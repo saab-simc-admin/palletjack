@@ -15,7 +15,7 @@ The toplevel `transforms.yaml` file defines key-value transforms to perform
 when loading the database, e.g. synthesize key-values from pallet metadata.
 
 - warehouse/
-  transforms.yaml
+  - transforms.yaml
   - building/
     - B101/
       - location.yaml
