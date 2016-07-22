@@ -25,9 +25,9 @@ when loading the database, e.g. synthesize key-values from pallet metadata.
       - building -> ../../building/B101
     - ...
   - machine/
-   - kvmhost1/
-     - chassis -> ../../chassis/1BC4F7H
-      - architecture.yaml
+    - kvmhost1/
+      - chassis -> ../../chassis/1BC4F7H
+        - architecture.yaml
     - ...
   - virtual_machine/
     - kvmguest1/
