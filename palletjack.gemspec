@@ -17,5 +17,5 @@ Gem::Specification.new do |s|
   s.files	+= Dir['lib/**/*.rb']
   s.executables	= []
   s.test_files	= Dir['test/test*.rb']
-  s.has_rdoc	= false
+  s.has_rdoc	= true
 end
