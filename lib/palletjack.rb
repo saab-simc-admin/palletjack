@@ -53,7 +53,8 @@ class PalletJack
         end
       end
     when options[:name]
-      result << @pallets[kind][options[:name]]
+      p = @pallets[kind][options[:name]]
+      result << p if p
     else
       @pallets[kind].each do |name, pallet|
         result << pallet
