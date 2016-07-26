@@ -1,0 +1,57 @@
+#!/usr/bin/env ruby
+
+# Write configuration for the Kea DHCP server from a Palletjack warehouse
+
+require 'palletjack'
+require 'optparse'
+require 'json'
+
+options = {}
+
+opts = OptionParser.new
+opts.banner = "Usage: #{$PROGRAM_NAME} [options] <name> ...
+
+Write configuration for the Kea DHCP server from a Palletjack warehouse
+
+"
+opts.on("-w DIR", "--warehouse DIR", "warehouse directory", String) {|dir| options[:warehouse] = dir }
+opts.parse!
+
+if not options[:warehouse]
+  puts opts.to_s
+  exit 1
+end
+
+jack = PalletJack.new(options[:warehouse])
+
+kea_config = {"subnet4" => Array.new}
+
+jack["ip_network"].each {|net|
+  net_config = {"subnet" => "#{net['pallet.ip_network'].sub('_', '/')}",
+                "reservations" => Array.new,
+                "option-data" =>
+                 [
+                   {
+                     "name" => "routers",
+                     "code" => 3,
+                     "space" => "dhcp4",
+                     "csv-format" => true,
+                     "data" => "#{net['net.ip.gateway']}"
+                   }
+                 ]
+               }
+
+  jack["ip_nic",
+       with_all:{"pallet.ip_network" =>
+                 Regexp.new("#{net['pallet.ip_network']}")}].each {|nic|
+    net_config["reservations"] << [ {
+      "hw-address" => "#{nic['net.mac.address']}",
+      "ip-address" => "#{nic['net.ip.address']}",
+      "hostname" => "#{nic['net.dns.fqdn']}"
+    } ]
+  }
+
+  kea_config["subnet4"] << net_config
+}
+
+jj kea_config
