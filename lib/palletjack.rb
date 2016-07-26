@@ -12,15 +12,15 @@ class PalletJack
 
   private :initialize
   def initialize(warehouse)
-    key_transforms = YAML::load_file(File.join(warehouse, "transforms.yaml"))
-    @warehouse = warehouse
+    @warehouse = File.expand_path(warehouse)
+    key_transforms = YAML::load_file(File.join(@warehouse, "transforms.yaml"))
     @keytrans_reader = KeyTransformer::Reader.new(key_transforms)
     @keytrans_writer = KeyTransformer::Writer.new(key_transforms)
     @pallets = Hash.new
     @dag = KVDAG.new
 
-    Dir.foreach(warehouse) do |kind|
-      kindpath = File.join(warehouse, kind)
+    Dir.foreach(@warehouse) do |kind|
+      kindpath = File.join(@warehouse, kind)
       next unless File.directory?(kindpath) and kind !~ /^\.{1,2}$/
 
       Dir.foreach(kindpath) do |pallet|
