@@ -31,6 +31,95 @@ class PalletJack
           end
         end
       end
+
+      # Synthesize a pallet value from others, using regular
+      # expressions to pull out parts of values.
+      #
+      # :call-seq:
+      #   synthesize_regexp(nil, param)   -> string or nil
+      #   synthesize_regexp(value, param) -> nil
+      #
+      # If +value+ is given, an earlier transform has already produced
+      # a value for this key, so do nothing and return +nil+.
+      #
+      # Otherwise, use the parsed YAML structure in +param+ to build
+      # and return a new value. If any failure occurs while building
+      # the new value, return +nil+ to let another transform try.
+      #
+      # YAML structure:
+      #
+      #   synthesize_regexp:
+      #     sources:
+      #       source0:
+      #         key: "key"
+      #         regexp: "regexp"
+      #       source1:
+      #         key: "key"
+      #         regexp: "regexp"
+      #       ...
+      #     produce: "recipe"
+      #
+      # where:
+      # [+sourceN+] Arbitrary number of sources for partial values,
+      #             with arbitrary names
+      # [+key+]     Name of the key to read a partial value from
+      # [+regexp+]  Regular expression for parsing the value indicated
+      #             by +key+, with named captures used to save
+      #             substrings for producing the final value. Capture
+      #             names must not be repeated within the same
+      #             synthesize_regexp block.
+      # [+produce+] A recipe for building the new value. Named
+      #             captures are inserted by <tt>#[capture]</tt>, and
+      #             all other characters are copied verbatim.
+      #
+      # Example:
+      #
+      # Take strings like +192.168.0.0_24+ from +pallet.ip_network+
+      # and produce strings like +192.168.0.0/24+ in +net.ip.cidr+.
+      #
+      #  - net.ip.cidr:
+      #      synthesize_regexp:
+      #        sources:
+      #          ip_network:
+      #            key: "pallet.ip_network"
+      #            regexp: "^(?<network>[0-9.]+)_(?<prefix_length>[0-9]+)$"
+      #        produce: "#[network]/#[prefix_length]"
+
+      def synthesize_regexp(value, param, result=String.new)
+        return if value
+
+        captures = {}
+
+        param["sources"].each do |_, source|
+          # Trying to read values from a non-existent key. Return nil
+          # and let another transform try.
+          return unless lookup = @pallet[source["key"]]
+
+          # Save all named captures
+          Regexp.new(source["regexp"]).match(lookup) do |md|
+            md.names.each do |name|
+              captures[name] = md[name.to_sym]
+            end
+          end
+        end
+
+        # No captures succeeded. Return nil and let another transform
+        # try.
+        return if captures.length == 0
+
+        # Making a copy of the string lets us use the destructive
+        # gsub! function later, which tells us whether the
+        # substitution succeeded
+        product = param["produce"].dup
+
+        captures.each do |name, match|
+          # If a substitution fails, return nil and let another
+          # transform try.
+          return unless product.gsub!("#[#{name}]", match)
+        end
+
+        return product
+      end
     end
     
     def initialize(key_transforms={})
