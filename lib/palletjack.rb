@@ -37,19 +37,34 @@ class PalletJack
     when options[:with_all]
       @pallets[kind].each do |name, pallet|
         result << pallet if options[:with_all].all? do |key, value|
-          pallet[key] =~ value
+          case value
+            when Regexp
+              pallet[key] =~ value
+            else
+              pallet[key].to_s == value.to_s
+          end
         end
       end
     when options[:with_any]
       @pallets[kind].each do |name, pallet|
         result << pallet if options[:with_any].any? do |key, value|
-          pallet[key] =~ value
+          case value
+            when Regexp
+              pallet[key] =~ value
+            else
+              pallet[key].to_s == value.to_s
+          end
         end
       end
     when options[:with_none]
       @pallets[kind].each do |name, pallet|
         result << pallet if options[:with_none].none? do |key, value|
-          pallet[key] =~ value
+          case value
+            when Regexp
+              pallet[key] =~ value
+            else
+              pallet[key].to_s == value.to_s
+          end
         end
       end
     when options[:name]
