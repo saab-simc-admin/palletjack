@@ -26,7 +26,7 @@ jack = PalletJack.new(options[:warehouse])
 
 kea_config = {"subnet4" => Array.new}
 
-jack["ip_network"].each {|net|
+jack["ip_network"].each do |net|
   net_config = {"subnet" => "#{net['net.ip.cidr']}",
                 "reservations" => Array.new,
                 "option-data" =>
@@ -43,15 +43,15 @@ jack["ip_network"].each {|net|
 
   jack["ip_nic",
        with_all:{"pallet.ip_network" =>
-                 Regexp.new("#{net['pallet.ip_network']}")}].each {|nic|
+                 Regexp.new("#{net['pallet.ip_network']}")}].each do |nic|
     net_config["reservations"] << [ {
       "hw-address" => "#{nic['net.mac.address']}",
       "ip-address" => "#{nic['net.ip.address']}",
       "hostname" => "#{nic['net.dns.fqdn']}"
     } ]
-  }
+  end
 
   kea_config["subnet4"] << net_config
-}
+end
 
 jj kea_config
