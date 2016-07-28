@@ -43,7 +43,7 @@ jack["ip_network"].each do |net|
 
   jack["ip_nic",
        with_all:{"pallet.ip_network" =>
-                 Regexp.new("#{net['pallet.ip_network']}")}].each do |nic|
+                 net['pallet.ip_network']}].each do |nic|
     net_config["reservations"] << [ {
       "hw-address" => "#{nic['net.mac.address']}",
       "ip-address" => "#{nic['net.ip.address']}",
