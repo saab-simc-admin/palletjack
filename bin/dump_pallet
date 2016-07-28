@@ -8,30 +8,38 @@ require 'optparse'
 options = {:type => "system"}
 
 opts = OptionParser.new
-opts.banner = "Usage: #{$PROGRAM_NAME} [options] <name> ...
+opts.banner = "Usage: #{$PROGRAM_NAME} [options] [<name> ...]
 
 Dump the YAML representation of all named pallets in a Palletjack warehouse
+
+If a name is specified, dump only that pallet. Otherwise, dump all
+pallets of the specified type.
 
 "
 opts.on("-w DIR", "--warehouse DIR", "warehouse directory", String) {|dir| options[:warehouse] = dir }
 opts.on("-t TYPE", "--type TYPE", "type (default \"system\")", String) {|type| options[:type] = type }
 opts.parse!
 
-if not options[:warehouse] or
-    ARGV.length == 0
+if not options[:warehouse]
   puts opts.to_s
   exit 1
 end
 
 jack = PalletJack.new(options[:warehouse])
 
-# Since we used the destructive opts.parse! above, all options were
-# removed from ARGV, leaving just the names to search for.
-ARGV.each {|name|
-  pallets = jack[options[:type], name:name]
+def dump_pallets(pallets)
   if pallets.length == 0
-    puts "No \"#{options[:type]}\" named \"#{name}\" found."
-    next
+    puts "No matching pallets found."
   end
   pallets.each {|p| puts p.to_yaml}
-}
+end
+
+# Since we used the destructive opts.parse! above, all options were
+# removed from ARGV, leaving just the names to search for.
+if ARGV.length == 0
+  dump_pallets(jack[options[:type]])
+else
+  ARGV.each do |name|
+    dump_pallets(jack[options[:type], name:name])
+  end
+end
