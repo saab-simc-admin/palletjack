@@ -28,18 +28,17 @@ kea_config = {"subnet4" => Array.new}
 
 jack["ip_network"].each do |net|
   net_config = {"subnet" => "#{net['net.ip.cidr']}",
-                "reservations" => Array.new,
-                "option-data" =>
-                 [
-                   {
-                     "name" => "routers",
-                     "code" => 3,
-                     "space" => "dhcp4",
-                     "csv-format" => true,
-                     "data" => "#{net['net.ip.gateway']}"
-                   }
-                 ]
-               }
+                "reservations" => [],
+                "option-data" => []}
+  if net['net.ip.gateway']
+    net_config["option-data"] << {
+      "name" => "routers",
+      "code" => 3,
+      "space" => "dhcp4",
+      "csv-format" => true,
+      "data" => "#{net['net.ip.gateway']}"
+    }
+  end
 
   jack["ip_nic",
        with_all:{"pallet.ip_network" =>
