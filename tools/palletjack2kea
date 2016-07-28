@@ -27,7 +27,7 @@ jack = PalletJack.new(options[:warehouse])
 kea_config = {"subnet4" => Array.new}
 
 jack["ip_network"].each {|net|
-  net_config = {"subnet" => "#{net['pallet.ip_network'].sub('_', '/')}",
+  net_config = {"subnet" => "#{net['net.ip.cidr']}",
                 "reservations" => Array.new,
                 "option-data" =>
                  [
