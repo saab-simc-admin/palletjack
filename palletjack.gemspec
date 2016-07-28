@@ -15,8 +15,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'kvdag', '~>0'
   s.files	= [ 'README.md', 'LICENSE' ]
   s.files	+= Dir['lib/**/*.rb']
-  s.files	+= Dir['bin/*']
-  s.executables	= ['dump_pallet']
+  s.executables	= []
   s.test_files	= Dir['test/test*.rb']
   s.has_rdoc	= true
 end
