@@ -26,7 +26,7 @@ class PalletJack
       #
       # YAML structure:
       #
-      #   synthesize:
+      #   - synthesize:
       #     - "rule"
       #     - "rule"
       #     ...
@@ -42,9 +42,9 @@ class PalletJack
       # Example:
       #
       #   - chassis.nic.name:
-      #      synthesize:
-      #        - "p#[chassis.nic.pcislot]p#[chassis.nic.port]"
-      #        - "em#[chassis.nic.port]"
+      #     - synthesize:
+      #       - "p#[chassis.nic.pcislot]p#[chassis.nic.port]"
+      #       - "em#[chassis.nic.port]"
 
       def synthesize(value, param, result=String.new)
         return if value
@@ -83,16 +83,16 @@ class PalletJack
       #
       # YAML structure:
       #
-      #   synthesize_regexp:
-      #     sources:
-      #       source0:
-      #         key: "key"
-      #         regexp: "regexp"
-      #       source1:
-      #         key: "key"
-      #         regexp: "regexp"
-      #       ...
-      #     produce: "recipe"
+      #   - synthesize_regexp:
+      #       sources:
+      #         source0:
+      #           key: "key"
+      #           regexp: "regexp"
+      #         source1:
+      #           key: "key"
+      #           regexp: "regexp"
+      #         ...
+      #       produce: "recipe"
       #
       # where:
       # [+sourceN+] Arbitrary number of sources for partial values,
@@ -113,7 +113,7 @@ class PalletJack
       # and produce strings like +192.168.0.0/24+ in +net.ip.cidr+.
       #
       #  - net.ip.cidr:
-      #      synthesize_regexp:
+      #    - synthesize_regexp:
       #        sources:
       #          ip_network:
       #            key: "pallet.ip_network"
@@ -167,18 +167,18 @@ class PalletJack
     # YAML structure:
     #
     #   - key:
-    #     transform1:
-    #       [transform-specific configuration]
-    #     transform2:
-    #       [transform-specific configuration]
+    #     - transform1:
+    #         [transform-specific configuration]
+    #     - transform2:
+    #         [transform-specific configuration]
     #     [...]
     #
-    # Transforms are evaluated in random order, and the last one to
-    # successfully produce a value is used. Only one instance of each
-    # transform is allowed.
+    # Transforms are evaluated in order from top to bottom, and the
+    # first one to successfully produce a value is used.
     #
     # Transforms are methods in PalletJack::KeyTransformer::Writer,
-    # called by name.
+    # called by name. They should return the new value, or +false+ if
+    # unsuccessful.
 
     def transform!(pallet)
       @pallet = pallet
@@ -186,10 +186,12 @@ class PalletJack
         key, transforms = keytrans_item.flatten
         value = @pallet[key, shallow: true]
 
-        transforms.each do |transform, param|
+        transforms.each do |t|
+          transform, param = t.flatten
           if self.respond_to?(transform.to_sym) then
             if new_value = self.send(transform.to_sym, value, param) then
               @pallet[key] = new_value
+              break
             end
           end
         end
