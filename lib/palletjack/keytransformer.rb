@@ -26,6 +26,10 @@ class PalletJack
       #
       # YAML structure:
       #
+      #   - synthesize: "rule"
+      #
+      # or
+      #
       #   - synthesize:
       #     - "rule"
       #     - "rule"
@@ -40,6 +44,9 @@ class PalletJack
       # used.
       #
       # Example:
+      #
+      #   - net.dns.fqdn:
+      #     - synthesize: "#[net.ip.name].#[domain.name]"
       #
       #   - chassis.nic.name:
       #     - synthesize:
