@@ -11,6 +11,48 @@ class PalletJack
         value.join(param) if value
       end
 
+      # Synthesize a pallet value by pasting others together.
+      #
+      # :call-seq:
+      #   synthesize(nil, param)   -> string or nil
+      #   synthesize(value, param) -> nil
+      #
+      # If +value+ is given, an earlier transform has already produced
+      # a value for this key, so do nothing and return +nil+.
+      #
+      # Otherwise, use the parsed YAML structure in +param+ to build
+      # and return a new value. If any failure occurs while building
+      # the new value, return +nil+ to let another transform try.
+      #
+      # YAML structure:
+      #
+      #   - synthesize: "rule"
+      #
+      # or
+      #
+      #   - synthesize:
+      #     - "rule"
+      #     - "rule"
+      #     ...
+      #
+      # Rules are strings used to build the new value. The value of
+      # another key is inserted by <tt>#[key]</tt>, and all other
+      # characters are copied verbatim.
+      #
+      # Rules are evaluated in order, and the first one to
+      # successfully produce a value without failing a key lookup is
+      # used.
+      #
+      # Example:
+      #
+      #   - net.dns.fqdn:
+      #     - synthesize: "#[net.ip.name].#[domain.name]"
+      #
+      #   - chassis.nic.name:
+      #     - synthesize:
+      #       - "p#[chassis.nic.pcislot]p#[chassis.nic.port]"
+      #       - "em#[chassis.nic.port]"
+
       def synthesize(value, param, result=String.new)
         return if value
 
@@ -48,16 +90,16 @@ class PalletJack
       #
       # YAML structure:
       #
-      #   synthesize_regexp:
-      #     sources:
-      #       source0:
-      #         key: "key"
-      #         regexp: "regexp"
-      #       source1:
-      #         key: "key"
-      #         regexp: "regexp"
-      #       ...
-      #     produce: "recipe"
+      #   - synthesize_regexp:
+      #       sources:
+      #         source0:
+      #           key: "key"
+      #           regexp: "regexp"
+      #         source1:
+      #           key: "key"
+      #           regexp: "regexp"
+      #         ...
+      #       produce: "recipe"
       #
       # where:
       # [+sourceN+] Arbitrary number of sources for partial values,
@@ -78,7 +120,7 @@ class PalletJack
       # and produce strings like +192.168.0.0/24+ in +net.ip.cidr+.
       #
       #  - net.ip.cidr:
-      #      synthesize_regexp:
+      #    - synthesize_regexp:
       #        sources:
       #          ip_network:
       #            key: "pallet.ip_network"
@@ -121,21 +163,42 @@ class PalletJack
         return product
       end
     end
-    
+
     def initialize(key_transforms={})
       @key_transforms = key_transforms
     end
-    
+
+    # Destructively transform the values in +pallet+ according to the
+    # loaded transform rules.
+    #
+    # YAML structure:
+    #
+    #   - key:
+    #     - transform1:
+    #         [transform-specific configuration]
+    #     - transform2:
+    #         [transform-specific configuration]
+    #     [...]
+    #
+    # Transforms are evaluated in order from top to bottom, and the
+    # first one to successfully produce a value is used.
+    #
+    # Transforms are methods in PalletJack::KeyTransformer::Writer,
+    # called by name. They should return the new value, or +false+ if
+    # unsuccessful.
+
     def transform!(pallet)
       @pallet = pallet
       @key_transforms.each do |keytrans_item|
         key, transforms = keytrans_item.flatten
         value = @pallet[key, shallow: true]
-        
-        transforms.each do |transform, param|
+
+        transforms.each do |t|
+          transform, param = t.flatten
           if self.respond_to?(transform.to_sym) then
             if new_value = self.send(transform.to_sym, value, param) then
               @pallet[key] = new_value
+              break
             end
           end
         end
