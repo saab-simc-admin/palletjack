@@ -11,6 +11,41 @@ class PalletJack
         value.join(param) if value
       end
 
+      # Synthesize a pallet value by pasting others together.
+      #
+      # :call-seq:
+      #   synthesize(nil, param)   -> string or nil
+      #   synthesize(value, param) -> nil
+      #
+      # If +value+ is given, an earlier transform has already produced
+      # a value for this key, so do nothing and return +nil+.
+      #
+      # Otherwise, use the parsed YAML structure in +param+ to build
+      # and return a new value. If any failure occurs while building
+      # the new value, return +nil+ to let another transform try.
+      #
+      # YAML structure:
+      #
+      #   synthesize:
+      #     - "rule"
+      #     - "rule"
+      #     ...
+      #
+      # Rules are strings used to build the new value. The value of
+      # another key is inserted by <tt>#[key]</tt>, and all other
+      # characters are copied verbatim.
+      #
+      # Rules are evaluated in order, and the first one to
+      # successfully produce a value without failing a key lookup is
+      # used.
+      #
+      # Example:
+      #
+      #   - chassis.nic.name:
+      #      synthesize:
+      #        - "p#[chassis.nic.pcislot]p#[chassis.nic.port]"
+      #        - "em#[chassis.nic.port]"
+
       def synthesize(value, param, result=String.new)
         return if value
 
