@@ -156,17 +156,36 @@ class PalletJack
         return product
       end
     end
-    
+
     def initialize(key_transforms={})
       @key_transforms = key_transforms
     end
-    
+
+    # Destructively transform the values in +pallet+ according to the
+    # loaded transform rules.
+    #
+    # YAML structure:
+    #
+    #   - key:
+    #     transform1:
+    #       [transform-specific configuration]
+    #     transform2:
+    #       [transform-specific configuration]
+    #     [...]
+    #
+    # Transforms are evaluated in random order, and the last one to
+    # successfully produce a value is used. Only one instance of each
+    # transform is allowed.
+    #
+    # Transforms are methods in PalletJack::KeyTransformer::Writer,
+    # called by name.
+
     def transform!(pallet)
       @pallet = pallet
       @key_transforms.each do |keytrans_item|
         key, transforms = keytrans_item.flatten
         value = @pallet[key, shallow: true]
-        
+
         transforms.each do |transform, param|
           if self.respond_to?(transform.to_sym) then
             if new_value = self.send(transform.to_sym, value, param) then
