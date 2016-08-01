@@ -48,7 +48,7 @@ jack["domain"].each do |domain|
   if domain['net.dns.mx']
     mx = DNS::Zone::RR::MX.new
     mx.label = absolute_domain_name
-    mx.exchange = domain['net.dns.mx']
+    mx.priority, mx.exchange = domain['net.dns.mx'].split
     zone.records << mx
   end
 
