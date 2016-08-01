@@ -1,0 +1,69 @@
+#!/usr/bin/env ruby
+
+# Write DNS server zone file from a Palletjack warehouse
+
+require 'palletjack'
+require 'optparse'
+require 'dns/zone'
+
+options = {}
+
+opts = OptionParser.new
+opts.banner = "Usage: #{$PROGRAM_NAME} -w <warehouse> -d <output directory>
+
+Write DNS server zone files from a Palletjack warehouse
+
+"
+opts.on("-w DIR", "--warehouse DIR", "warehouse directory", String) {|dir| options[:warehouse] = dir }
+opts.on("-d DIR", "--output DIR", "output directory", String) {|dir| options[:output] = dir }
+opts.parse!
+
+if not options[:warehouse] or
+    not options[:output] or
+    not File.directory?(options[:output])
+  puts opts.to_s
+  exit 1
+end
+
+
+jack = PalletJack.new(options[:warehouse])
+
+jack["domain"].each do |domain|
+  absolute_domain_name = "#{domain['domain.name']}."
+
+  zone = DNS::Zone.new
+
+  zone.origin = absolute_domain_name
+  zone.ttl = domain['net.dns.ttl']
+
+  zone.soa.label = absolute_domain_name
+  zone.soa.nameserver = domain['net.dns.ns']
+  zone.soa.email = domain['net.dns.soa-contact']
+
+  if domain['net.dns.mx']
+    mx = DNS::Zone::RR::MX.new
+    mx.label = absolute_domain_name
+    mx.exchange = domain['net.dns.mx']
+    zone.records << mx
+  end
+
+  if domain['net.dns.ns']
+    ns = DNS::Zone::RR::NS.new
+    ns.label = absolute_domain_name
+    ns.nameserver = domain['net.dns.ns']
+    zone.records << ns
+  end
+
+  jack["ip_nic",
+       with_all:{"domain.name" =>
+                 domain['domain.name']}].each do |nic|
+    a = DNS::Zone::RR::A.new
+    a.label = nic['net.ip.name']
+    a.address = nic['net.ip.address']
+    zone.records << a
+  end
+
+  File.open("#{options[:output]}/#{domain['domain.name']}.zone", File::CREAT | File::TRUNC | File::WRONLY, 0644) do |zonefile|
+    zonefile << zone.dump_pretty
+  end
+end
