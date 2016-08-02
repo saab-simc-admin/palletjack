@@ -1,0 +1,46 @@
+#!/usr/bin/env ruby
+
+# Write PXELINUX boot configuration file from a Palletjack warehouse
+#
+# Data model assumptions:
+#
+# Each OS has a box containing the key "host.pxelinux.configfile",
+# whose value is a string containing the path to the PXELINUX
+# configuration file which installs that OS, relative to the
+# pxelinux.cfg/ directory.
+
+require 'palletjack'
+require 'optparse'
+require 'fileutils'
+
+options = {}
+
+opts = OptionParser.new
+opts.banner = "Usage: #{$PROGRAM_NAME} -w <warehouse> -d <output directory>
+
+Write PXELINUX boot configuration files from a Palletjack warehouse
+
+"
+opts.on("-w DIR", "--warehouse DIR", "warehouse directory", String) {|dir| options[:warehouse] = dir }
+opts.on("-d DIR", "--output DIR", "output directory (pxelinux.cfg)", String) {|dir| options[:output] = dir }
+opts.parse!
+
+if not options[:warehouse] or
+    not options[:output] or
+    not File.directory?(options[:output])
+  puts opts.to_s
+  exit 1
+end
+
+jack = PalletJack.new(options[:warehouse])
+
+jack["system"].each do |system|
+  jack["ip_nic",
+       with_all:{"pallet.system" =>
+                 system['pallet.system']}].each do |nic|
+    if system['host.pxelinux.configfile']
+      filename = "#{options[:output]}/01-#{nic['net.mac.address'].gsub(':', '-').downcase}"
+      FileUtils.ln_s(system['host.pxelinux.configfile'], filename, :force => true)
+    end
+  end
+end
