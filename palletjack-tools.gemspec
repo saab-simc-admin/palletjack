@@ -17,6 +17,6 @@ Gem::Specification.new do |s|
   s.files	= [ 'README.md', 'LICENSE' ]
   s.files	+= Dir['tools/*']
   s.bindir      = 'tools/'
-  s.executables	= ['dump_pallet', 'palletjack2kea', 'palletjack2salt']
+  s.executables	= ['dump_pallet', 'palletjack2kea', 'palletjack2salt', 'palletjack2pxelinux']
   s.has_rdoc	= true
 end
