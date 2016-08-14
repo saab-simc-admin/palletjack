@@ -75,25 +75,10 @@ class PalletJack
       #       - "p#[chassis.nic.pcislot]p#[chassis.nic.port]"
       #       - "em#[chassis.nic.port]"
 
-      def synthesize(value, param, result=String.new)
+      def synthesize(value, param)
         return if value
-
-        case param
-        when String
-          rex=/#\[([a-z0-9.-_]+)\]/i
-          if md=rex.match(param) then
-            result << md.pre_match
-            return unless lookup = @pallet[md[1]]
-            result << lookup.to_s
-            synthesize(false, md.post_match, result)
-          else
-            result
-          end
-        else
-          param.reduce(false) do |found_one, alternative|
-            found_one || synthesize(false, alternative)
-          end
-        end
+        
+        synthesize_internal(param, @pallet)
       end
 
       # Synthesize a pallet value from others, using regular
