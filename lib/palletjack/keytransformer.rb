@@ -134,7 +134,7 @@ class PalletJack
       #            regexp: "^(?<network>[0-9.]+)_(?<prefix_length>[0-9]+)$"
       #        produce: "#[network]/#[prefix_length]"
 
-      def synthesize_regexp(value, param, result=String.new)
+      def synthesize_regexp(value, param)
         return if value
 
         captures = {}
@@ -152,22 +152,7 @@ class PalletJack
           end
         end
 
-        # No captures succeeded. Return nil and let another transform
-        # try.
-        return if captures.length == 0
-
-        # Making a copy of the string lets us use the destructive
-        # gsub! function later, which tells us whether the
-        # substitution succeeded
-        product = param["produce"].dup
-
-        captures.each do |name, match|
-          # If a substitution fails, return nil and let another
-          # transform try.
-          return unless product.gsub!("#[#{name}]", match)
-        end
-
-        return product
+        synthesize_internal(param["produce"], captures)
       end
     end
 
