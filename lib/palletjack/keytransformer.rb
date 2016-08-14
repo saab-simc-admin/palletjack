@@ -11,6 +11,28 @@ class PalletJack
         value.join(param) if value
       end
 
+      # Internal synthesize* helper method
+
+      def synthesize_internal(param, dictionary, result=String.new)
+        case param
+        when String
+          rex=/#\[([a-z0-9.-_]+)\]/i
+          if md=rex.match(param) then
+            result << md.pre_match
+            return unless lookup = dictionary[md[1]]
+            result << lookup.to_s
+            synthesize_internal(md.post_match, dictionary, result)
+          else
+            result
+          end
+        else
+          param.reduce(false) do |found_one, alternative|
+            found_one || synthesize_internal(alternative, dictionary)
+          end
+        end
+      end
+      private :synthesize_internal
+
       # Synthesize a pallet value by pasting others together.
       #
       # :call-seq:
