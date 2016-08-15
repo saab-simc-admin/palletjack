@@ -23,7 +23,7 @@ class PalletJack
             result << lookup.to_s
             synthesize_internal(md.post_match, dictionary, result)
           else
-            result
+            result << param
           end
         else
           param.reduce(false) do |found_one, alternative|
