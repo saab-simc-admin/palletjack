@@ -1,3 +1,108 @@
+# Value transformation rules
+# ==========================
+#
+# YAML structure:
+#
+# - <key>:
+#   - <synthesizing rule>
+#   - <synthesizing rule>
+#   ...
+# - <key>:
+#   - <synthesizing rule>
+#   - <synthesizing rule>
+#   ...
+# ...
+#
+#
+# Synthesize a value for each key according to the rules. Keys are
+# processed in order top to bottom, so later rules may use synthesized
+# values from earlier processed keys.
+#
+# Rules are processed in order top to bottom, and the first one to
+# produce a value is used.
+#
+# Two synthesizing rules are currently defined: "synthesize" and
+# "synthesize_regexp".
+#
+#
+# synthesize
+# ----------
+#
+# YAML structure:
+#
+#   - synthesize: "rule"
+#
+# or
+#
+#   - synthesize:
+#     - "rule"
+#     - "rule"
+#     ...
+#
+# Rules are strings used to build the new value. The value of another
+# key is inserted by "#[key]", and all other characters are copied
+# verbatim.
+#
+# Rules are evaluated in order, and the first one to
+# successfully produce a value without failing a key lookup is
+# used.
+#
+# Example:
+#
+#   - net.dns.fqdn:
+#     - synthesize: "#[net.ip.name].#[domain.name]"
+#
+#   - chassis.nic.name:
+#     - synthesize:
+#       - "p#[chassis.nic.pcislot]p#[chassis.nic.port]"
+#       - "em#[chassis.nic.port]"
+#
+#
+# synthesize_regexp
+# -----------------
+#
+# YAML structure:
+#
+#   - synthesize_regexp:
+#       sources:
+#         source0:
+#           key: "key"
+#           regexp: "regexp"
+#         source1:
+#           key: "key"
+#           regexp: "regexp"
+#         ...
+#       produce: "recipe"
+#
+# where:
+#
+# sourceN Arbitrary number of sources for partial values, with arbitrary
+#         names
+#
+# key     Name of the key to read a partial value from
+#
+# regexp  Regular expression for parsing the value indicated by "key",
+#         with named captures used to save substrings for producing the
+#         final value. Capture names must not be repeated within the same
+#         "synthesize_regexp" block.
+#
+# produce A recipe for building the new value. Named captures are
+#         inserted by "#[capture]", and all other characters are copied
+#         verbatim.
+#
+# Example:
+#
+# Take strings like "192.168.0.0_24" from "pallet.ip_network" and
+# produce strings like "192.168.0.0/24" in "net.ip.cidr".
+#
+#  - net.ip.cidr:
+#    - synthesize_regexp:
+#        sources:
+#          ip_network:
+#            key: "pallet.ip_network"
+#            regexp: "^(?<network>[0-9.]+)_(?<prefix_length>[0-9]+)$"
+#        produce: "#[network]/#[prefix_length]"
+
 - location.room.name:
   - synthesize: "#[pallet.room]"
 - location.building.name:
