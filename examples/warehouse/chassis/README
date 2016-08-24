@@ -1,0 +1,44 @@
+Chassis
+=======
+
+Type name: chassis
+
+Represents a physical computer chassis. For a desktop computer, it
+will contain a single machine object. For a server, it will contain
+two machine objects, one for the main system and one for the service
+module. For a blade chassis, each blade will be a machine object, and
+one for the chassis service module.
+
+The link "rack" points to the rack in which the chassis is mounted.
+
+Currently, no tools have any requirements on the formatting of this
+data. However, the following structure is recommended:
+
+
+Files:
+
+  chassis/<name>/identity.yaml
+  chassis/<name>/location.yaml
+
+
+Links:
+
+  chassis/<name>/rack -> ../../rack/<name>/
+
+
+YAML:
+
+identity.yaml:
+  chassis:
+    manufacturer: Human-readable manufacturer name
+    model: Human-readable model name
+    serial: Serial number
+    max-power: Nominal maximum power draw in watts
+
+location.yaml:
+  location:
+    position:
+      slot: Slot number of lowest rack slot occupied
+      height: Chassis height in rack units
+      front: True if this chassis blocks the front of the rack
+      rear: True if this chassis blocks the rear of the rack
