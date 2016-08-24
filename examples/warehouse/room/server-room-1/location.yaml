@@ -1,4 +1,4 @@
 location:
-  building:
+  room:
     floor: 1
-    room: 1111
+    number: 1111
