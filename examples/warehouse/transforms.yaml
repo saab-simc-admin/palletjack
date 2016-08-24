@@ -1,0 +1,44 @@
+- location.room.name:
+  - synthesize: "#[pallet.room]"
+- location.building.name:
+  - synthesize: "#[pallet.building]"
+- location.room.name:
+  - synthesize: "#[pallet.room]"
+- chassis.name:
+  - synthesize: "#[pallet.chassis]"
+- net.domain.name:
+  - synthesize: "#[pallet.domain]"
+- host.name:
+  - synthesize: "#[pallet.system]"
+- location.room.name:
+  - synthesize: "#[pallet.room]"
+- system.os:
+  - synthesize: "#[pallet.os]"
+- net.ip.name:
+  - synthesize: "#[host.name]"
+- net.ip.address:
+  - synthesize: "#[pallet.ip_nic]"
+- net.mac.address:
+  - synthesize: "#[pallet.phy_nic]"
+- net.dns.fqdn:
+  - synthesize: "#[net.ip.name].#[net.domain.name]"
+- location.rack.name:
+  - synthesize: "#[pallet.rack]"
+- chassis.nic.name:
+  - synthesize:
+      - "p#[chassis.nic.pcislot]p#[chassis.nic.port]"
+      - "em#[chassis.nic.port]"
+- net.ip.prefixlen:
+  - synthesize_regexp:
+      sources:
+        ip_network:
+          key: "pallet.ip_network"
+          regexp: "_(?<prefix_length>[0-9]+)$"
+      produce: "#[prefix_length]"
+- net.ip.cidr:
+  - synthesize_regexp:
+      sources:
+        ip_network:
+          key: "pallet.ip_network"
+          regexp: "^(?<network>[0-9.]+)_(?<prefix_length>[0-9]+)$"
+      produce: "#[network]/#[prefix_length]"
