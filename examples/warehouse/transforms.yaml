@@ -8,14 +8,14 @@
   - synthesize: "#[pallet.chassis]"
 - net.domain.name:
   - synthesize: "#[pallet.domain]"
-- host.name:
+- system.name:
   - synthesize: "#[pallet.system]"
 - location.room.name:
   - synthesize: "#[pallet.room]"
 - system.os:
   - synthesize: "#[pallet.os]"
 - net.ip.name:
-  - synthesize: "#[host.name]"
+  - synthesize: "#[system.name]"
 - net.ip.address:
   - synthesize: "#[pallet.ip_nic]"
 - net.mac.address:
