@@ -3,8 +3,6 @@
 # Write DNS server zone file from a Palletjack warehouse
 #
 # Data model assumptions:
-# - Zero or one NS per domain
-# - Zero or one MX per domain
 # - Each domain corresponds uniquely to one IPv4 network
 
 require 'palletjack'
@@ -42,20 +40,21 @@ jack["domain"].each do |domain|
   zone.ttl = domain['net.dns.ttl']
 
   zone.soa.label = absolute_domain_name
-  zone.soa.nameserver = domain['net.dns.ns']
+  zone.soa.nameserver = domain['net.dns.ns'][0]
   zone.soa.email = domain['net.dns.soa-contact']
 
-  if domain['net.dns.mx']
+  domain['net.dns.mx'].each do |server|
     mx = DNS::Zone::RR::MX.new
     mx.label = absolute_domain_name
-    mx.priority, mx.exchange = domain['net.dns.mx'].split
+    mx.priority = server['priority']
+    mx.exchange = server['server']
     zone.records << mx
   end
 
-  if domain['net.dns.ns']
+  domain['net.dns.ns'].each do |address|
     ns = DNS::Zone::RR::NS.new
     ns.label = absolute_domain_name
-    ns.nameserver = domain['net.dns.ns']
+    ns.nameserver = address
     zone.records << ns
   end
 
