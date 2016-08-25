@@ -1,0 +1,23 @@
+Operating system
+================
+
+Type name: os
+
+Represents a specific version of an operating system.
+
+Contains the information needed to install and configure an operating
+system.
+
+
+Files:
+
+  os/<name>/pxelinux.yaml
+
+
+YAML:
+
+pxelinux.yaml:
+  host:
+    pxelinux:
+      configfile: Path to PXELINUX configuration for installing this
+                  OS by netboot, relative to the pxelinux.cfg directory

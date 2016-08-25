@@ -1,0 +1,4 @@
+system:
+  role:
+    - web-server
+    - ssh-server

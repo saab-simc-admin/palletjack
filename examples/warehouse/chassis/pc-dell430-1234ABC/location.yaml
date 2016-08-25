@@ -1,0 +1,6 @@
+location:
+  position:
+    slot: 17
+    height: 2
+    front: true
+    rear: true

@@ -1,0 +1,5 @@
+chassis:
+  manufacturer: Dell
+  model: PowerEdge R430
+  serial: 1234ABC
+  max-power: 1000

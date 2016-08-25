@@ -1,0 +1,22 @@
+Buildings
+=========
+
+Type name: building
+
+Represents a physical building.
+
+Currently, no tools have any requirements on the formatting of this
+data. However, the following structure is recommended:
+
+
+Files:
+
+  building/<name>/location.yaml
+
+
+YAML:
+
+location.yaml:
+  location:
+    building:
+      description: Human-readable building name

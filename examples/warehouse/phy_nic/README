@@ -1,0 +1,39 @@
+Physical NIC
+============
+
+Type name: phy_nic
+
+Represents an Ethernet network interface card.
+
+The name of a NIC is its Ethernet MAC address, with bytes separated by
+":".
+
+For a physical network interface, the link "chassis" points to the
+chassis in which that interface lives and the key "chassis.nic.port"
+contains the physical port number in the chassis. For virtual
+networks, the link "phy_nic" points to the physical interface on which
+they run.
+
+This information is primarily used by "palletjack2kea" for creating
+DHCP configuration files with static leases for all interfaces which
+have IP addresses allocated.
+
+
+Files:
+
+  phy_nic/<name>/location.yaml
+
+
+Links:
+
+  phy_nic/<name>/chassis -> ../../chassis/<name>/
+  phy_nic/<name>/phy_nic -> ../../phy_nic/<name>/
+
+
+YAML:
+
+location.yaml:
+  chassis:
+    nic:
+      port: Port number, as printed on the back of the physical
+            chassis

@@ -1,0 +1,4 @@
+system: 
+  role:
+    - kvm-server
+    - ssh-server

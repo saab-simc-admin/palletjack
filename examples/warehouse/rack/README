@@ -1,0 +1,28 @@
+Rack
+====
+
+Type name: rack
+
+Represents a standard 19-inch rack.
+
+Currently, no tools have any requirements on the formatting of this
+data. However, the following structure is recommended:
+
+
+Files:
+
+  rack/<name>/location.yaml
+
+
+Links:
+
+  rack/<name>/room -> ../../room/<name>/
+
+
+YAML:
+
+location.yaml:
+  location:
+    rack:
+      aisle: Name of aisle in room
+      rack: Number of rack in aisle
