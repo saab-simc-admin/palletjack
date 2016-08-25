@@ -20,4 +20,3 @@ location.yaml:
   location:
     building:
       description: Human-readable building name
-      name: Filled in by default transform
