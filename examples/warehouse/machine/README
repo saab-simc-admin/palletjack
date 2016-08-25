@@ -1,0 +1,32 @@
+Machine
+=======
+
+Type name: machine
+
+Represents the substrate for running an operating system.
+
+A machine can be physical hardware running one system image (e.g. one
+desktop computer or one blade in a blade chassis), a virtual machine,
+or a container.
+
+For a physical machine, the link "chassis" points to the chassis in
+which that machine lives. For virtual machines and containers, the
+link "host" points to the system which hosts them.
+
+
+Files:
+
+  machine/<name>/type.yaml
+
+
+Links:
+
+  machine/<name>/chassis -> ../../chassis/<name>/
+  machine/<name>/host -> ../../system/<name>/
+
+
+YAML:
+
+type.yaml:
+  host:
+    type: "virtual", "physical" or "container"
