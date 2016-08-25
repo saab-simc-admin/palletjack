@@ -1,0 +1,196 @@
+# Value transformation rules
+# ==========================
+#
+# Since the data in the warehouse files is to be written by humans, we
+# don't want to have to repeat information. Instead, write each piece
+# of information once and use transformation rules in this file to
+# expand that into the forms expected by later tools.
+#
+#
+# YAML structure:
+#
+# - <key>:
+#   - <synthesizing rule>
+#   - <synthesizing rule>
+#   ...
+# - <key>:
+#   - <synthesizing rule>
+#   - <synthesizing rule>
+#   ...
+# ...
+#
+# Synthesize a value for each key according to the rules. Keys are
+# processed in order top to bottom, so later rules may use synthesized
+# values from earlier processed keys.
+#
+# Rules are processed in order top to bottom, and the first one to
+# produce a value is used.
+#
+# Two synthesizing rules are currently defined: "synthesize" and
+# "synthesize_regexp".
+#
+#
+# synthesize
+# ----------
+#
+# YAML structure:
+#
+#   - synthesize: "rule"
+#
+# or
+#
+#   - synthesize:
+#     - "rule"
+#     - "rule"
+#     ...
+#
+# Rules are strings used to build the new value. The value of another
+# key is inserted by "#[key]", and all other characters are copied
+# verbatim.
+#
+# Rules are evaluated in order, and the first one to
+# successfully produce a value without failing a key lookup is
+# used.
+#
+# Example:
+#
+#   - net.dns.fqdn:
+#     - synthesize: "#[net.ip.name].#[domain.name]"
+#
+#   - chassis.nic.name:
+#     - synthesize:
+#       - "p#[chassis.nic.pcislot]p#[chassis.nic.port]"
+#       - "em#[chassis.nic.port]"
+#
+#
+# synthesize_regexp
+# -----------------
+#
+# YAML structure:
+#
+#   - synthesize_regexp:
+#       sources:
+#         source0:
+#           key: "key"
+#           regexp: "regexp"
+#         source1:
+#           key: "key"
+#           regexp: "regexp"
+#         ...
+#       produce: "recipe"
+#
+# where:
+#
+# sourceN Arbitrary number of sources for partial values, with arbitrary
+#         names
+#
+# key     Name of the key to read a partial value from
+#
+# regexp  Regular expression for parsing the value indicated by "key",
+#         with named captures used to save substrings for producing the
+#         final value. Capture names must not be repeated within the same
+#         "synthesize_regexp" block.
+#
+# produce A recipe for building the new value. Named captures are
+#         inserted by "#[capture]", and all other characters are copied
+#         verbatim.
+#
+# Example:
+#
+# Take strings like "192.168.0.0_24" from "pallet.ip_network" and
+# produce strings like "192.168.0.0/24" in "net.ip.cidr".
+#
+#  - net.ip.cidr:
+#    - synthesize_regexp:
+#        sources:
+#          ip_network:
+#            key: "pallet.ip_network"
+#            regexp: "^(?<network>[0-9.]+)_(?<prefix_length>[0-9]+)$"
+#        produce: "#[network]/#[prefix_length]"
+
+
+# Default transforms
+# ==================
+#
+# *.name:
+#
+#   The name of an object is the name of the directory it resides in.
+#   To prevent us having to repeat that information in the YAML data,
+#   read the object names from the links (in the "pallet." namespace)
+#   and populate a "*.name" key.
+
+- location.room.name:
+  - synthesize: "#[pallet.room]"
+- location.building.name:
+  - synthesize: "#[pallet.building]"
+- location.room.name:
+  - synthesize: "#[pallet.room]"
+- chassis.name:
+  - synthesize: "#[pallet.chassis]"
+- net.domain.name:
+  - synthesize: "#[pallet.domain]"
+- location.room.name:
+  - synthesize: "#[pallet.room]"
+- location.rack.name:
+  - synthesize: "#[pallet.rack]"
+- system.name:
+  - synthesize: "#[pallet.system]"
+- net.ip.name:                     # Later rules can reference previously
+  - synthesize: "#[system.name]"   # synthesized values
+
+
+# These keys have the same data as "*.name" above, but have actual
+# mening to their names in addition to identification, so use keys
+# named for the purpose of the data instead of "name".
+
+- system.os:
+  - synthesize: "#[pallet.os]"
+- net.ip.address:
+  - synthesize: "#[pallet.ip_nic]"
+- net.mac.address:
+  - synthesize: "#[pallet.phy_nic]"
+
+
+# Simple pasting of previous values to synthesize a new one. Note that
+# we are, again, accessing a previously synthesized value.
+
+- net.dns.fqdn:
+  - synthesize: "#[net.ip.name].#[net.domain.name]"
+
+
+# A list of synthesizing rules is processed from top to bottom, and
+# the first one to produce a value is used. In this case, if
+# "chassis.nic.pcislot" doesn't exist, the first rule fails and the
+# second one takes over.
+
+- chassis.nic.name:
+  - synthesize:
+      - "p#[chassis.nic.pcislot]p#[chassis.nic.port]"
+      - "em#[chassis.nic.port]"
+
+
+# Regexp synthesizing rules. ip_network objects are named like
+# "192.168.0.0_24", so with a regexp like
+# "^(?<network>[0-9.]+)_(?<prefix_length>[0-9]+)$" the named captures
+# are bound to network:"192.168.0.0" and prefix_length:"24",
+# respectively.
+#
+# Different tools reading the data later will need either the prefix
+# length or the entire netblock in CIDR format, so we produce both
+# forms. A little repetition here allows us to have much simpler tools
+# later in the chain.
+
+- net.ip.prefixlen:
+  - synthesize_regexp:
+      sources:
+        ip_network:
+          key: "pallet.ip_network"
+          regexp: "_(?<prefix_length>[0-9]+)$"
+      produce: "#[prefix_length]"
+- net.ip.cidr:
+  - synthesize_regexp:
+      sources:
+        ip_network:
+          key: "pallet.ip_network"
+          regexp: "^(?<network>[0-9.]+)_(?<prefix_length>[0-9]+)$"
+      produce: "#[network]/#[prefix_length]"

@@ -1,0 +1,55 @@
+System
+======
+
+Type name: system
+
+Represents a running operating system instance.
+
+The name of a system object is its network hostname, which the default
+transforms will combine with the DNS domain to produce a full name in
+the key "net.dns.fqdn".
+
+The link "domain" points to the DNS domain this system is a part of.
+
+The link "machine" points to the machine this system runs on, either a
+physical machine, a virtual machine or a container.
+
+The link "os" points to the operating system this system runs.
+
+role.yaml contains, in the key "system.role", a list of roles which
+this system skall have, which in the future will be made available to
+the configuration management system.
+
+
+Files:
+
+  system/<name>/architecture.yaml
+  system/<name>/role.yaml
+
+
+Links:
+
+  system/<name>/domain -> ../../domain/<name>/
+  system/<name>/machine -> ../../machine/<name>/
+  system/<name>/os -> ../../os/<name>/
+
+
+YAML:
+
+architecture.yaml:
+  system:
+    architecture: Processor architecture, e.g. x86_64
+
+role.yaml:
+  system:
+    role:
+      - role1
+      - role2
+      ...
+
+
+Transformed values:
+
+  net:
+    ip:
+      fqdn: Fully qualified domain name
