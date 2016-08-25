@@ -1,0 +1,34 @@
+Room
+====
+
+Type name: room
+
+Represents a physical room.
+
+Currently, no tools have any requirements on the formatting of this
+data. However, the following structure is recommended:
+
+
+Files:
+
+  room/<name>/location.yaml
+  room/<name>/identity.yaml
+
+
+Links:
+
+  room/<name>/building -> ../../building/<name>/
+
+
+YAML:
+
+location.yaml:
+  location:
+    room:
+      floor: Number of floor this room is on
+      number: Room number
+
+identity.yaml:
+  location:
+    room:
+      description: Human-readable room name
