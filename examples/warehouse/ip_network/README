@@ -27,3 +27,11 @@ identity.yaml:
   net:
     ip:
       gateway: IPv4 address of default gateway from this network
+
+
+Transformed values:
+
+  net:
+    ip:
+      cidr: Netblock in CIDR notation
+      prefixlen: Netmask length in bits
