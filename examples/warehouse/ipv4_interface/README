@@ -1,0 +1,38 @@
+IPv4 interface
+==============
+
+Type name: ipv4_interface
+
+Represents an IPv4 configuration on a network interface.
+
+Each ipv4_interface has exactly one IPv4 address, which is its name.
+To configure several IP addresses on the same physical interface,
+create additional ipv4_interface objects with links to the same
+phy_nic object.
+
+The link "domain" points to the DNS domain this interface is a part
+of.
+
+The link "ipv4_network" points to the IPv4 network this interface is
+attached to.
+
+The link "phy_nic" points to the underlying Ethernet interface this
+IPv4 interface runs on.
+
+The link "system" points to the system in which this interface is
+configured.
+
+This information is used by all tools handling network configuration,
+currently "palletjack2kea", "palletjack2pxelinux" and
+"palletjack2zone".
+
+The phy_nic linked from this ipv4_interface may be a virtual
+interface, if the system runs on a virtual machine.
+
+
+Links:
+
+  ipv4_interface/<name>/domain -> ../../domain/<name>/
+  ipv4_interface/<name>/ipv4_network -> ../../ipv4_network/<name>/
+  ipv4_interface/<name>/phy_nic -> ../../phy_nic/<name>/
+  ipv4_interface/<name>/system -> ../../system/<name>/
