@@ -40,13 +40,13 @@ jack["ip_network"].each do |net|
     }
   end
 
-  jack["ip_nic",
+  jack["ip_interface",
        with_all:{"pallet.ip_network" =>
-                 net['pallet.ip_network']}].each do |nic|
+                 net['pallet.ip_network']}].each do |interface|
     net_config["reservations"] << [ {
-      "hw-address" => "#{nic['net.mac.address']}",
-      "ip-address" => "#{nic['net.ip.address']}",
-      "hostname" => "#{nic['net.dns.fqdn']}"
+      "hw-address" => "#{interface['net.mac.address']}",
+      "ip-address" => "#{interface['net.ip.address']}",
+      "hostname" => "#{interface['net.dns.fqdn']}"
     } ]
   end
 

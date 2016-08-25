@@ -146,7 +146,7 @@
 - system.os:
   - synthesize: "#[pallet.os]"
 - net.ip.address:
-  - synthesize: "#[pallet.ip_nic]"
+  - synthesize: "#[pallet.ip_interface]"
 - net.mac.address:
   - synthesize: "#[pallet.phy_nic]"
 
