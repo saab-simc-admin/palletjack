@@ -55,7 +55,7 @@
 # Example:
 #
 #   - net.dns.fqdn:
-#     - synthesize: "#[net.ip.name].#[domain.name]"
+#     - synthesize: "#[net.dns.name].#[domain.name]"
 #
 #   - chassis.nic.name:
 #     - synthesize:
@@ -97,14 +97,14 @@
 #
 # Example:
 #
-# Take strings like "192.168.0.0_24" from "pallet.ip_network" and
-# produce strings like "192.168.0.0/24" in "net.ip.cidr".
+# Take strings like "192.168.0.0_24" from "pallet.ipv4_network" and
+# produce strings like "192.168.0.0/24" in "net.ipv4.cidr".
 #
-#  - net.ip.cidr:
+#  - net.ipv4.cidr:
 #    - synthesize_regexp:
 #        sources:
-#          ip_network:
-#            key: "pallet.ip_network"
+#          ipv4_network:
+#            key: "pallet.ipv4_network"
 #            regexp: "^(?<network>[0-9.]+)_(?<prefix_length>[0-9]+)$"
 #        produce: "#[network]/#[prefix_length]"
 
@@ -127,7 +127,7 @@
   - synthesize: "#[pallet.room]"
 - chassis.name:
   - synthesize: "#[pallet.chassis]"
-- net.domain.name:
+- net.dns.domain:
   - synthesize: "#[pallet.domain]"
 - location.room.name:
   - synthesize: "#[pallet.room]"
@@ -135,7 +135,7 @@
   - synthesize: "#[pallet.rack]"
 - system.name:
   - synthesize: "#[pallet.system]"
-- net.ip.name:                     # Later rules can reference previously
+- net.dns.name:                    # Later rules can reference previously
   - synthesize: "#[system.name]"   # synthesized values
 
 
@@ -145,8 +145,8 @@
 
 - system.os:
   - synthesize: "#[pallet.os]"
-- net.ip.address:
-  - synthesize: "#[pallet.ip_interface]"
+- net.ipv4.address:
+  - synthesize: "#[pallet.ipv4_interface]"
 - net.mac.address:
   - synthesize: "#[pallet.phy_nic]"
 
@@ -155,7 +155,7 @@
 # we are, again, accessing a previously synthesized value.
 
 - net.dns.fqdn:
-  - synthesize: "#[net.ip.name].#[net.domain.name]"
+  - synthesize: "#[net.dns.name].#[net.dns.domain]"
 
 
 # A list of synthesizing rules is processed from top to bottom, and
@@ -169,7 +169,7 @@
       - "em#[chassis.nic.port]"
 
 
-# Regexp synthesizing rules. ip_network objects are named like
+# Regexp synthesizing rules. ipv4_network objects are named like
 # "192.168.0.0_24", so with a regexp like
 # "^(?<network>[0-9.]+)_(?<prefix_length>[0-9]+)$" the named captures
 # are bound to network:"192.168.0.0" and prefix_length:"24",
@@ -180,17 +180,17 @@
 # forms. A little repetition here allows us to have much simpler tools
 # later in the chain.
 
-- net.ip.prefixlen:
+- net.ipv4.prefixlen:
   - synthesize_regexp:
       sources:
-        ip_network:
-          key: "pallet.ip_network"
+        ipv4_network:
+          key: "pallet.ipv4_network"
           regexp: "_(?<prefix_length>[0-9]+)$"
       produce: "#[prefix_length]"
-- net.ip.cidr:
+- net.ipv4.cidr:
   - synthesize_regexp:
       sources:
-        ip_network:
-          key: "pallet.ip_network"
+        ipv4_network:
+          key: "pallet.ipv4_network"
           regexp: "^(?<network>[0-9.]+)_(?<prefix_length>[0-9]+)$"
       produce: "#[network]/#[prefix_length]"
