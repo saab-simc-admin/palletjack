@@ -96,6 +96,13 @@ jack["domain"].each do |domain|
   reverse_zone.soa.nameserver = domain['net.dns.ns']
   reverse_zone.soa.email = domain['net.dns.soa-contact']
 
+  domain['net.dns.ns'].each do |address|
+    ns = DNS::Zone::RR::NS.new
+    ns.label = reverse_zone.origin
+    ns.nameserver = address
+    reverse_zone.records << ns
+  end
+
   jack["ip_interface",
        with_all:{"net.domain.name" =>
                  domain['net.domain.name']}].each do |interface|
