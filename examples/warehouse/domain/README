@@ -32,6 +32,12 @@ YAML:
 dns.yaml:
   net:
     dns:
-      mx: String containing priority and host name for the mail server
-          for this domain (only 1)
-      ns: IP address of NS server authoritative for this domain (only 1)
+      mx:
+        -
+          priority: Priority of this mail server
+          server: FQDN of this mail server
+        -
+          ...
+      ns:
+        - IP address of NS server authoritative for this domain
+        - ...
