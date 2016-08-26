@@ -1,0 +1,52 @@
+#!/usr/bin/env ruby
+
+# Return a YAML structure containing Salt external pillar data for all
+# systems.
+#
+# Intended to be run as a cmd_yaml external pillar, e.g.:
+#   ext_pillar:
+#   - cmd_yaml: '/usr/bin/palletjack2salt -w /etc/warehouse/ -m %s'
+#
+# Data model assumptions:
+# - Salt minion ID is FQDN
+# - Role list is at system.role
+# - Output structure is:
+#
+#   palletjack:
+#     role:
+#       - role1
+#       - role2
+#       ...
+
+require 'palletjack'
+require 'optparse'
+require 'yaml'
+
+options = {}
+
+opts = OptionParser.new
+opts.banner = "Usage: #{$PROGRAM_NAME} -w <warehouse>
+
+Write Salt pillar data from a Palletjack warehouse
+
+"
+opts.on("-w DIR", "--warehouse DIR", "warehouse directory", String) {|dir| options[:warehouse] = dir }
+opts.on("-m MINION", "--minion MINION", "Salt minion ID", String) {|minion| options[:minion] = minion }
+opts.parse!
+
+if not options[:warehouse] or
+    not options[:minion]
+  puts opts.to_s
+  exit 1
+end
+
+output = { 'palletjack' => {} }
+
+jack = PalletJack.new(options[:warehouse])
+
+jack["system",
+     with_all:{'net.dns.fqdn' => options[:minion]}].each do |system|
+  output['palletjack'] = { 'role' => system['system.role'] }
+end
+
+puts output.to_yaml
