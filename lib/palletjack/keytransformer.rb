@@ -12,6 +12,36 @@ class PalletJack
       end
 
       # Internal synthesize* helper method
+      # N.B. rdoc will not be generated, because method is private.
+      #
+      # :call-seq:
+      #   synthesize_internal(param, dictionary) -> string or nil
+      #
+      # Use the single +String+ or +Enumerable+ containing +String+
+      # in +param+ to build and return a substitution value. If any
+      # failure occurs while building the new value, return +nil+.
+      #
+      # Substitutions are made from key-value pairs in +dictionary+
+      #
+      # YAML structure:
+      #
+      #   - some_rule: "rule"
+      #
+      # or
+      #
+      #   - some_rule:
+      #     - "rule"
+      #     - "rule"
+      #     ...
+      #
+      # Rules are strings used to build the new value. The value of
+      # another key is inserted by <tt>#[key]</tt>, and all other
+      # characters are copied verbatim.
+      #
+      # Rules are evaluated in order, and the first one to
+      # successfully produce a value without failing a key lookup is
+      # used.
+      #
 
       def synthesize_internal(param, dictionary, result=String.new)
         case param
