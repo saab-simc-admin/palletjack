@@ -149,6 +149,8 @@
   - synthesize: "#[pallet.ip_nic]"
 - net.mac.address:
   - synthesize: "#[pallet.phy_nic]"
+- host.pxelinux.config:
+  - synthesize: "#[pallet.os]"
 
 
 # Simple pasting of previous values to synthesize a new one. Note that

@@ -8,16 +8,13 @@ Represents a specific version of an operating system.
 Contains the information needed to install and configure an operating
 system.
 
-
-Files:
-
-  os/<name>/pxelinux.yaml
+The default transforms fill in "host.pxelinux.config" with the name of
+the OS.
 
 
-YAML:
+Transformed values:
 
-pxelinux.yaml:
   host:
     pxelinux:
-      configfile: Path to PXELINUX configuration for installing this
-                  OS by netboot, relative to the pxelinux.cfg directory
+      config: Name of PXELINUX configuration file for installing this
+              OS by netboot, in the pxelinux.cfg directory
