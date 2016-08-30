@@ -35,12 +35,12 @@ end
 jack = PalletJack.new(options[:warehouse])
 
 jack["system"].each do |system|
-  jack["ip_nic",
+  jack["ipv4_interface",
        with_all:{"pallet.system" =>
                  system['pallet.system']}].each do |nic|
-    if system['host.pxelinux.configfile']
+    if system['host.pxelinux.config']
       filename = "#{options[:output]}/01-#{nic['net.mac.address'].gsub(':', '-').downcase}"
-      FileUtils.ln_s(system['host.pxelinux.configfile'], filename, :force => true)
+      FileUtils.ln_s("#{system['host.pxelinux.config']}.menu", filename, :force => true)
     end
   end
 end
