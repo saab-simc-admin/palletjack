@@ -11,6 +11,58 @@ class PalletJack
         value.join(param) if value
       end
 
+      # Internal synthesize* helper method
+      # N.B. rdoc will not be generated, because method is private.
+      #
+      # :call-seq:
+      #   synthesize_internal(param, dictionary) -> string or nil
+      #
+      # Use the single +String+ or +Enumerable+ containing +String+
+      # in +param+ to build and return a substitution value. If any
+      # failure occurs while building the new value, return +nil+.
+      #
+      # Substitutions are made from key-value pairs in +dictionary+
+      #
+      # YAML structure:
+      #
+      #   - some_rule: "rule"
+      #
+      # or
+      #
+      #   - some_rule:
+      #     - "rule"
+      #     - "rule"
+      #     ...
+      #
+      # Rules are strings used to build the new value. The value of
+      # another key is inserted by <tt>#[key]</tt>, and all other
+      # characters are copied verbatim.
+      #
+      # Rules are evaluated in order, and the first one to
+      # successfully produce a value without failing a key lookup is
+      # used.
+      #
+
+      def synthesize_internal(param, dictionary, result=String.new)
+        case param
+        when String
+          rex=/#\[([[:alnum:]._-]+)\]/
+          if md=rex.match(param) then
+            result << md.pre_match
+            return unless lookup = dictionary[md[1]]
+            result << lookup.to_s
+            synthesize_internal(md.post_match, dictionary, result)
+          else
+            result << param
+          end
+        else # Enumerable
+          param.reduce(false) do |found_one, alternative|
+            found_one || synthesize_internal(alternative, dictionary)
+          end
+        end
+      end
+      private :synthesize_internal
+
       # Synthesize a pallet value by pasting others together.
       #
       # :call-seq:
@@ -53,25 +105,10 @@ class PalletJack
       #       - "p#[chassis.nic.pcislot]p#[chassis.nic.port]"
       #       - "em#[chassis.nic.port]"
 
-      def synthesize(value, param, result=String.new)
+      def synthesize(value, param)
         return if value
-
-        case param
-        when String
-          rex=/#\[([a-z0-9.-_]+)\]/i
-          if md=rex.match(param) then
-            result << md.pre_match
-            return unless lookup = @pallet[md[1]]
-            result << lookup.to_s
-            synthesize(false, md.post_match, result)
-          else
-            result
-          end
-        else
-          param.reduce(false) do |found_one, alternative|
-            found_one || synthesize(false, alternative)
-          end
-        end
+        
+        synthesize_internal(param, @pallet)
       end
 
       # Synthesize a pallet value from others, using regular
@@ -127,7 +164,7 @@ class PalletJack
       #            regexp: "^(?<network>[0-9.]+)_(?<prefix_length>[0-9]+)$"
       #        produce: "#[network]/#[prefix_length]"
 
-      def synthesize_regexp(value, param, result=String.new)
+      def synthesize_regexp(value, param)
         return if value
 
         captures = {}
@@ -145,22 +182,7 @@ class PalletJack
           end
         end
 
-        # No captures succeeded. Return nil and let another transform
-        # try.
-        return if captures.length == 0
-
-        # Making a copy of the string lets us use the destructive
-        # gsub! function later, which tells us whether the
-        # substitution succeeded
-        product = param["produce"].dup
-
-        captures.each do |name, match|
-          # If a substitution fails, return nil and let another
-          # transform try.
-          return unless product.gsub!("#[#{name}]", match)
-        end
-
-        return product
+        synthesize_internal(param["produce"], captures)
       end
     end
 
