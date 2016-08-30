@@ -55,7 +55,7 @@ class PalletJack
           else
             result << param
           end
-        else
+        else # Enumerable
           param.reduce(false) do |found_one, alternative|
             found_one || synthesize_internal(alternative, dictionary)
           end
