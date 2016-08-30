@@ -31,6 +31,21 @@ class PalletJack
     end
   end
 
+  # Search for pallets in a PalletJack warehouse
+  #
+  # :call-seq:
+  #   [kind]                        -> set of pallets
+  #   [kind, with_all:{ matches }]  -> set of pallets
+  #   [kind, with_any:{ matches }]  -> set of pallets
+  #   [kind, with_none:{ matches }] -> set of pallets
+  #
+  # Return all pallets of +kind+, optionally restricting by
+  # keypath matches.
+  #
+  # +matches+ should be a hash with "key.path" strings as keys,
+  # and either string or regexp values to match against.
+  #
+
   def [](kind, options = {})
     result = Set.new
     case
