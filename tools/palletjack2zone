@@ -115,7 +115,7 @@ jack["domain"].each do |domain|
                  domain['net.dns.domain']}].each do |interface|
     ptr = DNS::Zone::RR::PTR.new
     ptr.label = IP.new(interface['net.ipv4.address']).to_arpa
-    ptr.name = interface['net.dns.name']
+    ptr.name = "#{interface['net.dns.fqdn']}."
     reverse_zone.records << ptr
   end
 
