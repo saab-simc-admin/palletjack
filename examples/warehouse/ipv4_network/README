@@ -1,14 +1,14 @@
-IP network
-==========
+IPv4 network
+============
 
-Type name: ip_network
+Type name: ipv4_network
 
 Represents an IPv4 network.
 
-The name of an ip_network object is the netblock definition in CIDR
+The name of an ipv4_network object is the netblock definition in CIDR
 notation, with the / replaced with an _, e.g. "192.168.0.0_24". The
-default transform rules fill in values for "net.ip.cidr" and
-"net.ip.prefixlen" from the name. Mask lengths not a multiple of 8
+default transform rules fill in values for "net.ipv4.cidr" and
+"net.ipv4.prefixlen" from the name. Mask lengths not a multiple of 8
 bits are allowed here, but are not yet supported by "palletjack2zone"
 for writing reverse zones.
 
@@ -18,20 +18,20 @@ currently "palletjack2kea" and "palletjack2zone".
 
 Files:
 
-  ip_network/<name>/identity.yaml
+  ipv4_network/<name>/identity.yaml
 
 
 YAML:
 
 identity.yaml:
   net:
-    ip:
+    ipv4:
       gateway: IPv4 address of default gateway from this network
 
 
 Transformed values:
 
   net:
-    ip:
+    ipv4:
       cidr: Netblock in CIDR notation
       prefixlen: Netmask length in bits

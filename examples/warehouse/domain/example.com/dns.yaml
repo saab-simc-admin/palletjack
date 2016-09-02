@@ -1,4 +1,12 @@
 net:
   dns:
-    mx: "10 mail.example.com"
-    ns: "192.168.0.1"
+    mx:
+      -
+        priority: 10
+        server: mail.example.com
+      -
+        priority: 20
+        server: mail2.example.com
+    ns:
+      - 192.168.0.1
+      - 192.168.0.2

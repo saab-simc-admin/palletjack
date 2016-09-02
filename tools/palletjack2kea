@@ -26,27 +26,27 @@ jack = PalletJack.new(options[:warehouse])
 
 kea_config = {"subnet4" => Array.new}
 
-jack["ip_network"].each do |net|
-  net_config = {"subnet" => "#{net['net.ip.cidr']}",
+jack["ipv4_network"].each do |net|
+  net_config = {"subnet" => "#{net['net.ipv4.cidr']}",
                 "reservations" => [],
                 "option-data" => []}
-  if net['net.ip.gateway']
+  if net['net.ipv4.gateway']
     net_config["option-data"] << {
       "name" => "routers",
       "code" => 3,
       "space" => "dhcp4",
       "csv-format" => true,
-      "data" => "#{net['net.ip.gateway']}"
+      "data" => "#{net['net.ipv4.gateway']}"
     }
   end
 
-  jack["ip_nic",
-       with_all:{"pallet.ip_network" =>
-                 net['pallet.ip_network']}].each do |nic|
+  jack["ipv4_interface",
+       with_all:{"pallet.ipv4_network" =>
+                 net['pallet.ipv4_network']}].each do |interface|
     net_config["reservations"] << [ {
-      "hw-address" => "#{nic['net.mac.address']}",
-      "ip-address" => "#{nic['net.ip.address']}",
-      "hostname" => "#{nic['net.dns.fqdn']}"
+      "hw-address" => "#{interface['net.mac.address']}",
+      "ip-address" => "#{interface['net.ipv4.address']}",
+      "hostname" => "#{interface['net.dns.fqdn']}"
     } ]
   end
 

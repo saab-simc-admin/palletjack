@@ -153,14 +153,14 @@ class PalletJack
       #
       # Example:
       #
-      # Take strings like +192.168.0.0_24+ from +pallet.ip_network+
-      # and produce strings like +192.168.0.0/24+ in +net.ip.cidr+.
+      # Take strings like +192.168.0.0_24+ from +pallet.ipv4_network+
+      # and produce strings like +192.168.0.0/24+ in +net.ipv4.cidr+.
       #
-      #  - net.ip.cidr:
+      #  - net.ipv4.cidr:
       #    - synthesize_regexp:
       #        sources:
-      #          ip_network:
-      #            key: "pallet.ip_network"
+      #          ipv4_network:
+      #            key: "pallet.ipv4_network"
       #            regexp: "^(?<network>[0-9.]+)_(?<prefix_length>[0-9]+)$"
       #        produce: "#[network]/#[prefix_length]"
 

@@ -5,16 +5,16 @@ Type name: domain
 
 Represents a DNS domain.
 
-The link "ip_network" points to the IP network corresponding to this
-DNS domain.
+The link "ipv4_network" points to the IPv4 network corresponding to
+this DNS domain.
 
 This information is used by the tools "palletjack2kea", to write the
 domain name in the DHCP configuration, and "palletjack2zone", to write
-zone files for a DNS server. If the ip_network link points to a
-network which has its netblock in CIDR form in the key "net.ip.cidr",
-and the netmask length is a whole number of octets (i.e. 0, 8, 16 or
-24 bits), "palletjack2zone" will also write reverse zones for all
-defined IP addresses.
+zone files for a DNS server. If the ipv4_network link points to a
+network which has its netblock in CIDR form in the key
+"net.ipv4.cidr", and the netmask length is a whole number of octets
+(i.e. 0, 8, 16 or 24 bits), "palletjack2zone" will also write reverse
+zones for all defined IP addresses.
 
 
 Files:
@@ -24,7 +24,7 @@ Files:
 
 Links:
 
-  domain/<name>/ip_network -> ../../ip_network/<name>/
+  domain/<name>/ipv4_network -> ../../ipv4_network/<name>/
 
 
 YAML:
@@ -32,6 +32,12 @@ YAML:
 dns.yaml:
   net:
     dns:
-      mx: String containing priority and host name for the mail server
-          for this domain (only 1)
-      ns: IP address of NS server authoritative for this domain (only 1)
+      mx:
+        -
+          priority: Priority of this mail server
+          server: FQDN of this mail server
+        -
+          ...
+      ns:
+        - IP address of NS server authoritative for this domain
+        - ...
