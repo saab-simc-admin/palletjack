@@ -3,6 +3,11 @@ Chassis
 
 Type name: chassis
 
+The name of a chassis is structured as
+"<Manufacturer>:[[<Line>-]<Series>-]<Model>:<Serial>". The default
+transform rules pick this apart to fill in "chassis.manufacturer",
+"chassis.model", and "chassis.serial".
+
 Represents a physical computer chassis. For a desktop computer, it
 will contain a single machine object. For a server, it will contain
 two machine objects, one for the main system and one for the service
@@ -10,9 +15,6 @@ module. For a blade chassis, each blade will be a machine object, and
 one for the chassis service module.
 
 The link "rack" points to the rack in which the chassis is mounted.
-
-Currently, no tools have any requirements on the formatting of this
-data. However, the following structure is recommended:
 
 
 Files:
@@ -30,9 +32,6 @@ YAML:
 
 identity.yaml:
   chassis:
-    manufacturer: Human-readable manufacturer name
-    model: Human-readable model name
-    serial: Serial number
     max-power: Nominal maximum power draw in watts
 
 location.yaml:
@@ -42,3 +41,11 @@ location.yaml:
       height: Chassis height in rack units
       front: True if this chassis blocks the front of the rack
       rear: True if this chassis blocks the rear of the rack
+
+
+Transformed values:
+
+  chassis:
+    manufacturer: Human-readable manufacturer name
+    model: Human-readable model name
+    serial: Serial number
