@@ -194,3 +194,29 @@
           key: "pallet.ipv4_network"
           regexp: "^(?<network>[0-9.]+)_(?<prefix_length>[0-9]+)$"
       produce: "#[network]/#[prefix_length]"
+
+
+# Chassis names contain multiple colon-separated fields. Pick these
+# apart and fill in subkeys with the individual field values.
+#
+# We'll be using the same regexp several times, so we use YAML
+# aliasing to reference a single definition.
+
+- chassis.vendor:
+  - synthesize_regexp:
+      sources: &pallet_chassis
+        chassis:
+          key: "pallet.chassis"
+          regexp: "^(?<vendor>[^:]*):((?<line>[^:-]*)-)?((?<series>[^:-]*)-)?(?<model>[^:]*):(?<serial>[^:]*)$"
+      produce: "#[vendor]"
+- chassis.model:
+  - synthesize_regexp:
+      sources: *pallet_chassis
+      produce:
+        - "#[line] #[series] #[model]"
+        - "#[line] #[model]"
+        - "#[model]"
+- chassis.serial:
+  - synthesize_regexp:
+      sources: *pallet_chassis
+      produce: "#[serial]"
