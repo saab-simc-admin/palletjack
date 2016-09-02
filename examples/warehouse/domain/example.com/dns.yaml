@@ -8,5 +8,7 @@ net:
         priority: 20
         server: mail2.example.com
     ns:
-      - 192.168.0.1
-      - 192.168.0.2
+      - ns1.example.com
+      - ns2.example.com
+    soa-ns: ns1.example.com
+    soa-contact: hostmaster@example.com
