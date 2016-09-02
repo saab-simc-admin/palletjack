@@ -43,12 +43,14 @@ jack["domain"].each do |domain|
   zone.soa.nameserver = domain['net.dns.ns'][0]
   zone.soa.email = domain['net.dns.soa-contact']
 
-  domain['net.dns.mx'].each do |server|
-    mx = DNS::Zone::RR::MX.new
-    mx.label = absolute_domain_name
-    mx.priority = server['priority']
-    mx.exchange = server['server']
-    zone.records << mx
+  if domain['net.dns.mx']
+    domain['net.dns.mx'].each do |server|
+      mx = DNS::Zone::RR::MX.new
+      mx.label = absolute_domain_name
+      mx.priority = server['priority']
+      mx.exchange = server['server']
+      zone.records << mx
+    end
   end
 
   domain['net.dns.ns'].each do |address|
