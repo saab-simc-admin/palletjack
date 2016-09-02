@@ -27,6 +27,10 @@ identity.yaml:
   net:
     ipv4:
       gateway: IPv4 address of default gateway from this network
+  dns:
+    resolver:
+      - IP address of DNS resolver reachable from this network
+      - ...
 
 
 Transformed values:
