@@ -60,6 +60,30 @@ jack["ipv4_network"].each do |net|
     }
   end
 
+  if net['net.dhcp.tftp-server']
+    net_config["option-data"] << {
+      "name" => "tftp-server-name",
+      "code" => 66,
+      "space" => "dhcp4",
+      "csv-format" => true,
+      "data" => net['net.dhcp.tftp-server']
+    }
+
+    # Option 66 is the standard way of sending a TFTP server address, but some
+    # DHCP clients still want it in the next-server field.
+    net_config["next-server"] = net['net.dhcp.tftp-server']
+  end
+
+  if net['net.dhcp.boot-file']
+    net_config["option-data"] << {
+      "name" => "boot-file-name",
+      "code" => 67,
+      "space" => "dhcp4",
+      "csv-format" => true,
+      "data" => net['net.dhcp.boot-file']
+    }
+  end
+
   jack["ipv4_interface",
        with_all:{"pallet.ipv4_network" =>
                  net['pallet.ipv4_network']}].each do |interface|
