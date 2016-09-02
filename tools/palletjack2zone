@@ -60,7 +60,7 @@ jack["domain"].each do |domain|
   domain['net.dns.ns'].each do |address|
     ns = DNS::Zone::RR::NS.new
     ns.label = absolute_domain_name
-    ns.nameserver = address
+    ns.nameserver = "#{address}."
     zone.records << ns
   end
 
@@ -106,7 +106,7 @@ jack["domain"].each do |domain|
   domain['net.dns.ns'].each do |address|
     ns = DNS::Zone::RR::NS.new
     ns.label = reverse_zone.origin
-    ns.nameserver = address
+    ns.nameserver = "#{address}."
     reverse_zone.records << ns
   end
 
