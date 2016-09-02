@@ -1,3 +1,0 @@
-host:
-  pxelinux:
-    configfile: centos/CentOS-7-x86_64-1511/pxelinux.conf
