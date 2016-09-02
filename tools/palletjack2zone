@@ -29,6 +29,9 @@ if not options[:warehouse] or
   exit 1
 end
 
+# Use Unix timestamp as serial number, and get it once so all zones get the same one
+serial = Time.now.utc.to_i
+
 jack = PalletJack.new(options[:warehouse])
 
 jack["domain"].each do |domain|
@@ -39,6 +42,7 @@ jack["domain"].each do |domain|
   zone.origin = absolute_domain_name
   zone.ttl = domain['net.dns.ttl']
 
+  zone.soa.serial = serial
   zone.soa.label = absolute_domain_name
   zone.soa.nameserver = "#{domain['net.dns.soa-ns']}."
   zone.soa.email = "#{domain['net.dns.soa-contact']}.".sub('@', '.')
@@ -94,6 +98,7 @@ jack["domain"].each do |domain|
 
   reverse_zone.ttl = domain['net.dns.ttl']
 
+  reverse_zone.soa.serial = serial
   reverse_zone.soa.label = "#{reverse_zone.origin}."
   reverse_zone.soa.nameserver = "#{domain['net.dns.soa-ns']}."
   reverse_zone.soa.email = "#{domain['net.dns.soa-contact']}.".sub('@', '.')
