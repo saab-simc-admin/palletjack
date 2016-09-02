@@ -1,3 +1,6 @@
 net:
   ipv4:
     gateway: 192.168.0.1
+  dns:
+    resolver:
+      - 192.168.0.1

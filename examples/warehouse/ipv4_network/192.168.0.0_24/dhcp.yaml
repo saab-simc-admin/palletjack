@@ -1,0 +1,4 @@
+net:
+  dhcp:
+    tftp-server: 192.168.0.1
+    boot-file: pxelinux.0

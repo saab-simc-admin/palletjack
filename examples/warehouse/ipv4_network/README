@@ -3,7 +3,7 @@ IPv4 network
 
 Type name: ipv4_network
 
-Represents an IPv4 network.
+Represents an IPv4 network, including network-wide DHCP configuration.
 
 The name of an ipv4_network object is the netblock definition in CIDR
 notation, with the / replaced with an _, e.g. "192.168.0.0_24". The
@@ -19,6 +19,7 @@ currently "palletjack2kea" and "palletjack2zone".
 Files:
 
   ipv4_network/<name>/identity.yaml
+  ipv4_network/<name>/dhcp.yaml
 
 
 YAML:
@@ -27,6 +28,12 @@ identity.yaml:
   net:
     ipv4:
       gateway: IPv4 address of default gateway from this network
+
+dhcp.yaml:
+  net:
+    dhcp:
+      tftp-server: IPv4 address of TFTP boot server on this network
+      boot-file: TFTP boot file, e.g. "pxelinux.0"
 
 
 Transformed values:
