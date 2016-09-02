@@ -24,7 +24,12 @@ end
 
 jack = PalletJack.new(options[:warehouse])
 
-kea_config = {"subnet4" => Array.new}
+kea_config = { "Dhcp4" => {
+                 "interfaces-config" => { "interfaces" => [ '*' ] },
+                 "lease-database" => { "type" => "memfile" },
+                 "valid-lifetime" => 4000,
+                 "subnet4" => Array.new
+             }}
 
 jack["ipv4_network"].each do |net|
   net_config = {"subnet" => "#{net['net.ipv4.cidr']}",
@@ -40,17 +45,32 @@ jack["ipv4_network"].each do |net|
     }
   end
 
+  if net['net.dns.resolver']
+    resolvers = ""
+    net['net.dns.resolver'].each do |resolver|
+      resolvers << resolver << ", "
+    end
+
+    net_config["option-data"] << {
+      "name" => "domain-name-servers",
+      "code" => 6,
+      "space" => "dhcp4",
+      "csv-format" => true,
+      "data" => resolvers.chomp(', ')
+    }
+  end
+
   jack["ipv4_interface",
        with_all:{"pallet.ipv4_network" =>
                  net['pallet.ipv4_network']}].each do |interface|
-    net_config["reservations"] << [ {
+    net_config["reservations"] << {
       "hw-address" => "#{interface['net.mac.address']}",
       "ip-address" => "#{interface['net.ipv4.address']}",
       "hostname" => "#{interface['net.dns.fqdn']}"
-    } ]
+    }
   end
 
-  kea_config["subnet4"] << net_config
+  kea_config["Dhcp4"]["subnet4"] << net_config
 end
 
 jj kea_config
