@@ -6,7 +6,8 @@ Type name: phy_nic
 Represents an Ethernet network interface card.
 
 The name of a NIC is its Ethernet MAC address, with bytes separated by
-":".
+":". The default transform rules copy the MAC address to
+"net.layer2.address".
 
 For a physical network interface, the link "chassis" points to the
 chassis in which that interface lives and the key "chassis.nic.port"
@@ -14,14 +15,11 @@ contains the physical port number in the chassis. For virtual
 networks, the link "phy_nic" points to the physical interface on which
 they run.
 
-This information is primarily used by "palletjack2kea" for creating
-DHCP configuration files with static leases for all interfaces which
-have IP addresses allocated.
-
 
 Files:
 
   phy_nic/<name>/location.yaml
+  phy_nic/<name>/identity.yaml
 
 
 Links:
@@ -37,3 +35,8 @@ location.yaml:
     nic:
       port: Port number, as printed on the back of the physical
             chassis
+
+identity.yaml:
+  net:
+    layer2:
+      name: Name of this interface as seen by the OS, e.g. "eth0"
