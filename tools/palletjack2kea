@@ -15,21 +15,24 @@ Write configuration for the Kea DHCP server from a Palletjack warehouse
 
 "
 opts.on("-w DIR", "--warehouse DIR", "warehouse directory", String) {|dir| options[:warehouse] = dir }
+opts.on("-s SERVICE", "--service SERVICE", "service name for global configuration", String) {|service| options[:service] = service }
 opts.parse!
 
-if not options[:warehouse]
+if not options[:warehouse] or
+  not options[:service]
   puts opts.to_s
   exit 1
 end
 
 jack = PalletJack.new(options[:warehouse])
 
-kea_config = { "Dhcp4" => {
-                 "interfaces-config" => { "interfaces" => [ '*' ] },
-                 "lease-database" => { "type" => "memfile" },
-                 "valid-lifetime" => 4000,
-                 "subnet4" => Array.new
-             }}
+kea_config = { "Dhcp4" => {} }
+
+jack["service", name:options[:service]].each do |service_config|
+  kea_config["Dhcp4"] = service_config['service.kea_v4']
+end
+
+kea_config["Dhcp4"]["subnet4"] = []
 
 jack["ipv4_network"].each do |net|
   net_config = {"subnet" => "#{net['net.ipv4.cidr']}",
