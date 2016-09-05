@@ -48,8 +48,17 @@ end
 
 jack = PalletJack.new(options[:warehouse])
 
-jack["system"].each do |system|
+jack['system'].each do |system|
+  yaml_output = { 'ipv4_interfaces' => {} }
+  jack['ipv4_interface', with_all:{'pallet.system' =>
+      system['system.name']}].each do |interface|
+    yaml_output['ipv4_interfaces'][interface['net.layer2.name']] =
+      interface.filter('net.ipv4', 'net.layer2').to_hash
+  end
+
+  yaml_output['system'] = system['system']
+
   File.open("#{options[:output]}/#{system['net.dns.fqdn']}.yaml", File::CREAT | File::TRUNC | File::WRONLY, 0644) do |yamlfile|
-    yamlfile << { 'palletjack' => { 'role' => system['system.role'] } }.to_yaml
+    yamlfile << { 'palletjack' => yaml_output }.to_yaml
   end
 end
