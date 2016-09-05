@@ -22,7 +22,7 @@ Write PXELINUX boot configuration files from a Palletjack warehouse
 
 "
 opts.on("-w DIR", "--warehouse DIR", "warehouse directory", String) {|dir| options[:warehouse] = dir }
-opts.on("-d DIR", "--output DIR", "output directory (pxelinux.cfg)", String) {|dir| options[:output] = dir }
+opts.on("-o DIR", "--output DIR", "output directory (pxelinux.cfg)", String) {|dir| options[:output] = dir }
 opts.parse!
 
 if not options[:warehouse] or
