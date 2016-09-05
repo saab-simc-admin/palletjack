@@ -1,0 +1,23 @@
+Service
+=======
+
+Type name: service
+
+Represents a running service instance.
+
+The name of a service object is not significant to the Pallet Jack
+system itself, but is used as arguments to palletjack2* scripts to
+select a service object to read global configuration from.
+
+
+Files:
+
+  service/<name>/<program>.yaml
+
+
+YAML:
+
+<program>.yaml:
+  service:
+    <program>:
+      <program-specific data>
