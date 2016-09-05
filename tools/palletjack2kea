@@ -91,7 +91,7 @@ jack["ipv4_network"].each do |net|
        with_all:{"pallet.ipv4_network" =>
                  net['pallet.ipv4_network']}].each do |interface|
     net_config["reservations"] << {
-      "hw-address" => "#{interface['net.mac.address']}",
+      "hw-address" => "#{interface['net.layer2.address']}",
       "ip-address" => "#{interface['net.ipv4.address']}",
       "hostname" => "#{interface['net.dns.fqdn']}"
     }
