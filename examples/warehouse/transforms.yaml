@@ -147,7 +147,7 @@
   - synthesize: "#[pallet.os]"
 - net.ipv4.address:
   - synthesize: "#[pallet.ipv4_interface]"
-- net.mac.address:
+- net.layer2.address:
   - synthesize: "#[pallet.phy_nic]"
 - host.pxelinux.config:
   - synthesize: "#[pallet.os]"
@@ -169,6 +169,14 @@
   - synthesize:
       - "p#[chassis.nic.pcislot]p#[chassis.nic.port]"
       - "em#[chassis.nic.port]"
+
+
+# This is probably a bad default, but it's at least something. If the
+# rules for "chassis.nic.name" above get expanded to include the
+# entire Linux Udev ruleset, this will work perfectly.
+
+- net.layer2.name:
+  - synthesize: "#[chassis.nic.name]"
 
 
 # Regexp synthesizing rules. ipv4_network objects are named like
