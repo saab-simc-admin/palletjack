@@ -52,8 +52,10 @@ jack['system'].each do |system|
   yaml_output = { 'ipv4_interfaces' => {} }
   jack['ipv4_interface', with_all:{'pallet.system' =>
       system['system.name']}].each do |interface|
-    yaml_output['ipv4_interfaces'][interface['net.layer2.name']] =
+    yaml_output['ipv4_interfaces'][interface['net.layer2.name']] = {
+      interface['net.ipv4.address'] =>
       interface.filter('net.ipv4', 'net.layer2').to_hash
+    }
   end
 
   yaml_output['system'] = system['system']
