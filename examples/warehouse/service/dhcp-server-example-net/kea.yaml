@@ -1,0 +1,17 @@
+# The Kea DHCP server (<URL:https://www.isc.org/kea/>) uses JSON for
+# configuration, which means we can model the same structures in YAML
+# and just dump it in.
+#
+# Everything under the key "service.kea_v4" will be inserted in the
+# Kea configuration structure under "Dhcp4". See the documentation at
+# <URL:http://kea.isc.org/docs/kea-guide.html#dhcp4-configuration> for
+# details.
+
+service:
+  kea_v4:
+    interfaces-config:
+      interfaces:
+        - '*'
+    lease-database:
+      type: memfile
+    valid-lifetime: 4000
