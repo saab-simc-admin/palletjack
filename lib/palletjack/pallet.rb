@@ -2,7 +2,7 @@ class PalletJack
   # PalletJack managed pallet of key boxes inside a warehouse.
   class Pallet < KVDAG::Vertex
 
-    # N.B: Pallet.new should never be called directly; use
+    # N.B: A pallet should never be created manually; use
     # +PalletJack::new+ to initialize a complete warehouse.
     #
     # [+jack+] PalletJack that will manage this pallet.
@@ -21,7 +21,7 @@ class PalletJack
       jack.pallets[kind][name] || super
     end
 
-    # N.B: Pallet.new should never be called directly; use
+    # N.B: A pallet should never be created manually; use
     # +PalletJack::new+ to initialize a complete warehouse.
     #
     # [+jack+] PalletJack that will manage this pallet.
