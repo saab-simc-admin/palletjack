@@ -58,3 +58,62 @@ kvmguest1
 kvmguest1
  => #<Set: {#<PalletJack::Pallet:10775a0>}> 
 ```
+
+## Creating warehouse objects
+
+Warehouse objects are simple directories, so you can create them using
+`mkdir`. To simplify the process, there are some tools that create
+objects with standard links and YAML structures for you. Example:
+
+```bash
+$ create_domain -w /tmp/warehouse -d example.com -n 192.168.42.0/24
+$ create_system -w /tmp/warehouse -s vmhost -d example.com -o CentOS-7.2.1511-x86_64
+$ create_ipv4_interface -w /tmp/warehouse -s vmhost -d example.com -m 52:54:00:8d:be:fe -i 192.168.42.1 -n 192.168.42.0/24
+$ dump_pallet -w /tmp/warehouse -t ipv4_interface
+```
+```yaml
+---
+pallet:
+  ipv4_network: 192.168.42.0_24
+  boxes: []
+  references:
+    ipv4_network: 192.168.42.0_24
+    domain: example.com
+    phy_nic: 52:54:00:8d:be:fe
+    os: CentOS-7.2.1511-x86_64
+    system: vmhost
+  domain: example.com
+  phy_nic: 52:54:00:8d:be:fe
+  os: CentOS-7.2.1511-x86_64
+  system: vmhost
+  ipv4_interface: 192.168.42.1
+net:
+  dhcp:
+    tftp-server: ''
+    boot-file: ''
+  ipv4:
+    gateway: ''
+    prefixlen: '24'
+    cidr: 192.168.42.0/24
+    address: 192.168.42.1
+  dns:
+    resolver: ''
+    ns:
+    - ''
+    domain: example.com
+    name: vmhost
+    fqdn: vmhost.example.com
+  soa-ns: ''
+  soa-contact: ''
+  layer2:
+    name: ''
+    address: 52:54:00:8d:be:fe
+system:
+  os: CentOS-7.2.1511-x86_64
+  role:
+  - ''
+  name: vmhost
+host:
+  pxelinux:
+    config: CentOS-7.2.1511-x86_64
+```
