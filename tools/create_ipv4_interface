@@ -1,0 +1,70 @@
+#!/usr/bin/env ruby
+
+# Create a physical and logical IPv4 network interface in a warehouse
+
+require 'palletjack'
+require 'optparse'
+
+$options = {}
+
+opts = OptionParser.new
+opts.banner = "Usage: #{$PROGRAM_NAME} -w <warehouse> -s <system> -d <domain> -m <MAC address> -i <IPv4 address> -n <IPv4 network>
+
+Create phy_nic and ipv4_interface objects in a warehouse
+
+"
+opts.on("-w DIR", "--warehouse DIR", "warehouse directory", String) { |dir| $options[:warehouse] = dir }
+opts.on("-s SYSTEM", "--system SYSTEM", "system name", String) { |system| $options[:system] = system }
+opts.on("-d DOMAIN", "--domain DOMAIN", "domain name", String) { |domain| $options[:domain] = domain }
+opts.on("-m MAC", "--mac MAC", "MAC address", String) { |mac| $options[:mac] = mac }
+opts.on("-i ADDR", "--ipv4 ADDR", "IPv4 address", String) { |addr| $options[:addr] = addr }
+opts.on("-n NETWORK", "--network NETWORK", "IPv4 network, in CIDR format", String) { |network|
+         $options[:network] = network.gsub(/\//, '_')
+       }
+opts.parse!
+
+if not $options[:warehouse] or
+    not $options[:system] or
+    not $options[:domain] or
+    not $options[:mac] or
+    not $options[:addr] or
+    not $options[:network] or
+    not File.directory?($options[:warehouse])
+  puts opts.to_s
+  exit 1
+end
+
+def exists_ok(&code)
+  code.call()
+rescue Errno::EEXIST
+  nil
+end
+
+def warehouse_symlink(target, source)
+  begin
+    File.delete("#{$options[:warehouse]}/#{source}")
+  rescue Errno::ENOENT
+    nil
+  end
+
+  File.symlink("../../#{target}", "#{$options[:warehouse]}/#{source}")
+end
+
+exists_ok { Dir.mkdir("#{$options[:warehouse]}/phy_nic/") }
+exists_ok { Dir.mkdir("#{$options[:warehouse]}/phy_nic/#{$options[:mac]}") }
+
+File.open("#{$options[:warehouse]}/phy_nic/#{$options[:mac]}/identity.yaml",
+          File::CREAT | File::TRUNC | File::WRONLY, 0644) do |identity_file|
+  identity_file << { 'net' => { 'layer2' => { 'name' => '' } } }.to_yaml
+end
+
+exists_ok { Dir.mkdir("#{$options[:warehouse]}/ipv4_interface/") }
+exists_ok { Dir.mkdir("#{$options[:warehouse]}/ipv4_interface/#{$options[:addr]}") }
+warehouse_symlink("ipv4_network/#{$options[:network]}/",
+                  "ipv4_interface/#{$options[:addr]}/ipv4_network")
+warehouse_symlink("domain/#{$options[:domain]}/",
+                  "ipv4_interface/#{$options[:addr]}/domain")
+warehouse_symlink("phy_nic/#{$options[:mac]}/",
+                  "ipv4_interface/#{$options[:addr]}/phy_nic")
+warehouse_symlink("system/#{$options[:system]}/",
+                  "ipv4_interface/#{$options[:addr]}/system")

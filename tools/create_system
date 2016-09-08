@@ -1,0 +1,58 @@
+#!/usr/bin/env ruby
+
+# Create a system in a warehouse
+
+require 'palletjack'
+require 'optparse'
+
+$options = {}
+
+opts = OptionParser.new
+opts.banner = "Usage: #{$PROGRAM_NAME} -w <warehouse> -s <system> -d <domain> -o <os>
+
+Create system objects in a warehouse
+
+"
+opts.on("-w DIR", "--warehouse DIR", "warehouse directory", String) { |dir| $options[:warehouse] = dir }
+opts.on("-s SYSTEM", "--system SYSTEM", "system name", String) { |system| $options[:system] = system }
+opts.on("-d DOMAIN", "--domain DOMAIN", "domain name", String) { |domain| $options[:domain] = domain }
+opts.on("-o OS", "--os OS", "operating system name", String) { |os| $options[:os] = os }
+opts.parse!
+
+if not $options[:warehouse] or
+    not $options[:system] or
+    not $options[:domain] or
+    not $options[:os] or
+    not File.directory?($options[:warehouse])
+  puts opts.to_s
+  exit 1
+end
+
+def exists_ok(&code)
+  code.call()
+rescue Errno::EEXIST
+  nil
+end
+
+def warehouse_symlink(target, source)
+  begin
+    File.delete("#{$options[:warehouse]}/#{source}")
+  rescue Errno::ENOENT
+    nil
+  end
+
+  File.symlink("../../#{target}", "#{$options[:warehouse]}/#{source}")
+end
+
+exists_ok { Dir.mkdir("#{$options[:warehouse]}/system/") }
+exists_ok { Dir.mkdir("#{$options[:warehouse]}/system/#{$options[:system]}") }
+
+File.open("#{$options[:warehouse]}/system/#{$options[:system]}/role.yaml",
+          File::CREAT | File::TRUNC | File::WRONLY, 0644) do |dns_file|
+  dns_file << { 'system' => { 'role' => [ '' ] } }.to_yaml
+end
+
+warehouse_symlink("domain/#{$options[:domain]}/",
+                  "system/#{$options[:system]}/domain")
+warehouse_symlink("os/#{$options[:os]}/",
+                  "system/#{$options[:system]}/os")
