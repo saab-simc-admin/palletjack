@@ -1,0 +1,74 @@
+#!/usr/bin/env ruby
+
+# Create a domain and IPv4 network in a warehouse
+#
+# Data model assumptions:
+# - Each domain corresponds uniquely to one IPv4 network
+
+require 'palletjack'
+require 'optparse'
+
+$options = {}
+
+opts = OptionParser.new
+opts.banner = "Usage: #{$PROGRAM_NAME} -w <warehouse> -d <domain> -n <IPv4 network>
+
+Create domain and ipv4_network objects in a warehouse
+
+"
+opts.on("-w DIR", "--warehouse DIR", "warehouse directory", String) { |dir| $options[:warehouse] = dir }
+opts.on("-d DOMAIN", "--domain DOMAIN", "domain name", String) { |domain| $options[:domain] = domain }
+opts.on("-n NETWORK", "--network NETWORK", "IPv4 network, in CIDR format", String) { |network|
+         $options[:network] = network.gsub(/\//, '_')
+       }
+opts.parse!
+
+if not $options[:warehouse] or
+    not $options[:domain] or
+    not $options[:network] or
+    not File.directory?($options[:warehouse])
+  puts opts.to_s
+  exit 1
+end
+
+def exists_ok(&code)
+  code.call()
+rescue Errno::EEXIST
+  nil
+end
+
+def warehouse_symlink(target, source)
+  begin
+    File.delete("#{$options[:warehouse]}/#{source}")
+  rescue Errno::ENOENT
+    nil
+  end
+
+  File.symlink("../../#{target}", "#{$options[:warehouse]}/#{source}")
+end
+
+exists_ok { Dir.mkdir("#{$options[:warehouse]}/domain/") }
+exists_ok { Dir.mkdir("#{$options[:warehouse]}/domain/#{$options[:domain]}") }
+
+File.open("#{$options[:warehouse]}/domain/#{$options[:domain]}/dns.yaml",
+          File::CREAT | File::TRUNC | File::WRONLY, 0644) do |dns_file|
+  dns_file << { 'net' => { 'dns' => { 'ns' => [ '' ] },
+                           'soa-ns' => '',
+                           'soa-contact' => '' } }.to_yaml
+end
+
+exists_ok { Dir.mkdir("#{$options[:warehouse]}/ipv4_network/") }
+exists_ok { Dir.mkdir("#{$options[:warehouse]}/ipv4_network/#{$options[:network]}") }
+warehouse_symlink("ipv4_network/#{$options[:network]}/",
+                  "domain/#{$options[:domain]}/ipv4_network")
+
+File.open("#{$options[:warehouse]}/ipv4_network/#{$options[:network]}/dhcp.yaml",
+          File::CREAT | File::TRUNC | File::WRONLY, 0644) do |dhcp_file|
+  dhcp_file << { 'net' => { 'dhcp' => { 'tftp-server' => '', 'boot-file' => '' } } }.to_yaml
+end
+
+File.open("#{$options[:warehouse]}/ipv4_network/#{$options[:network]}/identity.yaml",
+          File::CREAT | File::TRUNC | File::WRONLY, 0644) do |identity_file|
+  identity_file << { 'net' => { 'ipv4' => { 'gateway' => '' },
+                                'dns' => { 'resolver' => '' } } }.to_yaml
+end
