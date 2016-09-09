@@ -1,0 +1,25 @@
+Examples
+========
+
+warehouse
+---------
+
+A sample warehouse with fake data, to demonstrate the features of
+Pallet Jack.
+
+
+palletjack_yaml_file.py
+-----------------------
+
+Salt external pillar for reading YAML files containing data exported
+from the warehouse by palletjack2salt.
+
+Place this file in your Salt pillar module directory, e.g.
+/usr/lib/python2.7/site-packages/salt/pillar/, and use it by adding
+this to your Salt master configuration:
+
+  ext_pillar:
+    - palletjack_yaml_file: /var/cache/palletjack/{environment}/{minion}.yaml
+
+Then, install a Git hook that runs palletjack2salt after the warehouse
+has been updated.
