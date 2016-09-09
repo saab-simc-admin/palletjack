@@ -21,7 +21,7 @@ end
 def zone_config(zone)
   "
 #{zone} {
-  file \"#{zone}.zone\";
+  file \"zones/#{zone}.zone\";
 }
 "
 end
