@@ -70,5 +70,5 @@ end
 File.open("#{$options[:warehouse]}/ipv4_network/#{$options[:network]}/identity.yaml",
           File::CREAT | File::TRUNC | File::WRONLY, 0644) do |identity_file|
   identity_file << { 'net' => { 'ipv4' => { 'gateway' => '' },
-                                'dns' => { 'resolver' => '' } } }.to_yaml
+                                'dns' => { 'resolver' => [ '' ] } } }.to_yaml
 end
