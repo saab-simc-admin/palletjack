@@ -34,6 +34,12 @@ require 'palletjack'
 require 'optparse'
 require 'fileutils'
 
+def exists_ok(&code)
+  code.call()
+rescue Errno::EEXIST
+  nil
+end
+
 options = {}
 
 opts = OptionParser.new
@@ -43,7 +49,7 @@ Write PXELINUX boot configuration files from a Palletjack warehouse
 
 "
 opts.on("-w DIR", "--warehouse DIR", "warehouse directory", String) {|dir| options[:warehouse] = dir }
-opts.on("-o DIR", "--output DIR", "output directory (pxelinux.cfg)", String) {|dir| options[:output] = dir }
+opts.on("-o DIR", "--output DIR", "output directory (tftpboot/)", String) {|dir| options[:output] = dir }
 opts.parse!
 
 if not options[:warehouse] or
@@ -52,6 +58,8 @@ if not options[:warehouse] or
   puts opts.to_s
   exit 1
 end
+
+exists_ok { Dir.mkdir("#{options[:output]}/pxelinux.cfg/") }
 
 jack = PalletJack.new(options[:warehouse])
 
