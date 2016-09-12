@@ -27,9 +27,8 @@
 #      |   ...
 #      ...
 #
-# Point this script's output directory at
-# /var/lib/tftpboot/pxelinux.cfg/, and it will create the MAC address
-# symlinks.
+# Point this script's output directory at /var/lib/tftpboot/, and it
+# will create the MAC address symlinks.
 
 require 'palletjack'
 require 'optparse'
@@ -61,7 +60,7 @@ jack["system"].each do |system|
        with_all:{"pallet.system" =>
                  system['pallet.system']}].each do |nic|
     if system['host.pxelinux.config']
-      filename = "#{options[:output]}/01-#{nic['net.layer2.address'].gsub(':', '-').downcase}"
+      filename = "#{options[:output]}/pxelinux.cfg/01-#{nic['net.layer2.address'].gsub(':', '-').downcase}"
       FileUtils.ln_s("../config/#{system['host.pxelinux.config']}.menu", filename, :force => true)
     end
   end
