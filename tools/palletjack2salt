@@ -4,24 +4,18 @@
 # systems, one file per system.
 #
 # Intended to be run from a Git post-update hook or similar, writing
-# YAML files which will be read by a Salt cmd_yaml external pillar,
-# since running the entire Pallet Jack infrastructure once per minion
-# for every pillar refresh is a bit excessive. Example Salt master
-# configuration:
+# YAML files which will be read by a Salt palletjack_yaml_file
+# external pillar (which you will have to install manually), since
+# running the entire Pallet Jack infrastructure once per minion for
+# every pillar refresh is a bit excessive.
+#
+# Example Salt master configuration:
 #
 #   ext_pillar:
-#     - cmd_yaml: cat /var/cache/salt/ext_pillar/%s.yaml
+#     - palletjack_yaml_file: /var/cache/palletjack/{environment}/{minion}.yaml
 #
 # Data model assumptions:
 # - Salt minion ID is FQDN
-# - Role list is at system.role
-# - Output structure is:
-#
-#   palletjack:
-#     role:
-#       - role1
-#       - role2
-#       ...
 
 require 'palletjack'
 require 'optparse'
