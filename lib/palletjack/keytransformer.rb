@@ -1,14 +1,14 @@
 class PalletJack
   class KeyTransformer
     class Reader < KeyTransformer
-      def concatenate(value,param)
-        value.split(param) if value
+      def concatenate(param, context = {})
+        context[:value].split(param) if context[:value]
       end
     end
 
     class Writer < KeyTransformer
-      def concatenate(value,param)
-        value.join(param) if value
+      def concatenate(param, context = {})
+        context[:value].join(param) if context[:value]
       end
 
       # Internal synthesize* helper method
@@ -66,11 +66,11 @@ class PalletJack
       # Synthesize a pallet value by pasting others together.
       #
       # :call-seq:
-      #   synthesize(nil, param)   -> string or nil
-      #   synthesize(value, param) -> nil
+      #   synthesize(param, context)   -> string or nil
       #
-      # If +value+ is given, an earlier transform has already produced
-      # a value for this key, so do nothing and return +nil+.
+      # If +context+ contains a non-nil +:value+, an earlier transform
+      # has already produced a value for this key, so do nothing and
+      # return +nil+.
       #
       # Otherwise, use the parsed YAML structure in +param+ to build
       # and return a new value. If any failure occurs while building
@@ -105,21 +105,21 @@ class PalletJack
       #       - "p#[chassis.nic.pcislot]p#[chassis.nic.port]"
       #       - "em#[chassis.nic.port]"
 
-      def synthesize(value, param)
-        return if value
+      def synthesize(param, context = {})
+        return if context[:value]
         
-        synthesize_internal(param, @pallet)
+        synthesize_internal(param, context[:pallet])
       end
 
       # Synthesize a pallet value from others, using regular
       # expressions to pull out parts of values.
       #
       # :call-seq:
-      #   synthesize_regexp(nil, param)   -> string or nil
-      #   synthesize_regexp(value, param) -> nil
+      #   synthesize_regexp(param, context)   -> string or nil
       #
-      # If +value+ is given, an earlier transform has already produced
-      # a value for this key, so do nothing and return +nil+.
+      # If +context+ contains a non-nil +:value+, an earlier transform
+      # has already produced a value for this key, so do nothing and
+      # return +nil+.
       #
       # Otherwise, use the parsed YAML structure in +param+ to build
       # and return a new value. If any failure occurs while building
@@ -164,15 +164,15 @@ class PalletJack
       #            regexp: "^(?<network>[0-9.]+)_(?<prefix_length>[0-9]+)$"
       #        produce: "#[network]/#[prefix_length]"
 
-      def synthesize_regexp(value, param)
-        return if value
+      def synthesize_regexp(param, context = {})
+        return if context[:value]
 
         captures = {}
 
         param["sources"].each do |_, source|
           # Trying to read values from a non-existent key. Return nil
           # and let another transform try.
-          return unless lookup = @pallet[source["key"]]
+          return unless lookup = context[:pallet][source["key"]]
 
           # Save all named captures
           Regexp.new(source["regexp"]).match(lookup) do |md|
@@ -210,16 +210,20 @@ class PalletJack
     # unsuccessful.
 
     def transform!(pallet)
-      @pallet = pallet
       @key_transforms.each do |keytrans_item|
         key, transforms = keytrans_item.flatten
-        value = @pallet[key, shallow: true]
+        context = {
+          pallet: pallet,
+          key:    key,
+          value:  pallet[key, shallow: true],
+        }
 
         transforms.each do |t|
           transform, param = t.flatten
           if self.respond_to?(transform.to_sym) then
-            if new_value = self.send(transform.to_sym, value, param) then
-              @pallet[key] = new_value
+            if new_value = self.send(transform.to_sym, param, context)
+            then
+              pallet[key] = new_value
               break
             end
           end
