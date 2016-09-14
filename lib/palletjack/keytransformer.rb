@@ -184,6 +184,21 @@ class PalletJack
 
         synthesize_internal(param["produce"], captures)
       end
+
+      # Synthesized value will override an inherited value for a
+      # +key+, but in some cases the intent is actually to only
+      # synthesize a value when there is no inherited value. This
+      # provides early termination of transforms for such keys.
+      #
+      # Example:
+      #
+      #  - net.layer2.name:
+      #    - inherited: ~
+      #    - synthesize: "#[chassis.nic.name]"
+
+      def inherited(_, context = {})
+        throw context[:abort] if context[:pallet][context[:key]]
+      end
     end
 
     def initialize(key_transforms={})
