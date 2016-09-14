@@ -211,20 +211,23 @@ class PalletJack
 
     def transform!(pallet)
       @key_transforms.each do |keytrans_item|
-        key, transforms = keytrans_item.flatten
-        context = {
-          pallet: pallet,
-          key:    key,
-          value:  pallet[key, shallow: true],
-        }
+        catch do |abort_tag|
+          key, transforms = keytrans_item.flatten
+          context = {
+            pallet: pallet,
+            key:    key,
+            value:  pallet[key, shallow: true],
+            abort:  abort_tag
+          }
 
-        transforms.each do |t|
-          transform, param = t.flatten
-          if self.respond_to?(transform.to_sym) then
-            if new_value = self.send(transform.to_sym, param, context)
-            then
-              pallet[key] = new_value
-              break
+          transforms.each do |t|
+            transform, param = t.flatten
+            if self.respond_to?(transform.to_sym) then
+              if new_value = self.send(transform.to_sym, param, context)
+              then
+                pallet[key] = new_value
+                break
+              end
             end
           end
         end
