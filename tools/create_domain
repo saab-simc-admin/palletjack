@@ -52,9 +52,9 @@ exists_ok { Dir.mkdir("#{$options[:warehouse]}/domain/#{$options[:domain]}") }
 
 File.open("#{$options[:warehouse]}/domain/#{$options[:domain]}/dns.yaml",
           File::CREAT | File::TRUNC | File::WRONLY, 0644) do |dns_file|
-  dns_file << { 'net' => { 'dns' => { 'ns' => [ '' ] },
-                           'soa-ns' => '',
-                           'soa-contact' => '' } }.to_yaml
+  dns_file << { 'net' => { 'dns' => { 'ns' => [ '' ],
+                                      'soa-ns' => '',
+                                      'soa-contact' => '' } } }.to_yaml
 end
 
 exists_ok { Dir.mkdir("#{$options[:warehouse]}/ipv4_network/") }
