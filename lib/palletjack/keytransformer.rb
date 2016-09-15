@@ -193,10 +193,10 @@ class PalletJack
       # Example:
       #
       #  - net.layer2.name:
-      #    - inherited: ~
+      #    - inherit: ~
       #    - synthesize: "#[chassis.nic.name]"
 
-      def inherited(_, context = {})
+      def inherit(_, context = {})
         throw context[:abort] if context[:pallet][context[:key]]
       end
     end

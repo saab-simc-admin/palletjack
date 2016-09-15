@@ -31,7 +31,7 @@
 #
 # The synthesized value will override an inherited value for a key,
 # but in some cases the intent is actually to only synthesize a value
-# when there is no inherited value. For this we have the "inherited"
+# when there is no inherited value. For this we have the "inherit"
 # transform, that does nothing, except abort the transform chain for a
 # key if there is an inherited value.
 #
@@ -115,12 +115,12 @@
 #        produce: "#[network]/#[prefix_length]"
 #
 #
-# inherited
+# inherit
 # ---------
 #
 # YAML structure:
 #
-#   - inherited: ~
+#   - inherit: ~
 #
 # Declares that the key is to be inherited first. By default,
 # synthesis rules shadows inherited values for a key.
@@ -134,7 +134,7 @@
 # instead of a physical phy_nic.
 #
 #  - net.layer2.name:
-#    - inherited: ~
+#    - inherit: ~
 #    - synthesize: "#[chassis.nic.name]"
 
 
@@ -209,7 +209,7 @@
 # overridden by the physical chassis based name.
 
 - net.layer2.name:
-  - inherited: ~
+  - inherit: ~
   - synthesize: "#[chassis.nic.name]"
 
 
