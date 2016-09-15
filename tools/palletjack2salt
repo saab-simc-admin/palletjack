@@ -54,6 +54,8 @@ jack['system'].each do |system|
 
   yaml_output['system'] = system['system']
 
+  yaml_output['service'] = { 'syslog' => system['net.service.syslog'] }
+
   File.open("#{options[:output]}/#{system['net.dns.fqdn']}.yaml", File::CREAT | File::TRUNC | File::WRONLY, 0644) do |yamlfile|
     yamlfile << { 'palletjack' => yaml_output }.to_yaml
   end
