@@ -1,14 +1,14 @@
 class PalletJack
   class KeyTransformer
     class Reader < KeyTransformer
-      def concatenate(value,param)
-        value.split(param) if value
+      def concatenate(param, context = {})
+        context[:value].split(param) if context[:value]
       end
     end
 
     class Writer < KeyTransformer
-      def concatenate(value,param)
-        value.join(param) if value
+      def concatenate(param, context = {})
+        context[:value].join(param) if context[:value]
       end
 
       # Internal synthesize* helper method
@@ -66,11 +66,11 @@ class PalletJack
       # Synthesize a pallet value by pasting others together.
       #
       # :call-seq:
-      #   synthesize(nil, param)   -> string or nil
-      #   synthesize(value, param) -> nil
+      #   synthesize(param, context)   -> string or nil
       #
-      # If +value+ is given, an earlier transform has already produced
-      # a value for this key, so do nothing and return +nil+.
+      # If +context+ contains a non-nil +:value+, an earlier transform
+      # has already produced a value for this key, so do nothing and
+      # return +nil+.
       #
       # Otherwise, use the parsed YAML structure in +param+ to build
       # and return a new value. If any failure occurs while building
@@ -105,21 +105,21 @@ class PalletJack
       #       - "p#[chassis.nic.pcislot]p#[chassis.nic.port]"
       #       - "em#[chassis.nic.port]"
 
-      def synthesize(value, param)
-        return if value
+      def synthesize(param, context = {})
+        return if context[:value]
         
-        synthesize_internal(param, @pallet)
+        synthesize_internal(param, context[:pallet])
       end
 
       # Synthesize a pallet value from others, using regular
       # expressions to pull out parts of values.
       #
       # :call-seq:
-      #   synthesize_regexp(nil, param)   -> string or nil
-      #   synthesize_regexp(value, param) -> nil
+      #   synthesize_regexp(param, context)   -> string or nil
       #
-      # If +value+ is given, an earlier transform has already produced
-      # a value for this key, so do nothing and return +nil+.
+      # If +context+ contains a non-nil +:value+, an earlier transform
+      # has already produced a value for this key, so do nothing and
+      # return +nil+.
       #
       # Otherwise, use the parsed YAML structure in +param+ to build
       # and return a new value. If any failure occurs while building
@@ -164,15 +164,15 @@ class PalletJack
       #            regexp: "^(?<network>[0-9.]+)_(?<prefix_length>[0-9]+)$"
       #        produce: "#[network]/#[prefix_length]"
 
-      def synthesize_regexp(value, param)
-        return if value
+      def synthesize_regexp(param, context = {})
+        return if context[:value]
 
         captures = {}
 
         param["sources"].each do |_, source|
           # Trying to read values from a non-existent key. Return nil
           # and let another transform try.
-          return unless lookup = @pallet[source["key"]]
+          return unless lookup = context[:pallet][source["key"]]
 
           # Save all named captures
           Regexp.new(source["regexp"]).match(lookup) do |md|
@@ -183,6 +183,21 @@ class PalletJack
         end
 
         synthesize_internal(param["produce"], captures)
+      end
+
+      # Synthesized value will override an inherited value for a
+      # +key+, but in some cases the intent is actually to only
+      # synthesize a value when there is no inherited value. This
+      # provides early termination of transforms for such keys.
+      #
+      # Example:
+      #
+      #  - net.layer2.name:
+      #    - inherit: ~
+      #    - synthesize: "#[chassis.nic.name]"
+
+      def inherit(_, context = {})
+        throw context[:abort] if context[:pallet][context[:key]]
       end
     end
 
@@ -208,19 +223,37 @@ class PalletJack
     # Transforms are methods in PalletJack::KeyTransformer::Writer,
     # called by name. They should return the new value, or +false+ if
     # unsuccessful.
+    #
+    # Transforms are given two parameters, +param+ and +context+:
+    # [+param+]     transform-specific configuration from transforms.yaml
+    # [+context+]
+    #    [+pallet+] The pallet object being processed
+    #    [+key+]    The key from transforms.yaml being processed
+    #    [+value+]  Current locally assigned value for key in pallet
+    #    [+abort+]  #throw this to abort transforms for current key
 
     def transform!(pallet)
-      @pallet = pallet
       @key_transforms.each do |keytrans_item|
-        key, transforms = keytrans_item.flatten
-        value = @pallet[key, shallow: true]
 
-        transforms.each do |t|
-          transform, param = t.flatten
-          if self.respond_to?(transform.to_sym) then
-            if new_value = self.send(transform.to_sym, value, param) then
-              @pallet[key] = new_value
-              break
+        # Enable early termination of transforms for a key
+        # by wrapping execution in a catch block.
+        catch do |abort_tag|
+          key, transforms = keytrans_item.flatten
+          context = {
+            pallet: pallet,
+            key:    key,
+            value:  pallet[key, shallow: true],
+            abort:  abort_tag
+          }
+
+          transforms.each do |t|
+            transform, param = t.flatten
+            if self.respond_to?(transform.to_sym) then
+              if new_value = self.send(transform.to_sym, param, context)
+              then
+                pallet[key] = new_value
+                break
+              end
             end
           end
         end
