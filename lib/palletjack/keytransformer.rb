@@ -223,9 +223,20 @@ class PalletJack
     # Transforms are methods in PalletJack::KeyTransformer::Writer,
     # called by name. They should return the new value, or +false+ if
     # unsuccessful.
+    #
+    # Transforms are given two parameters, +param+ and +context+:
+    # [+param+]     transform-specific configuration from transforms.yaml
+    # [+context+]
+    #    [+pallet+] The pallet object being processed
+    #    [+key+]    The key from transforms.yaml being processed
+    #    [+value+]  Current locally assigned value for key in pallet
+    #    [+abort+]  #throw this to abort transforms for current key
 
     def transform!(pallet)
       @key_transforms.each do |keytrans_item|
+
+        # Enable early termination of transforms for a key
+        # by wrapping execution in a catch block.
         catch do |abort_tag|
           key, transforms = keytrans_item.flatten
           context = {

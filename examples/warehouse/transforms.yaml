@@ -29,6 +29,12 @@
 # Two synthesizing rules are currently defined: "synthesize" and
 # "synthesize_regexp".
 #
+# The synthesized value will override an inherited value for a key,
+# but in some cases the intent is actually to only synthesize a value
+# when there is no inherited value. For this we have the "inherited"
+# transform, that does nothing, except abort the transform chain for a
+# key if there is an inherited value.
+#
 #
 # synthesize
 # ----------
@@ -107,6 +113,29 @@
 #            key: "pallet.ipv4_network"
 #            regexp: "^(?<network>[0-9.]+)_(?<prefix_length>[0-9]+)$"
 #        produce: "#[network]/#[prefix_length]"
+#
+#
+# inherited
+# ---------
+#
+# YAML structure:
+#
+#   - inherited: ~
+#
+# Declares that the key is to be inherited first. By default,
+# synthesis rules shadows inherited values for a key.
+#
+# Any parameters are currently ignored, but should be ~ (nil).
+#
+# Example:
+#
+# Don't synthesize net.layer2.name when there is an inherited value,
+# e.g. for ipv4_interface, that inherits from a virtual phy_nic
+# instead of a physical phy_nic.
+#
+#  - net.layer2.name:
+#    - inherited: ~
+#    - synthesize: "#[chassis.nic.name]"
 
 
 # Default transforms
@@ -175,11 +204,9 @@
 # rules for "chassis.nic.name" above get expanded to include the
 # entire Linux Udev ruleset, this will work perfectly.
 #
-# Synthesized value will override an inherited value for a key, but in
-# some cases the intent is actually to only synthesize a value when
-# there is no inherited value. For this we have the `inherited`
-# transform, that does nothing, except abort the transform chain for a
-# key if there is an inherited value.
+# A phy_nic can be either physical or virtual. Ensure that any
+# assigned value for a virtual phy_nic is inherited, and not
+# overridden by the physical chassis based name.
 
 - net.layer2.name:
   - inherited: ~
