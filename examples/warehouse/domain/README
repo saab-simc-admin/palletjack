@@ -8,18 +8,22 @@ Represents a DNS domain.
 The link "ipv4_network" points to the IPv4 network corresponding to
 this DNS domain.
 
-This information is used by the tools "palletjack2kea", to write the
-domain name in the DHCP configuration, and "palletjack2zone", to write
-zone files for a DNS server. If the ipv4_network link points to a
-network which has its netblock in CIDR form in the key
-"net.ipv4.cidr", and the netmask length is a whole number of octets
-(i.e. 0, 8, 16 or 24 bits), "palletjack2zone" will also write reverse
-zones for all defined IP addresses.
+The information in "dns.yaml" is used by the tools "palletjack2kea",
+to write the domain name in the DHCP configuration, and
+"palletjack2zone", to write zone files for a DNS server. If the
+ipv4_network link points to a network which has its netblock in CIDR
+form in the key "net.ipv4.cidr", and the netmask length is a whole
+number of octets (i.e. 0, 8, 16 or 24 bits), "palletjack2zone" will
+also write reverse zones for all defined IP addresses.
+
+The information in "services.yaml" is used by "palletjack2salt" to
+write Salt pillar data pointing to services available in the domain.
 
 
 Files:
 
   domain/<name>/dns.yaml
+  domain/<name>/services.yaml
 
 
 Links:
@@ -40,4 +44,11 @@ dns.yaml:
           ...
       ns:
         - IP address of NS server authoritative for this domain
+        - ...
+
+services.yaml:
+  domain:
+    services:
+      syslog:
+        - A central Syslog server, in the form <fqdn>:<port>
         - ...

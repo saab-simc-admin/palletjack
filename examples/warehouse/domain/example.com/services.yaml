@@ -1,0 +1,5 @@
+domain:
+  services:
+    syslog:
+      - syslog-archive.example.com:514
+      - logstash.example.com:5514
