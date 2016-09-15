@@ -1,5 +1,9 @@
-domain:
-  services:
+net:
+  service:
     syslog:
-      - syslog-archive.example.com:514
-      - logstash.example.com:5514
+      - address: syslog-archive.example.com
+        port: 514
+        protocol: udp
+      - address: logstash.example.com
+        port: 5514
+        protocol: tcp

@@ -47,8 +47,10 @@ dns.yaml:
         - ...
 
 services.yaml:
-  domain:
-    services:
+  net:
+    service:
       syslog:
-        - A central Syslog server, in the form <fqdn>:<port>
+        - address: FQDN of central syslog server
+          port: Port to talk to on central syslog server
+          protocol: "tcp" or "udp"
         - ...
