@@ -38,6 +38,7 @@ into Salt state configuration for unbound.
 E.g.
   palletjack2unbound -w /etc/salt/respository/warehouse \\
     -o /etc/salt/repository/state/unbound/files
+
 "
 opts.on("-w DIR", "--warehouse DIR", "warehouse directory", String) {|dir|
   $options[:warehouse] = dir }
