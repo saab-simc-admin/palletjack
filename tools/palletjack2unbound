@@ -55,7 +55,7 @@ def rfc1918?(ip)
 end
 
 opts = OptionParser.new
-opts.banner = "Usage: #{$PROGRAM_NAME} -w <warehouse> -d <output directory>
+opts.banner = "Usage: #{$PROGRAM_NAME} -w <warehouse> -o <output directory>
 
 Write DNS resolver stub declarations from a Palletjack warehouse
 into Salt state configuration for unbound.
