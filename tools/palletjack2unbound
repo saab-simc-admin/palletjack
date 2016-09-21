@@ -46,6 +46,15 @@ stub-zone:
   end
 end
 
+# Check if +ip+ belongs to some RFC1918 network
+
+def rfc1918?(ip)
+  rfc1918_nets = [IP.new("10.0.0.0/8"),
+                  IP.new("172.16.0.0/12"),
+                  IP.new("192.168.0.0/16")]
+  rfc1918_nets.any? {|net| ip.is_in?(net)}
+end
+
 opts = OptionParser.new
 opts.banner = "Usage: #{$PROGRAM_NAME} -w <warehouse> -d <output directory>
 
@@ -87,4 +96,21 @@ jack["domain"].each do |domain|
   end
 
   stub_zone(zone, stub_addrs)
+
+  next unless domain['net.ipv4.cidr']
+
+  # Assume all delegations happen on octet boundaries for now.
+  # TODO: RFC 2317 classless in-addr.arpa delegation
+
+  ip_net = IP.new(domain['net.ipv4.cidr'])
+  reverse_zone = ip_net.to_arpa
+  prefix_octets, _ = domain['net.ipv4.prefixlen'].to_i.divmod(8)
+  reverse_zone = ip_net.to_arpa.split(".")[-(2 + prefix_octets) .. 5].join(".")
+
+  # Make the same assumption that palletjack2knot does;
+  # reverse delegations are made to the same nameserver
+  # as forward delegations.
+
+  stub_zone(reverse_zone, stub_addrs,
+            transparent: rfc1918?(ip_net))
 end
