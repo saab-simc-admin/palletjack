@@ -4,7 +4,6 @@
 
 require 'palletjack'
 require 'optparse'
-require 'dns/zone'
 require 'ip'
 
 $options = {}
