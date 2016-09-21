@@ -9,6 +9,8 @@ require 'ip'
 
 $options = {}
 
+# Ignore any Error::EEXIST raised by block argument
+
 def exists_ok(&code)
   code.call()
 rescue Errno::EEXIST
