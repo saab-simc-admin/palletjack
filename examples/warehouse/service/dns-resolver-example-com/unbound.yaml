@@ -1,0 +1,15 @@
+# The unbound DNS resolver <https://unbound.net/> has a simple
+# key-value configuration structure with top-level categories and
+# underlying key-value items.  The YAML structure mirrors this.
+#
+# Value lists are represented as repeted key-values.  Strings in
+# unbound config are double-quoted, so any quoting in the YAML
+# structure should use single-quoutes to prevent confusion.
+---
+service:
+  unbound:
+    server:
+      - interface: '0.0.0.0'
+      - access-control: '192.168.0.0/24 allow'
+      - private-domain: '"example.com"'
+      - private-address: 192.168.0.0/24
