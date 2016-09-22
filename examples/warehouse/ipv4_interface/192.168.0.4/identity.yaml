@@ -1,0 +1,4 @@
+---
+net:
+  dns:
+    name: ns2
