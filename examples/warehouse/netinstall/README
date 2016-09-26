@@ -1,0 +1,25 @@
+Network install configuration
+=============================
+
+Type name: netinstall
+
+The name of a netinstall is structured as "<OS>-<Variant>", where
+variant may not contain a "-".
+
+Represents a specific variant of configuration choices for network
+installation of an operating system.
+
+Palletjack2pxelinux uses "host.os.name" and "host.kickstart.variant"
+to generate os variant enumeration PXE menus and os variant
+installation PXE menus.
+
+Links:
+
+  netinstall/<name>/os -> ../../os/<name>
+
+
+Transformed values:
+
+  host:
+    kickstart:
+      variant: Variant part of netinstall name

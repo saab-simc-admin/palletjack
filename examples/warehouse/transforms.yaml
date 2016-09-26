@@ -178,8 +178,8 @@
   - synthesize: "#[pallet.ipv4_interface]"
 - net.layer2.address:
   - synthesize: "#[pallet.phy_nic]"
-- host.pxelinux.config:
-  - synthesize: "#[pallet.os]"
+- host.kickstart.config:
+  - synthesize: "#[pallet.netinstall]"
 
 
 # Simple pasting of previous values to synthesize a new one. Note that
@@ -187,6 +187,11 @@
 
 - net.dns.fqdn:
   - synthesize: "#[net.dns.name].#[net.dns.domain]"
+
+- host.kickstart.ksurl:
+  - synthesize: "http://kickstart/#[host.kickstart.config]/ks.cfg"
+- host.pxelinux.kernel:
+  - synthesize: "/boot/#[system.os]/vmlinuz"
 
 
 # A list of synthesizing rules is processed from top to bottom, and
@@ -198,6 +203,10 @@
   - synthesize:
       - "p#[chassis.nic.pcislot]p#[chassis.nic.port]"
       - "em#[chassis.nic.port]"
+- host.pxelinux.config:
+  - synthesize:
+    - "#[pallet.netinstall]"
+    - "#[pallet.os]"
 
 
 # This is probably a bad default, but it's at least something. If the
@@ -239,6 +248,24 @@
           regexp: "^(?<network>[0-9.]+)_(?<prefix_length>[0-9]+)$"
       produce: "#[network]/#[prefix_length]"
 
+- host.pxelinux.append:
+  - synthesize_regexp:
+      sources:
+        os:
+          key: "system.os"
+          regexp: "^(?<os>.*)$"
+        ksurl:
+          key: "host.kickstart.ksurl"
+          regexp: "^(?<ksurl>http://.*)$"
+        baseurl:
+          key: "host.kickstart.baseurl"
+          regexp: "^(?<baseurl>http://.*)$"
+      produce:
+      - "initrd=/boot/#[os]/initrd.img
+         inst.ks=#[ksurl]"
+      - "initrd=/boot/#[os]/initrd.img
+         method=#[baseurl]"
+
 
 # Chassis names contain multiple colon-separated fields. Pick these
 # apart and fill in subkeys with the individual field values.
@@ -264,3 +291,11 @@
   - synthesize_regexp:
       sources: *pallet_chassis
       produce: "#[serial]"
+
+- host.kickstart.variant:
+  - synthesize_regexp:
+      sources:
+        netinstall:
+          key: "pallet.netinstall"
+          regexp: "^.*-(?<variant>[^-]+)$"
+      produce: "#[variant]"
