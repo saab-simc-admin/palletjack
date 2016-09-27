@@ -92,4 +92,31 @@ class PalletJack
     end
     result
   end
+
+  # Fetch a single pallet from a PalletJack warehouse
+  #
+  # :call-seq:
+  #   fetch(kind)                        -> pallet or KeyError
+  #   fetch(kind, name: name)            -> pallet or KeyError
+  #   fetch(kind, with_all:{ matches })  -> pallet or KeyError
+  #   fetch(kind, with_any:{ matches })  -> pallet or KeyError
+  #   fetch(kind, with_none:{ matches }) -> pallet or KeyError
+  #
+  # Return exactly one pallet of +kind+, optionally restricting by
+  # keypath matches.
+  #
+  # Raise a KeyError if there is more or less than one match.
+  #
+  # +matches+ should be a hash with "key.path" strings as keys,
+  # and either string or regexp values to match against.
+  #
+
+  def fetch(kind, options = {})
+    result = self[kind, options]
+    if result.length != 1 then
+      raise KeyError.new("\"#{kind}\", #{options} matched #{result.length} pallets")
+    end
+
+    result.first
+  end
 end
