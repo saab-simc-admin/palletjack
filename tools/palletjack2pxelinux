@@ -48,8 +48,8 @@ opts.banner = "Usage: #{$PROGRAM_NAME} -w <warehouse> -d <output directory>
 Write PXELINUX boot configuration files from a Palletjack warehouse
 
 "
-opts.on("-w DIR", "--warehouse DIR", "warehouse directory", String) {|dir| options[:warehouse] = dir }
-opts.on("-o DIR", "--output DIR", "output directory (tftpboot/)", String) {|dir| options[:output] = dir }
+opts.on('-w DIR', '--warehouse DIR', 'warehouse directory', String) {|dir| options[:warehouse] = dir }
+opts.on('-o DIR', '--output DIR', 'output directory (tftpboot/)', String) {|dir| options[:output] = dir }
 opts.parse!
 
 if not options[:warehouse] or
@@ -63,9 +63,9 @@ exists_ok { Dir.mkdir("#{options[:output]}/pxelinux.cfg/") }
 
 jack = PalletJack.new(options[:warehouse])
 
-jack["system"].each do |system|
-  jack["ipv4_interface",
-       with_all:{"pallet.system" =>
+jack['system'].each do |system|
+  jack['ipv4_interface',
+       with_all:{'pallet.system' =>
                  system['pallet.system']}].each do |nic|
     if system['host.pxelinux.config']
       filename = "#{options[:output]}/pxelinux.cfg/01-#{nic['net.layer2.address'].gsub(':', '-').downcase}"

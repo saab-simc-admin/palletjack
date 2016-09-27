@@ -32,8 +32,8 @@ opts.banner = "Usage: #{$PROGRAM_NAME} -w <warehouse> -d <output directory>
 Write DNS server zone files from a Palletjack warehouse
 
 "
-opts.on("-w DIR", "--warehouse DIR", "warehouse directory", String) {|dir| options[:warehouse] = dir }
-opts.on("-o DIR", "--output DIR", "output directory", String) {|dir| 
+opts.on('-w DIR', '--warehouse DIR', 'warehouse directory', String) {|dir| options[:warehouse] = dir }
+opts.on('-o DIR', '--output DIR', 'output directory', String) {|dir| 
   options[:output] = dir
   options[:zone_dir] = "#{dir}/zones"
 }
@@ -53,7 +53,7 @@ serial = Time.now.utc.to_i
 
 jack = PalletJack.new(options[:warehouse])
 
-File.open("#{options[:output]}/zones.conf", 
+File.open("#{options[:output]}/zones.conf",
           File::CREAT | File::TRUNC | File::WRONLY, 0644) do |config_file|
 
   config_file <<
@@ -62,7 +62,7 @@ File.open("#{options[:output]}/zones.conf",
 ################
 "
 
-  jack["domain"].each do |domain|
+  jack['domain'].each do |domain|
     absolute_domain_name = "#{domain['net.dns.domain']}."
 
     zone = DNS::Zone.new
@@ -92,8 +92,8 @@ File.open("#{options[:output]}/zones.conf",
       zone.records << ns
     end
 
-    jack["ipv4_interface",
-         with_all:{"net.dns.domain" =>
+    jack['ipv4_interface',
+         with_all:{'net.dns.domain' =>
            domain['net.dns.domain']}].each do |interface|
       a = DNS::Zone::RR::A.new
       a.label = interface['net.dns.name']
@@ -124,7 +124,7 @@ File.open("#{options[:output]}/zones.conf",
     absolute_reverse_zone_name = ip_net.to_arpa
 
     prefix_octets, _ = domain['net.ipv4.prefixlen'].to_i.divmod(8)
-    reverse_zone.origin = absolute_reverse_zone_name.split(".")[-(2 + prefix_octets) .. 5].join(".")
+    reverse_zone.origin = absolute_reverse_zone_name.split('.')[-(2 + prefix_octets) .. 5].join('.')
 
     reverse_zone.ttl = domain['net.dns.ttl']
 
@@ -140,8 +140,8 @@ File.open("#{options[:output]}/zones.conf",
       reverse_zone.records << ns
     end
 
-    jack["ipv4_interface",
-         with_all:{"net.dns.domain" =>
+    jack['ipv4_interface',
+         with_all:{'net.dns.domain' =>
            domain['net.dns.domain']}].each do |interface|
       ptr = DNS::Zone::RR::PTR.new
       ptr.label = IP.new(interface['net.ipv4.address']).to_arpa

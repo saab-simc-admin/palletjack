@@ -5,7 +5,7 @@
 require 'palletjack'
 require 'optparse'
 
-options = {:type => "system"}
+options = {:type => 'system'}
 
 opts = OptionParser.new
 opts.banner = "Usage: #{$PROGRAM_NAME} [options] [<name> ...]
@@ -16,8 +16,8 @@ If a name is specified, dump only that pallet. Otherwise, dump all
 pallets of the specified type.
 
 "
-opts.on("-w DIR", "--warehouse DIR", "warehouse directory", String) {|dir| options[:warehouse] = dir }
-opts.on("-t TYPE", "--type TYPE", "type (default \"system\")", String) {|type| options[:type] = type }
+opts.on('-w DIR', '--warehouse DIR', 'warehouse directory', String) {|dir| options[:warehouse] = dir }
+opts.on('-t TYPE', '--type TYPE', 'type (default "system")', String) {|type| options[:type] = type }
 opts.parse!
 
 if not options[:warehouse]
@@ -29,7 +29,7 @@ jack = PalletJack.new(options[:warehouse])
 
 def dump_pallets(pallets)
   if pallets.length == 0
-    puts "No matching pallets found."
+    puts 'No matching pallets found.'
   end
   pallets.each {|p| puts p.to_yaml}
 end

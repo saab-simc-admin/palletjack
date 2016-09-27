@@ -14,8 +14,8 @@ opts.banner = "Usage: #{$PROGRAM_NAME} [options] <name> ...
 Write configuration for the Kea DHCP server from a Palletjack warehouse
 
 "
-opts.on("-w DIR", "--warehouse DIR", "warehouse directory", String) {|dir| options[:warehouse] = dir }
-opts.on("-s SERVICE", "--service SERVICE", "service name for global configuration", String) {|service| options[:service] = service }
+opts.on('-w DIR', '--warehouse DIR', 'warehouse directory', String) {|dir| options[:warehouse] = dir }
+opts.on('-s SERVICE', '--service SERVICE', 'service name for global configuration', String) {|service| options[:service] = service }
 opts.parse!
 
 if not options[:warehouse] or
@@ -26,78 +26,78 @@ end
 
 jack = PalletJack.new(options[:warehouse])
 
-kea_config = { "Dhcp4" => {} }
+kea_config = { 'Dhcp4' => {} }
 
-jack["service", name:options[:service]].each do |service_config|
-  kea_config["Dhcp4"] = service_config['service.kea_v4']
+jack['service', name:options[:service]].each do |service_config|
+  kea_config['Dhcp4'] = service_config['service.kea_v4']
 end
 
-kea_config["Dhcp4"]["subnet4"] = []
+kea_config['Dhcp4']['subnet4'] = []
 
-jack["ipv4_network"].each do |net|
-  net_config = {"subnet" => "#{net['net.ipv4.cidr']}",
-                "reservations" => [],
-                "option-data" => []}
+jack['ipv4_network'].each do |net|
+  net_config = {'subnet' => "#{net['net.ipv4.cidr']}",
+                'reservations' => [],
+                'option-data' => []}
   if net['net.ipv4.gateway']
-    net_config["option-data"] << {
-      "name" => "routers",
-      "code" => 3,
-      "space" => "dhcp4",
-      "csv-format" => true,
-      "data" => "#{net['net.ipv4.gateway']}"
+    net_config['option-data'] << {
+      'name' => 'routers',
+      'code' => 3,
+      'space' => 'dhcp4',
+      'csv-format' => true,
+      'data' => "#{net['net.ipv4.gateway']}"
     }
   end
 
   if net['net.dns.resolver']
-    resolvers = ""
+    resolvers = ''
     net['net.dns.resolver'].each do |resolver|
-      resolvers << resolver << ", "
+      resolvers << resolver << ', '
     end
 
-    net_config["option-data"] << {
-      "name" => "domain-name-servers",
-      "code" => 6,
-      "space" => "dhcp4",
-      "csv-format" => true,
-      "data" => resolvers.chomp(', ')
+    net_config['option-data'] << {
+      'name' => 'domain-name-servers',
+      'code' => 6,
+      'space' => 'dhcp4',
+      'csv-format' => true,
+      'data' => resolvers.chomp(', ')
     }
   end
 
   if net['net.dhcp.tftp-server']
-    net_config["option-data"] << {
-      "name" => "tftp-server-name",
-      "code" => 66,
-      "space" => "dhcp4",
-      "csv-format" => true,
-      "data" => net['net.dhcp.tftp-server']
+    net_config['option-data'] << {
+      'name' => 'tftp-server-name',
+      'code' => 66,
+      'space' => 'dhcp4',
+      'csv-format' => true,
+      'data' => net['net.dhcp.tftp-server']
     }
 
     # Option 66 is the standard way of sending a TFTP server address, but some
     # DHCP clients still want it in the next-server field.
-    net_config["next-server"] = net['net.dhcp.tftp-server']
+    net_config['next-server'] = net['net.dhcp.tftp-server']
   end
 
   if net['net.dhcp.boot-file']
-    net_config["option-data"] << {
-      "name" => "boot-file-name",
-      "code" => 67,
-      "space" => "dhcp4",
-      "csv-format" => true,
-      "data" => net['net.dhcp.boot-file']
+    net_config['option-data'] << {
+      'name' => 'boot-file-name',
+      'code' => 67,
+      'space' => 'dhcp4',
+      'csv-format' => true,
+      'data' => net['net.dhcp.boot-file']
     }
   end
 
-  jack["ipv4_interface",
-       with_all:{"pallet.ipv4_network" =>
+  jack['ipv4_interface',
+       with_all:{'pallet.ipv4_network' =>
                  net['pallet.ipv4_network']}].each do |interface|
-    net_config["reservations"] << {
-      "hw-address" => "#{interface['net.layer2.address']}",
-      "ip-address" => "#{interface['net.ipv4.address']}",
-      "hostname" => "#{interface['net.dns.fqdn']}"
+    net_config['reservations'] << {
+      'hw-address' => "#{interface['net.layer2.address']}",
+      'ip-address' => "#{interface['net.ipv4.address']}",
+      'hostname' => "#{interface['net.dns.fqdn']}"
     }
   end
 
-  kea_config["Dhcp4"]["subnet4"] << net_config
+  kea_config['Dhcp4']['subnet4'] << net_config
 end
 
 jj kea_config
