@@ -90,10 +90,29 @@ jack['ipv4_network'].each do |net|
   jack['ipv4_interface',
        with_all:{'pallet.ipv4_network' =>
                  net['pallet.ipv4_network']}].each do |interface|
+    # There are interfaces in the example warehouse without
+    # corresponding hardware, in order to be able to point at them in
+    # generated DNS configuration. Ignore those here, since they
+    # cannot run DHCP if they don't have MAC addresses.
+    next if not interface['net.layer2.address']
+
     net_config['reservations'] << {
       'hw-address' => "#{interface['net.layer2.address']}",
       'ip-address' => "#{interface['net.ipv4.address']}",
-      'hostname' => "#{interface['net.dns.fqdn']}"
+      'hostname' => "#{interface['net.dns.fqdn']}",
+      'option-data' => [
+        'name' => 'domain-name',
+        'code' => 15,
+        'space' => 'dhcp4',
+        'csv-format' => true,
+        # Interfaces are attached to networks, which are attached to
+        # domains, so if we look for a domain name from the interface
+        # we'll get different ones depending on the interface. But
+        # domain name is a property of the system, so look up the
+        # system this interface is attached to and get its domain
+        # name.
+        'data' => jack.fetch('system', name:interface['pallet.system'])['net.dns.domain']
+      ]
     }
   end
 
