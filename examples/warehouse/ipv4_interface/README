@@ -36,3 +36,18 @@ Links:
   ipv4_interface/<name>/ipv4_network -> ../../ipv4_network/<name>/
   ipv4_interface/<name>/phy_nic -> ../../phy_nic/<name>/
   ipv4_interface/<name>/system -> ../../system/<name>/
+
+
+Files:
+
+  ipv4_interface/<name>/dns.yaml
+
+
+YAML:
+
+dns.yaml:
+  net:
+    dns:
+      alias:
+        - CNAME for this interface
+        - ...

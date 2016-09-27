@@ -4,6 +4,12 @@
 #
 # Data model assumptions:
 # - Each domain corresponds uniquely to one IPv4 network
+#
+# The YAML key "net.dns.alias" is used to create CNAME aliases for
+# each interface. This means that if a "system" object specifies
+# "net.dns.alias", each of its interfaces will get that alias in its
+# own domain. Aliases explicitly specified on a single interface will
+# override this.
 
 require 'palletjack'
 require 'optparse'
