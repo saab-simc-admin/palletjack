@@ -92,6 +92,15 @@ File.open("#{options[:output]}/zones.conf",
       zone.records << ns
     end
 
+    if domain['net.dns.cname']
+      domain['net.dns.cname'].each do |name, target|
+        cname = DNS::Zone::RR::CNAME.new
+        cname.label = name
+        cname.domainname = target
+        zone.records << cname
+      end
+    end
+
     jack['ipv4_interface',
          with_all:{'net.dns.domain' =>
            domain['net.dns.domain']}].each do |interface|
