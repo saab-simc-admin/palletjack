@@ -45,6 +45,10 @@ dns.yaml:
         - ...
     soa-ns: FQDN of master name server for this domain
     soa-contact: E-mail address of administrative domain contact
+    cname:
+      <name>: <target> Create a CNAME stating that <name> is an alias
+                       for <target>
+      ...
 
 services.yaml:
   net:

@@ -10,3 +10,5 @@ net:
       - ns2.example.com
     soa-ns: ns1.example.com
     soa-contact: hostmaster@example.com
+    cname:
+      mail2: ns2
