@@ -13,12 +13,12 @@ opts.banner = "Usage: #{$PROGRAM_NAME} -w <warehouse> -s <system> -d <domain> -m
 Create phy_nic and ipv4_interface objects in a warehouse
 
 "
-opts.on("-w DIR", "--warehouse DIR", "warehouse directory", String) { |dir| $options[:warehouse] = dir }
-opts.on("-s SYSTEM", "--system SYSTEM", "system name", String) { |system| $options[:system] = system }
-opts.on("-d DOMAIN", "--domain DOMAIN", "domain name", String) { |domain| $options[:domain] = domain }
-opts.on("-m MAC", "--mac MAC", "MAC address", String) { |mac| $options[:mac] = mac }
-opts.on("-i ADDR", "--ipv4 ADDR", "IPv4 address", String) { |addr| $options[:addr] = addr }
-opts.on("-n NETWORK", "--network NETWORK", "IPv4 network, in CIDR format", String) { |network|
+opts.on('-w DIR', '--warehouse DIR', 'warehouse directory', String) { |dir| $options[:warehouse] = dir }
+opts.on('-s SYSTEM', '--system SYSTEM', 'system name', String) { |system| $options[:system] = system }
+opts.on('-d DOMAIN', '--domain DOMAIN', 'domain name', String) { |domain| $options[:domain] = domain }
+opts.on('-m MAC', '--mac MAC', 'MAC address', String) { |mac| $options[:mac] = mac }
+opts.on('-i ADDR', '--ipv4 ADDR', 'IPv4 address', String) { |addr| $options[:addr] = addr }
+opts.on('-n NETWORK', '--network NETWORK', 'IPv4 network, in CIDR format', String) { |network|
          $options[:network] = network.gsub(/\//, '_')
        }
 opts.parse!

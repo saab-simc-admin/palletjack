@@ -16,9 +16,9 @@ opts.banner = "Usage: #{$PROGRAM_NAME} -w <warehouse> -d <domain> -n <IPv4 netwo
 Create domain and ipv4_network objects in a warehouse
 
 "
-opts.on("-w DIR", "--warehouse DIR", "warehouse directory", String) { |dir| $options[:warehouse] = dir }
-opts.on("-d DOMAIN", "--domain DOMAIN", "domain name", String) { |domain| $options[:domain] = domain }
-opts.on("-n NETWORK", "--network NETWORK", "IPv4 network, in CIDR format", String) { |network|
+opts.on('-w DIR', '--warehouse DIR', 'warehouse directory', String) { |dir| $options[:warehouse] = dir }
+opts.on('-d DOMAIN', '--domain DOMAIN', 'domain name', String) { |domain| $options[:domain] = domain }
+opts.on('-n NETWORK', '--network NETWORK', 'IPv4 network, in CIDR format', String) { |network|
          $options[:network] = network.gsub(/\//, '_')
        }
 opts.parse!

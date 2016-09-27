@@ -13,10 +13,10 @@ opts.banner = "Usage: #{$PROGRAM_NAME} -w <warehouse> -s <system> -d <domain> -o
 Create system objects in a warehouse
 
 "
-opts.on("-w DIR", "--warehouse DIR", "warehouse directory", String) { |dir| $options[:warehouse] = dir }
-opts.on("-s SYSTEM", "--system SYSTEM", "system name", String) { |system| $options[:system] = system }
-opts.on("-d DOMAIN", "--domain DOMAIN", "domain name", String) { |domain| $options[:domain] = domain }
-opts.on("-o OS", "--os OS", "operating system name", String) { |os| $options[:os] = os }
+opts.on('-w DIR', '--warehouse DIR', 'warehouse directory', String) { |dir| $options[:warehouse] = dir }
+opts.on('-s SYSTEM', '--system SYSTEM', 'system name', String) { |system| $options[:system] = system }
+opts.on('-d DOMAIN', '--domain DOMAIN', 'domain name', String) { |domain| $options[:domain] = domain }
+opts.on('-o OS', '--os OS', 'operating system name', String) { |os| $options[:os] = os }
 opts.parse!
 
 if not $options[:warehouse] or

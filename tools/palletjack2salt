@@ -29,8 +29,8 @@ opts.banner = "Usage: #{$PROGRAM_NAME} -w <warehouse> -d <output directory>
 Write Salt pillar data from a Palletjack warehouse, one YAML file per system
 
 "
-opts.on("-w DIR", "--warehouse DIR", "warehouse directory", String) {|dir| options[:warehouse] = dir }
-opts.on("-o DIR", "--output DIR", "output directory", String) {|dir| options[:output] = dir }
+opts.on('-w DIR', '--warehouse DIR', 'warehouse directory', String) {|dir| options[:warehouse] = dir }
+opts.on('-o DIR', '--output DIR', 'output directory', String) {|dir| options[:output] = dir }
 opts.parse!
 
 if not options[:warehouse] or
