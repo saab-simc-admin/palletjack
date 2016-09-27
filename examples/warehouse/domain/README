@@ -49,6 +49,14 @@ dns.yaml:
       <name>: <target> Create a CNAME stating that <name> is an alias
                        for <target>
       ...
+    srv:
+      - service: Name of service
+        protocol: "tcp" or "udp"
+        port: Port number
+        priority: Defaults to 0 if not specified
+        weight: Defaults to 0 if not specified
+        target: Dot-terminated FQDN or hostname of target
+      - ...
 
 services.yaml:
   net:

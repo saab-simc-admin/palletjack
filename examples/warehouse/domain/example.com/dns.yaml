@@ -12,3 +12,14 @@ net:
     soa-contact: hostmaster@example.com
     cname:
       mail2: ns2
+    srv:
+      - service: xmpp-server
+        protocol: tcp
+        port: 5269
+        priority: 0
+        weight: 0
+        target: xmpp1.example.com.
+      - service: xmpp-server
+        protocol: tcp
+        port: 5269
+        target: xmpp2
