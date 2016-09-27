@@ -122,6 +122,15 @@ File.open("#{options[:output]}/zones.conf",
       a.label = interface['net.dns.name']
       a.address = interface['net.ipv4.address']
       zone.records << a
+
+      if interface['net.dns.alias']
+        interface['net.dns.alias'].each do |label|
+          cname = DNS::Zone::RR::CNAME.new
+          cname.label = label
+          cname.domainname = interface['net.dns.name']
+          zone.records << cname
+        end
+      end
     end
 
     File.open("#{options[:zone_dir]}/#{domain['net.dns.domain']}.zone", File::CREAT | File::TRUNC | File::WRONLY, 0644) do |zonefile|
