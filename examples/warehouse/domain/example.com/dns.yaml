@@ -1,11 +1,9 @@
 net:
   dns:
     mx:
-      -
-        priority: 10
+      - priority: 10
         server: mail.example.com
-      -
-        priority: 20
+      - priority: 20
         server: mail2.example.com
     ns:
       - ns1.example.com
