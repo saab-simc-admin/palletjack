@@ -33,7 +33,7 @@ Write DNS server zone files from a Palletjack warehouse
 
 "
 opts.on('-w DIR', '--warehouse DIR', 'warehouse directory', String) {|dir| options[:warehouse] = dir }
-opts.on('-o DIR', '--output DIR', 'output directory', String) {|dir| 
+opts.on('-o DIR', '--output DIR', 'output directory', String) {|dir|
   options[:output] = dir
   options[:zone_dir] = "#{dir}/zones"
 }
