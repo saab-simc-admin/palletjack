@@ -4,6 +4,12 @@
 #
 # Data model assumptions:
 # - Each domain corresponds uniquely to one IPv4 network
+#
+# The YAML key "net.dns.alias" is used to create CNAME aliases for
+# each interface. This means that if a "system" object specifies
+# "net.dns.alias", each of its interfaces will get that alias in its
+# own domain. Aliases explicitly specified on a single interface will
+# override this.
 
 require 'palletjack'
 require 'optparse'
@@ -33,7 +39,7 @@ Write DNS server zone files from a Palletjack warehouse
 
 "
 opts.on('-w DIR', '--warehouse DIR', 'warehouse directory', String) {|dir| options[:warehouse] = dir }
-opts.on('-o DIR', '--output DIR', 'output directory', String) {|dir| 
+opts.on('-o DIR', '--output DIR', 'output directory', String) {|dir|
   options[:output] = dir
   options[:zone_dir] = "#{dir}/zones"
 }
@@ -92,6 +98,29 @@ File.open("#{options[:output]}/zones.conf",
       zone.records << ns
     end
 
+    if domain['net.dns.cname']
+      domain['net.dns.cname'].each do |name, target|
+        cname = DNS::Zone::RR::CNAME.new
+        cname.label = name
+        cname.domainname = target
+        zone.records << cname
+      end
+    end
+
+    if domain['net.dns.srv']
+      domain['net.dns.srv'].each do |service|
+        srv = DNS::Zone::RR::SRV.new
+        srv.label = "_#{service['service']}._#{service['protocol']}"
+        srv.target = service['target']
+        srv.port = service['port']
+        service['priority'] ||= 0
+        srv.priority = service['priority']
+        service['weight'] ||= 0
+        srv.weight = service['weight']
+        zone.records << srv
+      end
+    end
+
     jack['ipv4_interface',
          with_all:{'net.dns.domain' =>
            domain['net.dns.domain']}].each do |interface|
@@ -99,6 +128,15 @@ File.open("#{options[:output]}/zones.conf",
       a.label = interface['net.dns.name']
       a.address = interface['net.ipv4.address']
       zone.records << a
+
+      if interface['net.dns.alias']
+        interface['net.dns.alias'].each do |label|
+          cname = DNS::Zone::RR::CNAME.new
+          cname.label = label
+          cname.domainname = interface['net.dns.name']
+          zone.records << cname
+        end
+      end
     end
 
     File.open("#{options[:zone_dir]}/#{domain['net.dns.domain']}.zone", File::CREAT | File::TRUNC | File::WRONLY, 0644) do |zonefile|

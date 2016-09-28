@@ -37,14 +37,26 @@ dns.yaml:
   net:
     dns:
       mx:
-        -
-          priority: Priority of this mail server
+        - priority: Priority of this mail server
           server: FQDN of this mail server
-        -
-          ...
+        - ...
       ns:
         - IP address of NS server authoritative for this domain
         - ...
+    soa-ns: FQDN of master name server for this domain
+    soa-contact: E-mail address of administrative domain contact
+    cname:
+      <name>: <target> Create a CNAME stating that <name> is an alias
+                       for <target>
+      ...
+    srv:
+      - service: Name of service
+        protocol: "tcp" or "udp"
+        port: Port number
+        priority: Defaults to 0 if not specified
+        weight: Defaults to 0 if not specified
+        target: Dot-terminated FQDN or hostname of target
+      - ...
 
 services.yaml:
   net:

@@ -1,14 +1,25 @@
 net:
   dns:
     mx:
-      -
-        priority: 10
+      - priority: 10
         server: mail.example.com
-      -
-        priority: 20
+      - priority: 20
         server: mail2.example.com
     ns:
       - ns1.example.com
       - ns2.example.com
     soa-ns: ns1.example.com
     soa-contact: hostmaster@example.com
+    cname:
+      mail2: ns2
+    srv:
+      - service: xmpp-server
+        protocol: tcp
+        port: 5269
+        priority: 0
+        weight: 0
+        target: xmpp1.example.com.
+      - service: xmpp-server
+        protocol: tcp
+        port: 5269
+        target: xmpp2
