@@ -35,6 +35,7 @@ class PalletJack
   #
   # :call-seq:
   #   [kind]                        -> set of pallets
+  #   [kind, name: pallet_name]     -> set of pallets
   #   [kind, with_all:{ matches }]  -> set of pallets
   #   [kind, with_any:{ matches }]  -> set of pallets
   #   [kind, with_none:{ matches }] -> set of pallets
@@ -42,54 +43,46 @@ class PalletJack
   # Return all pallets of +kind+, optionally restricting by
   # keypath matches.
   #
+  # +pallet_name+ is the filesystem +basename+ for the pallet.
+  #
   # +matches+ should be a hash with "key.path" strings as keys,
   # and either string or regexp values to match against.
-  #
 
   def [](kind, options = {})
+    match_enumerator = {
+      :with_all  => :all?,
+      :with_any  => :any?,
+      :with_none => :none?
+    }
     result = Set.new
+
     case
-    when options[:with_all]
-      @pallets[kind].each do |name, pallet|
-        result << pallet if options[:with_all].all? do |key, value|
-          case value
-            when Regexp
-              pallet[key] =~ value
-            else
-              pallet[key].to_s == value.to_s
-          end
-        end
-      end
-    when options[:with_any]
-      @pallets[kind].each do |name, pallet|
-        result << pallet if options[:with_any].any? do |key, value|
-          case value
-            when Regexp
-              pallet[key] =~ value
-            else
-              pallet[key].to_s == value.to_s
-          end
-        end
-      end
-    when options[:with_none]
-      @pallets[kind].each do |name, pallet|
-        result << pallet if options[:with_none].none? do |key, value|
-          case value
-            when Regexp
-              pallet[key] =~ value
-            else
-              pallet[key].to_s == value.to_s
-          end
-        end
-      end
+    when options.empty?
+      result += @pallets[kind].values
     when options[:name]
-      p = @pallets[kind][options[:name]]
-      result << p if p
+      if p = @pallets[kind][options[:name]]
+        result << p
+      end
     else
-      @pallets[kind].each do |name, pallet|
-        result << pallet
+      match_enumerator.keys.each do |tag|
+        if options[tag]
+          @pallets[kind].each do |_, pallet|
+            if options[tag].send(match_enumerator[tag]) do |key, value|
+                case value
+                when Regexp
+                  pallet[key] =~ value
+                else
+                  pallet[key].to_s == value.to_s
+                end
+              end
+            then
+              result << pallet
+            end
+          end
+        end
       end
     end
+
     result
   end
 
