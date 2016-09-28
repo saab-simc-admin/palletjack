@@ -100,7 +100,7 @@ jack['ipv4_network'].each do |net|
       'hw-address' => "#{interface['net.layer2.address']}",
       'ip-address' => "#{interface['net.ipv4.address']}",
       'hostname' => "#{interface['net.dns.fqdn']}",
-      'option-data' => [
+      'option-data' => [ {
         'name' => 'domain-name',
         'code' => 15,
         'space' => 'dhcp4',
@@ -112,7 +112,7 @@ jack['ipv4_network'].each do |net|
         # system this interface is attached to and get its domain
         # name.
         'data' => jack.fetch('system', name:interface['pallet.system'])['net.dns.domain']
-      ]
+      } ]
     }
   end
 
