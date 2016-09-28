@@ -2,14 +2,16 @@
 # key-value configuration structure with top-level categories and
 # underlying key-value items.  The YAML structure mirrors this.
 #
-# Value lists are represented as repeted key-values.  Strings in
-# unbound config are double-quoted, so any quoting in the YAML
-# structure should use single-quoutes to prevent confusion.
+# Value lists are represented as repeated key-values.  The Unbound
+# configuration format requires string values to be surrounded by
+# double quotes. To preserve them through the YAML parser, surround
+# the entire value with single quotes.
 ---
 service:
   unbound:
     server:
-      - interface: '0.0.0.0'
-      - access-control: '192.168.0.0/24 allow'
+      - interface: 0.0.0.0
+      - access-control: 192.168.0.0/24 allow
       - private-domain: '"example.com"'
       - private-address: 192.168.0.0/24
+      - private-address: 192.168.1.0/24
