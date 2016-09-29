@@ -189,7 +189,7 @@
   - synthesize: "#[net.dns.name].#[net.dns.domain]"
 
 - host.kickstart.ksurl:
-  - synthesize: "http://kickstart/#[host.kickstart.config]/ks.cfg"
+  - synthesize: "http://kickstart/#[host.kickstart.config].cfg"
 - host.pxelinux.kernel:
   - synthesize: "/boot/#[system.os]/vmlinuz"
 
