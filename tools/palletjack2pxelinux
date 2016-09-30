@@ -14,6 +14,7 @@
 # Each +netinstall+ object will contain the keys:
 #   host:
 #     kickstart:
+#       label: <human-friendly label for variant>
 #       ksurl: ["none"|<URL to kickstart file>]
 #     pxelinux:
 #       config: <basename of pxelinux menu file w/o .menu>
@@ -60,10 +61,11 @@ end
 
 def pxemenu_for_netinstall(netinstall)
   config=netinstall['host.pxelinux.config']
-  label=config.gsub(/-/, ' ')
+  os_label=netinstall['system.os'].gsub(/-/, ' ')
+  ks_label=(netinstall['host.kickstart.label'] ||
+            netinstall['host.kickstart.variant'] )
   kernel=netinstall['host.pxelinux.kernel']
   append=netinstall['host.pxelinux.append']
-  variant=netinstall['host.kickstart.variant']
 
   File.open("#{$options[:output]}/config/#{config}.menu",
             File::CREAT | File::TRUNC | File::WRONLY, 0644) do |menufile|
@@ -75,13 +77,13 @@ def pxemenu_for_netinstall(netinstall)
 UI menu.c32
 PROMPT 0
 MENU INCLUDE /config/graphics.conf
-MENU AUTOBOOT Installing #{label} in # seconds
+MENU AUTOBOOT Installing #{os_label} (#{ks_label}) in # seconds
 TIMEOUT 100
 
-MENU TITLE Install #{label}
+MENU TITLE Install #{os_label} (#{ks_label})
 
 LABEL #{config}
-  MENU LABEL ^Install #{label}
+  MENU LABEL ^Install #{os_label} (#{ks_label})
   MENU DEFAULT
   KERNEL #{kernel}
   APPEND #{append}
@@ -98,7 +100,7 @@ end
 
 def pxemenu_for_operating_system(os)
   config=os['host.pxelinux.config']
-  label=config.gsub(/-/, ' ')
+  os_label=config.gsub(/-/, ' ')
   kernel=os['host.pxelinux.kernel']
   append=os['host.pxelinux.append']
 
@@ -113,22 +115,22 @@ UI menu.c32
 PROMPT 0
 MENU INCLUDE /config/graphics.conf
 
-MENU TITLE #{label} Installation Menu
+MENU TITLE #{os_label} Installation Menu
 "
 
     $jack['netinstall',
           with_all:{'system.os' => config}].each do |netinstall|
       config=netinstall['host.pxelinux.config']
-      label=config.gsub(/-/, ' ')
+      ks_label=(netinstall['host.kickstart.label'] ||
+                netinstall['host.kickstart.variant'] )
       kernel=netinstall['host.pxelinux.kernel']
       append=netinstall['host.pxelinux.append']
-      variant=netinstall['host.kickstart.variant']
 
       pxemenu_for_netinstall(netinstall)
 
       menufile << "
 LABEL #{config}
-  MENU LABEL Install #{label}
+  MENU LABEL Install #{os_label} (#{ks_label})
   KERNEL menu.c32
   APPEND /config/#{config}.menu
 "
