@@ -1,24 +1,37 @@
 #!/usr/bin/env ruby
 
-# Write PXELINUX boot configuration file from a Palletjack warehouse
+# Write PXELINUX boot menus from a Palletjack warehouse
 #
 # Data model assumptions:
 #
-# Each OS has a box containing the key "host.pxelinux.configfile",
-# whose value is a string containing a partial file name for a
-# PXELINUX configuration file which installs that OS, in the
-# /var/lib/tftpboot/config/ directory, without the ".menu" suffix.
+# Each +os+ object will contain the keys:
+#   host:
+#     kickstart:
+#       baseurl: <URL to OS installation>
+#     pxelinux:
+#       config: <basename of pxelinux menu file w/o .menu>
+#
+# Each +netinstall+ object will contain the keys:
+#   host:
+#     kickstart:
+#       ksurl: ["none"|<URL to kickstart file>]
+#     pxelinux:
+#       config: <basename of pxelinux menu file w/o .menu>
+#       kernel: <tftp path of pxelinux kernel>
+#       append: <pxelinux kernel parameters>
 #
 # PXELINUX directory tree:
 #
 # /var/lib/tftpboot/
 #  |- pxelinux.cfg
 #  |   |- default -> ../config/default
-#  |   |- 01-<MAC address> -> ../config/<OS>.menu
+#  |   |- 01-<MAC address> -> ../config/<OS>-<Variant>.menu
 #  |   ...
 #  |- config
 #  |   |- default
+#  |   |- linux.menu
 #  |   |- <OS>.menu
+#  |   |- <OS>-<Variant>.menu
 #  |   ...
 #  \- boot
 #      |- <OS>
@@ -28,7 +41,10 @@
 #      ...
 #
 # Point this script's output directory at /var/lib/tftpboot/, and it
-# will create the MAC address symlinks.
+# will create the MAC address symlinks, and menu tree for linux
+# installations.
+#
+# The boot/... and config/default needs to be populated by other means.
 
 require 'palletjack'
 require 'optparse'
