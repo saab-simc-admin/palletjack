@@ -1,0 +1,3 @@
+host:
+  kickstart:
+    label: single disk physical machine

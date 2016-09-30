@@ -12,6 +12,19 @@ The default transforms fill in "host.pxelinux.config" with the name of
 the OS.
 
 
+Files:
+
+  os/<name>/kickstart.yaml
+
+
+YAML:
+
+kickstart.yaml:
+  host:
+    kickstart:
+      baseurl: URL to operating system network installation repository
+
+
 Transformed values:
 
   host:
