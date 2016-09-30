@@ -1,3 +1,4 @@
 host:
   kickstart:
+    label: manual configuration
     ksurl: "none"
