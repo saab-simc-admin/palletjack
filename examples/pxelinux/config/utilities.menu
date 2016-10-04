@@ -1,0 +1,13 @@
+UI menu.c32
+PROMPT 0
+
+MENU INCLUDE pxelinux.cfg/graphics.conf
+MENU TITLE Utilities Menu
+
+LABEL MainMenu
+  MENU LABEL ^Return to Main Menu
+  CONFIG /config/default
+
+LABEL memtest
+  MENU LABEL ^Memory Test: Memtest86+ v4.20
+  KERNEL /boot/memtest86/memtest.4.20

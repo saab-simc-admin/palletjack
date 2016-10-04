@@ -23,3 +23,31 @@ this to your Salt master configuration:
 
 Then, install a Git hook that runs palletjack2salt after the warehouse
 has been updated.
+
+
+pxelinux
+--------
+
+Example PXELINUX configuration, compatible with the output generated
+by palletjack2pxelinux. The contents of this directory are meant to be
+placed in the root of the TFTP server, along with an installation of
+PXELINUX.
+
+For the Kickstart PXELINUX profiles to work, there needs to be an HTTP
+server at "http://kickstart/", serving Kickstart files out of its root
+directory. See the default transform rule for "host.kickstart.ksurl".
+
+The PXELINUX boot menu configuration is based on the example at
+http://www.syslinux.org/wiki/index.php?title=PXELINUX#Custom_Menu_Example_with_sub-menus.
+
+Actual boot files belonging to external utilities are not included in
+this repository.
+
+For Memtest86+, download
+http://www.memtest.org/download/4.20/memtest86+-4.20.bin.gz and unpack
+it as pxelinux/boot/memtest.4.20.
+
+For the CentOS 7 installer, download
+http://mirror.centos.org/centos/7/os/x86_64/images/pxeboot/vmlinuz and
+http://mirror.centos.org/centos/7/os/x86_64/images/pxeboot/initrd.img
+to pxelinux/boot/CentOS-7.2.1511-x86_64/.

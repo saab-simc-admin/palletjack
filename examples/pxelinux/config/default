@@ -1,0 +1,20 @@
+UI menu.c32
+PROMPT 0
+
+MENU TITLE PXE Boot Menu
+MENU INCLUDE /config/graphics.conf
+MENU AUTOBOOT Starting Local System in # seconds
+
+LABEL bootlocal
+  MENU LABEL Local ^BIOS boot
+  MENU DEFAULT
+  LOCALBOOT 0
+TIMEOUT 100
+
+LABEL InstallLinux
+  MENU LABEL Install ^Linux
+  CONFIG /config/linux.menu
+
+LABEL UtilitiesMenu
+  MENU LABEL ^Utilities
+  CONFIG /config/utilities.menu
