@@ -90,6 +90,7 @@ jack['ipv4_network'].each do |net|
   jack['ipv4_interface',
        with_all:{'pallet.ipv4_network' =>
                  net['pallet.ipv4_network']}].each do |interface|
+    next if not interface['net.layer2.address']
     net_config['reservations'] << {
       'hw-address' => interface['net.layer2.address'],
       'ip-address' => interface['net.ipv4.address'],
