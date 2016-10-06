@@ -124,7 +124,7 @@ exists_ok { Dir.mkdir($options[:local_dir]) }
 jack = PalletJack.new($options[:warehouse])
 
 jack['domain'].each do |domain|
-  zone = "#{domain['net.dns.domain']}"
+  zone = domain['net.dns.domain']
   stub_addrs = []
 
   domain['net.dns.ns'].each do |ns|
