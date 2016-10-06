@@ -94,7 +94,7 @@ File.open("#{options[:output]}/zones.conf",
     domain['net.dns.ns'].each do |address|
       ns = DNS::Zone::RR::NS.new
       ns.label = absolute_domain_name
-      ns.nameserver = "#{address}."
+      ns.nameserver = address
       zone.records << ns
     end
 
@@ -174,7 +174,7 @@ File.open("#{options[:output]}/zones.conf",
     domain['net.dns.ns'].each do |address|
       ns = DNS::Zone::RR::NS.new
       ns.label = "#{reverse_zone.origin}."
-      ns.nameserver = "#{address}."
+      ns.nameserver = address
       reverse_zone.records << ns
     end
 

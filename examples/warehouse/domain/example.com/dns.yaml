@@ -6,8 +6,8 @@ net:
       - priority: 20
         server: mail2.example.com
     ns:
-      - ns1.example.com
-      - ns2.example.com
+      - ns1.example.com.
+      - ns2
     soa-ns: ns1.example.com.
     soa-contact: hostmaster@example.com
     cname:
