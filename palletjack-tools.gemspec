@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'rugged', '~> 0.24'
   s.files	= [ 'README.md', 'LICENSE' ]
   s.files	+= Dir['tools/*']
+  s.files	+= [ 'lib/palletjack/tool-support.rb' ]
   s.bindir      = 'tools/'
   s.executables = ['dump_pallet', 'palletjack2kea', 'palletjack2salt',
     'palletjack2pxelinux', 'create_domain', 'create_system',
