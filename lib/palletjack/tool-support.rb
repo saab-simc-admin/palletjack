@@ -13,7 +13,7 @@ require 'rugged'
 # If Git information cannot be found for +warehouse_path+, return a
 # string stating its path and print an error message on stderr.
 
-def git_header(tool_name, warehouse_path, comment_char = '#', include_id = false)
+def git_header(tool_name, warehouse_path, comment_char: '#', include_id: false)
   repo = Rugged::Repository.discover(warehouse_path)
   workdir = repo.workdir
   branch = repo.head.name

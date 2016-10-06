@@ -137,7 +137,7 @@ File.open("#{options[:output]}/zones.conf",
     end
 
     File.open("#{options[:zone_dir]}/#{domain['net.dns.domain']}.zone", File::CREAT | File::TRUNC | File::WRONLY, 0644) do |zonefile|
-      zonefile << git_header('palletjack2knot', options[:warehouse], ';')
+      zonefile << git_header('palletjack2knot', options[:warehouse], comment_char: ';')
       zonefile << zone.dump_pretty
     end
 
@@ -180,7 +180,7 @@ File.open("#{options[:output]}/zones.conf",
     end
 
     File.open("#{options[:zone_dir]}/#{reverse_zone.origin}.zone", File::CREAT | File::TRUNC | File::WRONLY, 0644) do |zonefile|
-      zonefile << git_header('palletjack2knot', options[:warehouse], ';')
+      zonefile << git_header('palletjack2knot', options[:warehouse], comment_char: ';')
       zonefile << reverse_zone.dump_pretty
     end
 
