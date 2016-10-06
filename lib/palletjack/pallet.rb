@@ -41,8 +41,9 @@ class PalletJack
       boxes = Array.new
 
       super(jack.dag, pallet:{kind => name})
-      
+
       Dir.foreach(path) do |file|
+        next if file[0] == '.'
         filepath = File.join(path, file)
         filestat = File.lstat(filepath)
         case
