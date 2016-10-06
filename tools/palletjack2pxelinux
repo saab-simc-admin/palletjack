@@ -202,9 +202,8 @@ end
 # Generate pxe default menu links for each system
 
 $jack['system'].each do |system|
-  $jack['ipv4_interface',
-       with_all:{'pallet.system' =>
-                 system['pallet.system']}].each do |nic|
+  system.children.each do |nic|
+    next unless nic.kind == 'ipv4_interface'
     if system['host.pxelinux.config']
       filename = "#{$options[:output]}/pxelinux.cfg/01-#{nic['net.layer2.address'].gsub(':', '-').downcase}"
       FileUtils.ln_s("../config/#{system['host.pxelinux.config']}.menu", filename, :force => true)
