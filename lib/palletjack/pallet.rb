@@ -52,10 +52,9 @@ class PalletJack
         when filestat.symlink?
           link = File.readlink(filepath)
           lpath, lname = File.split(link)
-          lppath, lkind = File.split(lpath)
 
           pallet = Pallet.new(jack, File.absolute_path(link, path))
-          edge(pallet, pallet:{references:{lkind => lname}})
+          edge(pallet, pallet:{references:{file => lname}})
         end
       end
       merge!(pallet:{boxes: boxes})
