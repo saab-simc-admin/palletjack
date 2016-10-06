@@ -86,7 +86,7 @@ File.open("#{options[:output]}/zones.conf",
         mx = DNS::Zone::RR::MX.new
         mx.label = absolute_domain_name
         mx.priority = server['priority']
-        mx.exchange = "#{server['server']}."
+        mx.exchange = server['server']
         zone.records << mx
       end
     end
