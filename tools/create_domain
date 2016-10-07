@@ -57,6 +57,17 @@ File.open("#{$options[:warehouse]}/domain/#{$options[:domain]}/dns.yaml",
                                       'soa-contact' => '' } } }.to_yaml
 end
 
+File.open("#{$options[:warehouse]}/domain/#{$options[:domain]}/services.yaml",
+          File::CREAT | File::TRUNC | File::WRONLY, 0644) do |services_file|
+  services_file << { 'net' => { 'service' => { 'syslog' => [
+          {
+            'address' => '',
+            'port' => '514',
+            'protocol' => 'udp'
+          }
+        ] } } }.to_yaml
+end
+
 exists_ok { Dir.mkdir("#{$options[:warehouse]}/ipv4_network/") }
 exists_ok { Dir.mkdir("#{$options[:warehouse]}/ipv4_network/#{$options[:network]}") }
 warehouse_symlink("ipv4_network/#{$options[:network]}/",
