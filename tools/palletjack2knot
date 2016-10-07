@@ -78,7 +78,7 @@ File.open("#{options[:output]}/zones.conf",
 
     zone.soa.serial = serial
     zone.soa.label = absolute_domain_name
-    zone.soa.nameserver = "#{domain['net.dns.soa-ns']}."
+    zone.soa.nameserver = domain['net.dns.soa-ns']
     zone.soa.email = "#{domain['net.dns.soa-contact']}.".sub('@', '.')
 
     if domain['net.dns.mx']
@@ -86,7 +86,7 @@ File.open("#{options[:output]}/zones.conf",
         mx = DNS::Zone::RR::MX.new
         mx.label = absolute_domain_name
         mx.priority = server['priority']
-        mx.exchange = "#{server['server']}."
+        mx.exchange = server['server']
         zone.records << mx
       end
     end
@@ -94,7 +94,7 @@ File.open("#{options[:output]}/zones.conf",
     domain['net.dns.ns'].each do |address|
       ns = DNS::Zone::RR::NS.new
       ns.label = absolute_domain_name
-      ns.nameserver = "#{address}."
+      ns.nameserver = address
       zone.records << ns
     end
 
@@ -168,13 +168,13 @@ File.open("#{options[:output]}/zones.conf",
 
     reverse_zone.soa.serial = serial
     reverse_zone.soa.label = "#{reverse_zone.origin}."
-    reverse_zone.soa.nameserver = "#{domain['net.dns.soa-ns']}."
+    reverse_zone.soa.nameserver = domain['net.dns.soa-ns']
     reverse_zone.soa.email = "#{domain['net.dns.soa-contact']}.".sub('@', '.')
 
     domain['net.dns.ns'].each do |address|
       ns = DNS::Zone::RR::NS.new
       ns.label = "#{reverse_zone.origin}."
-      ns.nameserver = "#{address}."
+      ns.nameserver = address
       reverse_zone.records << ns
     end
 
