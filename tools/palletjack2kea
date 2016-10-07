@@ -3,6 +3,7 @@
 # Write configuration for the Kea DHCP server from a Palletjack warehouse
 
 require 'palletjack'
+require 'palletjack/tool-support'
 require 'optparse'
 require 'json'
 
@@ -99,5 +100,7 @@ jack['ipv4_network'].each do |net|
 
   kea_config['Dhcp4']['subnet4'] << net_config
 end
+
+puts git_header('palletjack2kea', options[:warehouse])
 
 jj kea_config

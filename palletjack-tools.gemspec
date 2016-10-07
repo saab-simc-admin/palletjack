@@ -15,6 +15,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'kvdag', '~> 0.0.3'
   s.add_runtime_dependency 'dns-zone', '~> 0.3'
   s.add_runtime_dependency 'ruby-ip', '~> 0.9'
+  s.add_runtime_dependency 'rugged', '~> 0.24'
   s.files	= [ 'README.md', 'LICENSE' ]
   s.files	+= Dir['tools/*']
   s.bindir      = 'tools/'
