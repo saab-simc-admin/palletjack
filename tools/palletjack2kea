@@ -89,7 +89,7 @@ jack['ipv4_network'].each do |net|
 
   net.children.each do |interface|
     next unless interface.kind == 'ipv4_interface'
-    next if not interface['net.layer2.address']
+    next unless interface['net.layer2.address']
     net_config['reservations'] << {
       'hw-address' => interface['net.layer2.address'],
       'ip-address' => interface['net.ipv4.address'],
