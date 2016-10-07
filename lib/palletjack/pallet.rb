@@ -18,7 +18,7 @@ class PalletJack
 
     def Pallet.new(jack, path) #:doc:
       ppath, name = File.split(path)
-      pppath, kind = File.split(ppath)
+      _, kind = File.split(ppath)
 
       jack.pallets[kind] ||= Hash.new
       jack.pallets[kind][name] || super
@@ -40,7 +40,7 @@ class PalletJack
       @jack = jack
       @path = path
       ppath, @name = File.split(path)
-      pppath, @kind = File.split(ppath)
+      _, @kind = File.split(ppath)
       boxes = Array.new
 
       super(jack.dag, pallet:{@kind => @name})
