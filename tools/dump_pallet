@@ -31,7 +31,11 @@ def dump_pallets(pallets)
   if pallets.length == 0
     puts 'No matching pallets found.'
   end
-  pallets.each {|p| puts p.to_yaml}
+  pallets.each do |p|
+    puts "---"
+    puts "# #{p.kind}: #{p.name}"
+    puts p.to_yaml
+  end
 end
 
 # Since we used the destructive opts.parse! above, all options were

@@ -2,6 +2,9 @@ class PalletJack
   # PalletJack managed pallet of key boxes inside a warehouse.
   class Pallet < KVDAG::Vertex
 
+    attr_reader :name
+    attr_reader :kind
+
     # N.B: A pallet should never be created manually; use
     # +PalletJack::new+ to initialize a complete warehouse.
     #
@@ -15,7 +18,7 @@ class PalletJack
 
     def Pallet.new(jack, path) #:doc:
       ppath, name = File.split(path)
-      pppath, kind = File.split(ppath)
+      _, kind = File.split(ppath)
 
       jack.pallets[kind] ||= Hash.new
       jack.pallets[kind][name] || super
@@ -36,11 +39,11 @@ class PalletJack
     def initialize(jack, path) #:notnew:
       @jack = jack
       @path = path
-      ppath, name = File.split(path)
-      pppath, kind = File.split(ppath)
+      ppath, @name = File.split(path)
+      _, @kind = File.split(ppath)
       boxes = Array.new
 
-      super(jack.dag, pallet:{kind => name})
+      super(jack.dag, pallet:{@kind => @name})
 
       Dir.foreach(path) do |file|
         next if file[0] == '.'
@@ -60,7 +63,7 @@ class PalletJack
       end
       merge!(pallet:{boxes: boxes})
       @jack.keytrans_writer.transform!(self)
-      @jack.pallets[kind][name] = self
+      @jack.pallets[@kind][@name] = self
     end
 
     def inspect
