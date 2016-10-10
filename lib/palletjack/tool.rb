@@ -143,7 +143,7 @@ class PalletJack
       File.join(path.map {|item|
                   case item
                   when Symbol
-                    options[item]
+                    options.fetch(item)
                   else
                     item.to_s
                   end
