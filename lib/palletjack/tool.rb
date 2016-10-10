@@ -215,19 +215,25 @@ class PalletJack
       end
     end
 
-    # Create a link from a pallet to a parent
+    # Create links from a pallet to parents
+    #
+    # Example:
+    #
+    #   pallet_links 'domain', :domain, ipv4_network:['ipv4_network', :network]
 
-    def pallet_link(kind, name, link_type, parent_kind, parent_name)
-      link_path = config_path(:warehouse, kind, name, link_type)
-      parent_path = config_path('..', '..', parent_kind, parent_name)
+    def pallet_links(kind, name, links={})
+      links.each do |link_type, parent|
+        parent_kind, parent_name = parent
+        link_path = config_path(:warehouse, kind, name, link_type.to_s)
+        parent_path = config_path('..', '..', parent_kind, parent_name)
 
-      begin
-        File.delete(link_path)
-      rescue Errno::ENOENT
-        nil
+        begin
+          File.delete(link_path)
+        rescue Errno::ENOENT
+          nil
+        end
+        File.symlink(parent_path, link_path)
       end
-
-      File.symlink(parent_path, link_path)
     end
   end
 end
