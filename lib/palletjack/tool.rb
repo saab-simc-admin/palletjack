@@ -216,23 +216,30 @@ class PalletJack
     end
 
     # Create links from a pallet to parents
+    # 
+    # links contain key-value pairs <link_type>:[<parent_kind>, <parent_name>]
+    #
+    # If the link target is empty (e.g. <link_type>:[]), the link is removed.
     #
     # Example:
     #
-    #   pallet_links 'domain', :domain, ipv4_network:['ipv4_network', :network]
+    #   pallet_links 'system', :system, os:['os', :os], netinstall:[]
 
     def pallet_links(kind, name, links={})
       links.each do |link_type, parent|
-        parent_kind, parent_name = parent
         link_path = config_path(:warehouse, kind, name, link_type.to_s)
-        parent_path = config_path('..', '..', parent_kind, parent_name)
 
         begin
           File.delete(link_path)
         rescue Errno::ENOENT
           nil
         end
-        File.symlink(parent_path, link_path)
+        unless parent.empty?
+          parent_kind, parent_name = parent
+          parent_path = config_path('..', '..', parent_kind, parent_name)
+
+          File.symlink(parent_path, link_path)
+        end
       end
     end
   end
