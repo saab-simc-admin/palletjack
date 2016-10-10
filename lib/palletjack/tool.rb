@@ -59,6 +59,7 @@ class PalletJack
     def initialize
       @parser = OptionParser.new
       @options = {}
+      @option_checks = []
 
       @parser.banner = "Usage: #{$PROGRAM_NAME} -w <warehouse> [options]"
       @parser.separator ''
@@ -71,6 +72,7 @@ class PalletJack
       parse_options(@parser)
 
       @parser.parse!
+      @option_checks.each {|check| check.call }
     rescue
       abort(usage)
     end
@@ -87,14 +89,18 @@ class PalletJack
     # Raises ArgumentError if none exist in options[]
 
     def required_option(*opts)
-      raise ArgumentError unless opts.any? {|opt| options[opt]}
+      @option_checks << lambda do
+        raise ArgumentError unless opts.any? {|opt| options[opt]}
+      end
     end
 
     # Require presence of no more than one of the given options
     # Raises ArgumentError if more than one exist in options[]
 
     def exclusive_options(*opts)
-      raise ArgumentError if opts.count {|opt| options[opt]} > 1
+      @option_checks << lambda do
+        raise ArgumentError if opts.count {|opt| options[opt]} > 1
+      end
     end
 
     # Usage information from option parser
