@@ -2,48 +2,49 @@
 
 # Simple script for dumping a specified pallet as YAML.
 
-require 'palletjack'
-require 'optparse'
+require 'palletjack/tool'
 
-options = {:type => 'system'}
+class DumpPallet < PalletJack::Tool
+  def parse_options(parser)
 
-opts = OptionParser.new
-opts.banner = "Usage: #{$PROGRAM_NAME} [options] [<name> ...]
+    parser.banner = "Usage: #{$PROGRAM_NAME} [options] [<name> ...]
 
 Dump the YAML representation of all named pallets in a Palletjack warehouse
 
 If a name is specified, dump only that pallet. Otherwise, dump all
-pallets of the specified type.
+pallets of the specified type."
 
-"
-opts.on('-w DIR', '--warehouse DIR', 'warehouse directory', String) {|dir| options[:warehouse] = dir }
-opts.on('-t TYPE', '--type TYPE', 'type (default "system")', String) {|type| options[:type] = type }
-opts.parse!
+    # The preset value for options[:type] will be overridden when
+    # the parse! method of the parser is eventually run and finds
+    # a --type option. Keep declarations in that order for clarity.
 
-if not options[:warehouse]
-  puts opts.to_s
-  exit 1
+    options[:type]='system'
+    parser.on('-t TYPE', '--type TYPE',
+              'type (default "system")',
+              String) {|type| options[:type] = type }
+  end
+
+  # Dump the yaml contents of all pallets given to STDOUT
+
+  def dump_pallets(pallets)
+    abort('No matching pallets found.') if pallets.empty?
+
+    pallets.each do |p|
+      puts "---"
+      puts "# #{p.kind}: #{p.name}"
+      puts p.to_yaml
+    end
+  end
 end
 
-jack = PalletJack.new(options[:warehouse])
-
-def dump_pallets(pallets)
-  if pallets.length == 0
-    puts 'No matching pallets found.'
-  end
-  pallets.each do |p|
-    puts "---"
-    puts "# #{p.kind}: #{p.name}"
-    puts p.to_yaml
-  end
-end
-
-# Since we used the destructive opts.parse! above, all options were
-# removed from ARGV, leaving just the names to search for.
-if ARGV.length == 0
-  dump_pallets(jack[options[:type]])
-else
-  ARGV.each do |name|
-    dump_pallets(jack[options[:type], name:name])
+DumpPallet.run do
+  # Since the Tool framework uses destructive opts.parse!, all options
+  # were removed from ARGV, leaving just the names to search for.
+  if ARGV.empty?
+    dump_pallets(jack[options[:type]])
+  else
+    ARGV.each do |name|
+      dump_pallets(jack[options[:type], name:name])
+    end
   end
 end
