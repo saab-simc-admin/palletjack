@@ -217,7 +217,7 @@ class PalletJack
     end
 
     # Create links from a pallet to parents
-    # 
+    #
     # links contain key-value pairs <link_type>:[<parent_kind>, <parent_name>]
     #
     # If the link target is empty (e.g. <link_type>:[]), the link is removed.
@@ -248,12 +248,14 @@ class PalletJack
     # suitable for inclusion at the top of a generated configuration file,
     # with each line prefixed by +comment_char+.
     #
-    # If +warehouse_path+ points within a Git repository, return a string
-    # stating its absolute path and active branch. If +include_id+ is
-    # true, also include the commit ID of the branch's HEAD.
+    # If <tt>options[:warehouse]</tt> points within a Git repository,
+    # return a string stating its absolute path and active branch. If
+    # +include_id+ is true, also include the commit ID of the branch's
+    # HEAD.
     #
-    # If Git information cannot be found for +warehouse_path+, return a
-    # string stating its path and print an error message on stderr.
+    # If Git information cannot be found for
+    # <tt>options[:warehouse]</tt>, return a string stating its path
+    # and print an error message on stderr.
 
     def git_header(tool_name, comment_char: '#', include_id: false)
       repo = Rugged::Repository.discover(options[:warehouse])
