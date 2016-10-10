@@ -47,31 +47,36 @@
 #
 # The boot/... and config/default needs to be populated by other means.
 
-require 'palletjack'
-require 'palletjack/tool-support'
-require 'optparse'
+require 'palletjack/tool'
 require 'fileutils'
 
-def exists_ok(&code)
-  code.call()
-rescue Errno::EEXIST
-  nil
-end
+class PalletJack2PXELinux < PalletJack::Tool
 
-# Generate pxe menus for each OS configuration
+  def parse_options(opts)
+    opts.banner =
+"Usage: #{$PROGRAM_NAME} -w <warehouse> -d <output directory>
 
-def pxemenu_for_netinstall(netinstall)
-  config=netinstall['host.pxelinux.config']
-  os_label=netinstall['system.os'].gsub(/-/, ' ')
-  ks_label=(netinstall['host.kickstart.label'] ||
-            netinstall['host.kickstart.variant'] )
-  kernel=netinstall['host.pxelinux.kernel']
-  append=netinstall['host.pxelinux.append']
+Write PXELINUX boot configuration files from a Palletjack warehouse"
 
-  File.open("#{$options[:output]}/config/#{config}.menu",
-            File::CREAT | File::TRUNC | File::WRONLY, 0644) do |menufile|
-    menufile << git_header('palletjack2pxelinux', $options[:warehouse])
-    menufile << "
+    opts.on('-o DIR', '--output DIR', 'output directory (tftpboot/)',
+            String) {|dir| options[:output] = dir }
+
+    required_option :output
+  end
+
+  # Generate pxe menus for each OS configuration
+
+  def pxemenu_for_netinstall(netinstall)
+    config=netinstall['host.pxelinux.config']
+    os_label=netinstall['system.os'].gsub(/-/, ' ')
+    ks_label=(netinstall['host.kickstart.label'] ||
+              netinstall['host.kickstart.variant'] )
+    kernel=netinstall['host.pxelinux.kernel']
+    append=netinstall['host.pxelinux.append']
+
+    config_file :output, 'config', "#{config}.menu" do |menufile|
+      menufile << git_header('palletjack2pxelinux')
+      menufile << "
 UI menu.c32
 PROMPT 0
 MENU INCLUDE /config/graphics.conf
@@ -91,21 +96,20 @@ LABEL MainMenu
   KERNEL menu.c32
   APPEND /config/default
 "
+    end
   end
-end
 
-# Generate pxe menus for each OS version
+  # Generate pxe menus for each OS version
 
-def pxemenu_for_operating_system(os)
-  config=os['host.pxelinux.config']
-  os_label=config.gsub(/-/, ' ')
-  kernel=os['host.pxelinux.kernel']
-  append=os['host.pxelinux.append']
+  def pxemenu_for_operating_system(os)
+    config=os['host.pxelinux.config']
+    os_label=config.gsub(/-/, ' ')
+    kernel=os['host.pxelinux.kernel']
+    append=os['host.pxelinux.append']
 
-  File.open("#{$options[:output]}/config/#{config}.menu",
-            File::CREAT | File::TRUNC | File::WRONLY, 0644) do |menufile|
-    menufile << git_header('palletjack2pxelinux', $options[:warehouse])
-    menufile << "
+    config_file :output, 'config', "#{config}.menu" do |menufile|
+      menufile << git_header('palletjack2pxelinux')
+      menufile << "
 UI menu.c32
 PROMPT 0
 MENU INCLUDE /config/graphics.conf
@@ -113,61 +117,40 @@ MENU INCLUDE /config/graphics.conf
 MENU TITLE #{os_label} Installation Menu
 "
 
-    $jack['netinstall',
-          with_all:{'system.os' => config}].each do |netinstall|
-      config=netinstall['host.pxelinux.config']
-      ks_label=(netinstall['host.kickstart.label'] ||
-                netinstall['host.kickstart.variant'] )
-      kernel=netinstall['host.pxelinux.kernel']
-      append=netinstall['host.pxelinux.append']
+      os.children.select{|c| c.kind == 'netinstall'}.each do |netinstall|
+        config=netinstall['host.pxelinux.config']
+        ks_label=(netinstall['host.kickstart.label'] ||
+                  netinstall['host.kickstart.variant'] )
+        kernel=netinstall['host.pxelinux.kernel']
+        append=netinstall['host.pxelinux.append']
 
-      pxemenu_for_netinstall(netinstall)
+        pxemenu_for_netinstall(netinstall)
 
-      menufile << "
+        menufile << "
 LABEL #{config}
   MENU LABEL Install #{os_label} (#{ks_label})
   KERNEL menu.c32
   APPEND /config/#{config}.menu
 "
-    end
+      end
 
-    menufile << "
+      menufile << "
 LABEL MainMenu
   MENU LABEL ^Main Menu
   KERNEL menu.c32
   APPEND /config/default
 "
+    end
   end
 end
 
-$options = {}
+PalletJack2PXELinux.run do
+  config_dir :output, 'config'
+  config_dir :output, 'pxelinux.cfg'
 
-opts = OptionParser.new
-opts.banner = "Usage: #{$PROGRAM_NAME} -w <warehouse> -d <output directory>
-
-Write PXELINUX boot configuration files from a Palletjack warehouse
-
-"
-opts.on('-w DIR', '--warehouse DIR', 'warehouse directory', String) {|dir| $options[:warehouse] = dir }
-opts.on('-o DIR', '--output DIR', 'output directory (tftpboot/)', String) {|dir| $options[:output] = dir }
-opts.parse!
-
-if not $options[:warehouse] or
-    not $options[:output] or
-    not File.directory?($options[:output])
-  puts opts.to_s
-  exit 1
-end
-
-exists_ok { Dir.mkdir("#{$options[:output]}/config/") }
-exists_ok { Dir.mkdir("#{$options[:output]}/pxelinux.cfg/") }
-
-$jack = PalletJack.new($options[:warehouse])
-
-File.open("#{$options[:output]}/config/linux.menu",
-          File::CREAT | File::TRUNC | File::WRONLY, 0644) do |menufile|
-  menufile << git_header('palletjack2pxelinux', $options[:warehouse])
-  menufile << "
+  config_file :output, 'config', 'linux.menu' do |menufile|
+    menufile << git_header('palletjack2pxelinux')
+    menufile << "
 UI menu.c32
 PROMPT 0
 MENU INCLUDE /config/graphics.conf
@@ -175,30 +158,35 @@ MENU INCLUDE /config/graphics.conf
 MENU TITLE Linux Installation Menu
 "
 
-  $jack['os'].each do |os|
-    next unless config=os['host.pxelinux.config']
+    jack['os'].each do |os|
+      next unless config=os['host.pxelinux.config']
 
-    label=config.gsub(/-/, ' ')
+      label=config.gsub(/-/, ' ')
 
-    pxemenu_for_operating_system(os)
+      pxemenu_for_operating_system(os)
 
-    menufile << "
+      menufile << "
 LABEL #{config}
   MENU LABEL Install #{label}
   KERNEL menu.c32
   APPEND /config/#{config}.menu
 "
+    end
   end
-end
 
-# Generate pxe default menu links for each system
+  # Generate pxe default menu links for each system
 
-$jack['system'].each do |system|
-  system.children.each do |nic|
-    next unless nic.kind == 'ipv4_interface'
-    if system['host.pxelinux.config']
-      filename = "#{$options[:output]}/pxelinux.cfg/01-#{nic['net.layer2.address'].gsub(':', '-').downcase}"
-      FileUtils.ln_s("../config/#{system['host.pxelinux.config']}.menu", filename, :force => true)
+  jack['system'].each do |system|
+    system.children.each do |nic|
+      next unless nic.kind == 'ipv4_interface'
+      if system['host.pxelinux.config']
+        menuname = "#{system['host.pxelinux.config']}.menu"
+        linkname = "01-#{nic['net.layer2.address'].gsub(':', '-').downcase}"
+
+        FileUtils.ln_s(config_path('..', 'config', menuname),
+                       config_path(:output, 'pxelinux.cfg', linkname),
+                       :force => true)
+      end
     end
   end
 end
