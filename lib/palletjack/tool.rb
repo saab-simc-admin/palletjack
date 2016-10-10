@@ -199,9 +199,20 @@ class PalletJack
     end
 
     # Write a new key box inside a pallet
+    #
+    # The block should return a hash representing the contents of the box.
+    # All keys will be stringified, so we can use key: short forms for
+    # declaration of the box contents.
+    #
+    # Example:
+    #   pallet_box 'domain', :domain, 'dns' do
+    #     { dns:{ ns:options[:soa_ns].split(',') } }
+    #   end
 
     def pallet_box(kind, name, box, &block)
-      config_file :warehouse, kind, name, "#{box}.yaml", &block
+      config_file :warehouse, kind, name, "#{box}.yaml" do |box_file|
+        box_file = block.call.deep_stringify_keys.to_yaml
+      end
     end
 
     # Create a link from a pallet to a parent
