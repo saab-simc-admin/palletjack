@@ -194,6 +194,7 @@ class PalletJack
     # Create a new pallet dir if needed
 
     def pallet_dir(kind, name)
+      config_dir :warehouse, kind
       config_dir :warehouse, kind, name
     end
 
