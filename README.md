@@ -189,3 +189,29 @@ system:
   - ''
   name: vmhost
 ```
+
+## Contributing
+
+We are happy to accept contributions in the form of issues and pull requests on [GitHub](https://github.com/saab-simc-admin/palletjack). Please follow these guidelines to make the experience as smooth as possible:
+
+- All development takes place in feature branches, with master only accepting non-fast-forward merges.
+
+- Others shall be able to use the Pallet Jack library to build their own tools. To facilitate this, the library and the included tools are packaged as two different Ruby gems, and are intended to be loosely coupled. If you introduce API changes, please increment version numbers according to [semantic versioning](http://semver.org/).
+
+- All code will be reviewed before it is merged. To help the reviewer, send your work as a series of logically separate changes, not as one gigantic squash commit. Make sure bisection will work by ensuring the code actually works after each change.
+
+- GnuPG sign all your commits and tags, with a key that is [validated by GitHub](https://help.github.com/articles/about-gpg-commit-and-tag-signatures/).
+
+  - GitHub's web UI cannot generate signed merges when accepting pull requests. Instead, we use [a custom tool](https://github.com/saab-simc-admin/workflow-tools/tree/master/git-ghpr) to accept them. You can still send them through the web as usual.
+
+  - Your code shall be signed by you. Therefore, the maintainer cannot fix any merge conflicts arising from your pull request. If there are any conflicts, please rebase onto current master before sending your pull request.
+
+- Document your work.
+
+  - At an absolute minimum, Ruby code shall have [RDoc](https://rdoc.github.io/rdoc/) blocks documenting each function, with analogues for other languages (e.g. Python [docstrings](https://www.python.org/dev/peps/pep-0257/)).
+
+  - User-visible features shall have examples in the [`examples/` directory](https://github.com/saab-simc-admin/palletjack/tree/master/examples). In particular, [the example warehouse](https://github.com/saab-simc-admin/palletjack/tree/master/examples/warehouse) shall include demonstrations of all keys used by any included tool.
+
+    - If your code needs larger chunks of static data to work, please provide it in a separate directory under `examples/`. See e.g. [the `examples/pxelinux/` tree](https://github.com/saab-simc-admin/palletjack/tree/master/examples/pxelinux), which contains files required to make sense of the output from `palletjack2pxelinux`.
+
+  - Write your commit messages in the usual Git style: a short summary in the first line, then paragraphs of explanatory text, line wrapped.
