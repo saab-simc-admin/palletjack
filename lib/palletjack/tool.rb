@@ -39,12 +39,12 @@ class PalletJack
     # Run the +block+ given in the context of the tool singleton instance
     # as convenience for simple tools.
     #
-    # More complex tools probably want to override initialize to
+    # More complex tools probably want to override parse_options to
     # add option parsing, and split functionality into multiple methods.
     #
     # Example:
     #
-    # MyTool.run { jack['system'].each {|sys| puts sys.to_yaml } }
+    #   MyTool.run { jack['system'].each {|sys| puts sys.to_yaml } }
 
     def self.run(&block)
       instance.instance_eval(&block)
