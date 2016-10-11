@@ -12,18 +12,19 @@ class PalletJack
   # and warehouse structure management.
   #
   # Example:
+  #   require 'palletjack/tool'
+  #
   #   class MyTool < PalletJack::Tool
   #     def parse_options(parser)
   #       parser.on('-o DIR', '--output DIR',
   #                 'output directory',
-  #                 String) { options[:output] = dir }
+  #                 String) {|dir| options[:output] = dir }
   #
   #       required_option :output
   #     end
   #   end
   #
   #   MyTool.run do
-  #
   #     jack['system'].each do |sys|
   #        config_dir :output, sys.name
   #        config_file :output, sys.name, "dump.yaml" do |file|
