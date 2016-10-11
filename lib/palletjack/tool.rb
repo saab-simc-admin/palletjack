@@ -58,7 +58,7 @@ class PalletJack
     # Any exceptions raised during option parsing will abort execution
     # with usage information.
 
-    def initialize
+    def initialize #:notnew:
       @parser = OptionParser.new
       @options = {}
       @option_checks = []
