@@ -81,14 +81,43 @@ class PalletJack
 
     # Additional option parsing
     #
-    # Implementations needing more options than the default --warehouse and
-    # -- help should override this empty default
+    # The default instance initalization will add option parsing for
+    # <tt>-w</tt>/<tt>--warehouse</tt> and <tt>-h</tt>/<tt>--help</tt>,
+    # and a simple banner string.
+    #
+    # Implementations needing more options than the default, a more
+    # informative banner, or requirement checks for parsed options should
+    # override this empty method.
+    #
+    # Any exceptions raised will abort execution with usage information.
+    #
+    # Example:
+    #
+    #   class MyTool < PalletJack::Tool
+    #     def parse_options(parser)
+    #       parser.on('-o DIR', '--output DIR',
+    #                 'output directory',
+    #                 String) {|dir| options[:output] = dir }
+    #
+    #       required_option :output
+    #     end
+    #   end
 
     def parse_options(parser)
     end
 
-    # Require presence of one of the given options
+    # Require the presence of one of the given options.
+    #
+    # Must not be called outside the scope of the parse_options method.
+    #
     # Raises ArgumentError if none exist in options[]
+    #
+    # Example:
+    #
+    #   def parse_options(parser)
+    #     ...
+    #     required_option :output
+    #   end
 
     def required_option(*opts)
       @option_checks << lambda do
@@ -96,8 +125,19 @@ class PalletJack
       end
     end
 
-    # Require presence of no more than one of the given options
+    # Require the presence of no more than one of the given options.
+    #
+    # Must not be called outside the scope of the parse_options method.
+    #
     # Raises ArgumentError if more than one exist in options[]
+    #
+    # Example:
+    #
+    #   def parse_options(parse)
+    #     ...
+    #     required_option :output_file, :output_stdout
+    #     exclusive_options :output_file, :output_stdout
+    #   end
 
     def exclusive_options(*opts)
       @option_checks << lambda do
