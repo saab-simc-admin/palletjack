@@ -33,12 +33,12 @@ CreateSystem.run do
   pallet_box 'system', :system, 'role' do
     { system:{ role:[ '' ] } }
   end
-  pallet_links 'system', :system, domain:['domain', :domain]
+  pallet_links 'system', :system, 'domain' => ['domain', :domain]
   pallet_links 'system', :system,
     if options[:os]
-      { os:['os', :os], netinstall:[] }
+      { 'os' => ['os', :os], 'netinstall' => [] }
     elsif options[:netinstall]
-      { os:[], netinstall:['netinstall', :netinstall] }
+      { 'os' => [], 'netinstall' => ['netinstall', :netinstall] }
     else
       abort('Both --os and --netinstall were nil; should not happen!')
     end

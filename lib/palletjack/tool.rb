@@ -279,17 +279,20 @@ class PalletJack
 
     # Create links from a pallet to parents
     #
-    # links contain key-value pairs <link_type>:[<parent_kind>, <parent_name>]
+    # Uses config_path to construct paths within the warehouse, so any
+    # symbols will be looked up in the options hash.
     #
-    # If the link target is empty (e.g. <link_type>:[]), the link is removed.
+    # +links+ is a hash containing +link_type+=>[+parent_kind+, +parent_name+]
+    #
+    # If the link target is empty (e.g. +link_type+=>[]), the link is removed.
     #
     # Example:
     #
-    #   pallet_links 'system', :system, os:['os', :os], netinstall:[]
+    #   pallet_links 'system', :system, 'os'=>['os', :os], 'netinstall'=>[]
 
     def pallet_links(kind, name, links={})
       links.each do |link_type, parent|
-        link_path = config_path(:warehouse, kind, name, link_type.to_s)
+        link_path = config_path(:warehouse, kind, name, link_type)
 
         begin
           File.delete(link_path)

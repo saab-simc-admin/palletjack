@@ -47,6 +47,6 @@ CreateDomain.run do
   pallet_box 'domain', :domain, 'services' do
     { net:{ service:{ syslog:[{address:'', port:'514', protocol:'udp' } ] } } }
   end
-  pallet_links 'domain', :domain, ipv4_network:['ipv4_network', :network]
+  pallet_links 'domain', :domain, 'ipv4_network' => ['ipv4_network', :network]
 
 end

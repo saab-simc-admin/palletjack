@@ -44,8 +44,8 @@ CreateIPv4Interface.run do
 
   pallet_dir 'ipv4_interface', :addr
   pallet_links 'ipv4_interface', :addr,
-    ipv4_network:['ipv4_network', :network],
-    domain:['domain', :domain],
-    phy_nic:['phy_nic', :mac],
-    system:['system', :system]
+    'ipv4_network' => ['ipv4_network', :network],
+    'domain' => ['domain', :domain],
+    'phy_nic' => ['phy_nic', :mac],
+    'system' => ['system', :system]
 end
