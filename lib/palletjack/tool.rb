@@ -193,12 +193,13 @@ class PalletJack
     end
 
     # :call-seq:
-    # config_dir '/path/name'
+    # config_dir '', 'path', 'name'
     # config_dir :option, 'subdir', ...
     #
     # Creates a directory if it doesn't already exist.
     #
-    # Uses config_path to construct the path.
+    # Uses config_path to construct the path, so any symbols will
+    # be looked up in the options hash.
     #
     # Example:
     #
