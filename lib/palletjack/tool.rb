@@ -212,14 +212,15 @@ class PalletJack
     end
 
     # :call-seq:
-    # config_file "filename" {|file| ... }
+    # config_file 'filename' {|file| ... }
     # config_file :option, 'fragment', 'base.ext' {|file| ... }
     # config_file ..., mode:0600 {|file| ...}
     #
     # Creates a configuration file, with default mode:0644
     # and calls the given block with the file as argument.
     #
-    # Uses config_path to construct the path.
+    # Uses config_path to construct the path, so any symbols will
+    # be looked up in the options hash.
     #
     # Example:
     #
