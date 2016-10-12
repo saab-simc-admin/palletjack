@@ -2,65 +2,44 @@
 
 # Create a system in a warehouse
 
-require 'palletjack'
-require 'optparse'
+require 'palletjack/tool'
 
-$options = {}
+class CreateSystem < PalletJack::Tool
+  def parse_options(opts)
+    opts.banner =
+"Usage: #{$PROGRAM_NAME} -w <warehouse> -s <system> -d <domain> \\
+                      [ -o <os> | -n <netinstall> ]
 
-opts = OptionParser.new
-opts.banner = "Usage: #{$PROGRAM_NAME} -w <warehouse> -s <system> -d <domain> [ -o <os> | -n <netinstall> ]
+Create system objects in a warehouse"
 
-Create system objects in a warehouse
+    opts.on('-s SYSTEM', '--system SYSTEM', 'system name', String) {|system|
+      options[:system] = system }
+    opts.on('-d DOMAIN', '--domain DOMAIN', 'domain name', String) {|domain|
+      options[:domain] = domain }
+    opts.on('-o OS', '--os OS', 'operating system name', String) {|os|
+      options[:os] = os }
+    opts.on('-n OS', '--netinstall NETINSTALL', 'network installation profile',
+            String) {|netinstall| options[:netinstall] = netinstall }
 
-"
-opts.on('-w DIR', '--warehouse DIR', 'warehouse directory', String) { |dir| $options[:warehouse] = dir }
-opts.on('-s SYSTEM', '--system SYSTEM', 'system name', String) { |system| $options[:system] = system }
-opts.on('-d DOMAIN', '--domain DOMAIN', 'domain name', String) { |domain| $options[:domain] = domain }
-opts.on('-o OS', '--os OS', 'operating system name', String) { |os| $options[:os] = os }
-opts.on('-n OS', '--netinstall NETINSTALL', 'network installation profile', String) { |netinstall| $options[:netinstall] = netinstall }
-opts.parse!
-
-if not $options[:warehouse] or
-    not $options[:system] or
-    not $options[:domain] or
-    not ( $options[:os] or $options[:netinstall] ) or
-    ( $options[:os] and $options[:netinstall] ) or
-    not File.directory?($options[:warehouse])
-  puts opts.to_s
-  exit 1
-end
-
-def exists_ok(&code)
-  code.call()
-rescue Errno::EEXIST
-  nil
-end
-
-def warehouse_symlink(target, source)
-  begin
-    File.delete("#{$options[:warehouse]}/#{source}")
-  rescue Errno::ENOENT
-    nil
+    required_option :system
+    required_option :domain
+    required_option :os, :netinstall
+    exclusive_options :os, :netinstall
   end
-
-  File.symlink("../../#{target}", "#{$options[:warehouse]}/#{source}")
 end
 
-exists_ok { Dir.mkdir("#{$options[:warehouse]}/system/") }
-exists_ok { Dir.mkdir("#{$options[:warehouse]}/system/#{$options[:system]}") }
-
-File.open("#{$options[:warehouse]}/system/#{$options[:system]}/role.yaml",
-          File::CREAT | File::TRUNC | File::WRONLY, 0644) do |dns_file|
-  dns_file << { 'system' => { 'role' => [ '' ] } }.to_yaml
-end
-
-warehouse_symlink("domain/#{$options[:domain]}/",
-                  "system/#{$options[:system]}/domain")
-
-if $options[:os]
-  warehouse_symlink("os/#{$options[:os]}/",
-                    "system/#{$options[:system]}/os")
-elsif $options[:netinstall]
-  warehouse_symlink("netinstall/#{$options[:netinstall]}/",
-                    "system/#{$options[:system]}/netinstall")
+CreateSystem.run do
+  pallet_dir 'system', :system
+  pallet_box 'system', :system, 'role' do
+    { system:{ role:[ '' ] } }
+  end
+  pallet_links 'system', :system, 'domain' => ['domain', :domain]
+  pallet_links 'system', :system,
+    if options[:os]
+      { 'os' => ['os', :os], 'netinstall' => [] }
+    elsif options[:netinstall]
+      { 'os' => [], 'netinstall' => ['netinstall', :netinstall] }
+    else
+      abort('Both --os and --netinstall were nil; should not happen!')
+    end
 end

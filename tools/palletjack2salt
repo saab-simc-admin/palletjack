@@ -17,46 +17,41 @@
 # Data model assumptions:
 # - Salt minion ID is FQDN
 
-require 'palletjack'
-require 'optparse'
+require 'palletjack/tool'
 require 'yaml'
 
-options = {}
+class PalletJack2Salt < PalletJack::Tool
+  def parse_options(opts)
+    opts.banner =
+"Usage: #{$PROGRAM_NAME} -w <warehouse> -o <output directory>
 
-opts = OptionParser.new
-opts.banner = "Usage: #{$PROGRAM_NAME} -w <warehouse> -d <output directory>
+Write Salt pillar data from a Palletjack warehouse, one YAML file per system"
 
-Write Salt pillar data from a Palletjack warehouse, one YAML file per system
+    opts.on('-o DIR', '--output DIR', 'output directory', String) {|dir|
+      options[:output] = dir }
 
-"
-opts.on('-w DIR', '--warehouse DIR', 'warehouse directory', String) {|dir| options[:warehouse] = dir }
-opts.on('-o DIR', '--output DIR', 'output directory', String) {|dir| options[:output] = dir }
-opts.parse!
-
-if not options[:warehouse] or
-    not options[:output] or
-    not File.directory?(options[:output])
-  puts opts.to_s
-  exit 1
+    required_option :output
+  end
 end
 
-jack = PalletJack.new(options[:warehouse])
+PalletJack2Salt.run do
+  jack['system'].each do |system|
+    yaml_output = { 'ipv4_interfaces' => {} }
 
-jack['system'].each do |system|
-  yaml_output = { 'ipv4_interfaces' => {} }
-  system.children.each do |interface|
-    next unless interface.kind == 'ipv4_interface'
-    yaml_output['ipv4_interfaces'][interface['net.layer2.name']] = {
-      interface['net.ipv4.address'] =>
-      interface.filter('net.ipv4', 'net.layer2').to_hash
-    }
-  end
+    system.children.each do |interface|
+      next unless interface.kind == 'ipv4_interface'
+      yaml_output['ipv4_interfaces'][interface['net.layer2.name']] = {
+        interface['net.ipv4.address'] =>
+        interface.filter('net.ipv4', 'net.layer2').to_hash
+      }
+    end
 
-  yaml_output['system'] = system['system']
+    yaml_output['system'] = system['system']
 
-  yaml_output['service'] = { 'syslog' => system['net.service.syslog'] }
+    yaml_output['service'] = { 'syslog' => system['net.service.syslog'] }
 
-  File.open("#{options[:output]}/#{system['net.dns.fqdn']}.yaml", File::CREAT | File::TRUNC | File::WRONLY, 0644) do |yamlfile|
-    yamlfile << { 'palletjack' => yaml_output }.to_yaml
+    config_file :output, "#{system['net.dns.fqdn']}.yaml" do |yamlfile|
+      yamlfile << { 'palletjack' => yaml_output }.to_yaml
+    end
   end
 end
