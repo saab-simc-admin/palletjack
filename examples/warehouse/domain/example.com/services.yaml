@@ -7,3 +7,5 @@ net:
       - address: logstash.example.com
         port: 5514
         protocol: tcp
+    zabbix:
+      server: zabbix.example.com
