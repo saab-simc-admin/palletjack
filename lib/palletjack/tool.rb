@@ -222,6 +222,8 @@ class PalletJack
     # Uses config_path to construct the path, so any symbols will
     # be looked up in the options hash.
     #
+    # N.B! If the file already exists, it will be overwritten!
+    #
     # Example:
     #
     #   config_file :output, system.name, 'dump.yaml' do |file|
