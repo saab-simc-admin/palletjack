@@ -251,13 +251,22 @@ class PalletJack
       config_dir :warehouse, kind, name
     end
 
-    # Write a new key box inside a pallet
+    # Write a key box file inside a pallet
     #
     # The block should return a hash representing the contents of the box.
     # All keys will be stringified, so we can use key: short forms for
     # declaration of the box contents.
     #
+    # Uses config_file to create the file, so any symbols will
+    # be looked up in the options hash.
+    #
+    # N.B! If the box already exists, it will be overwritten!
+    #--
+    # FIXME: should new values be merged with existing box data instead?
+    #++
+    #
     # Example:
+    #
     #   pallet_box 'domain', :domain, 'dns' do
     #     { dns:{ ns:options[:soa_ns].split(',') } }
     #   end
