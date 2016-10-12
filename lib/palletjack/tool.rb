@@ -235,7 +235,16 @@ class PalletJack
       end
     end
 
-    # Create a new pallet dir if needed
+    # Create a new pallet directory inside the warehouse
+    #
+    # Uses config_dir to create the directory, so any symbols will
+    # be looked up in the options hash.
+    #
+    # This is effectively a noop if the pallet already exists.
+    #
+    # Example:
+    #
+    #   pallet_dir 'system', :system_name
 
     def pallet_dir(kind, name)
       config_dir :warehouse, kind
