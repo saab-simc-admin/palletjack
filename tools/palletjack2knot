@@ -18,7 +18,7 @@ require 'ip'
 class PalletJack2Knot < PalletJack::Tool
   def parse_options(opts)
     opts.banner =
-"Usage: #{$PROGRAM_NAME} -w <warehouse> -d <output directory>
+"Usage: #{$PROGRAM_NAME} -w <warehouse> -o <output directory>
 
 Write DNS server zone files from a Palletjack warehouse"
 

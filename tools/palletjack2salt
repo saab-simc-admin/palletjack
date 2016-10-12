@@ -23,7 +23,7 @@ require 'yaml'
 class PalletJack2Salt < PalletJack::Tool
   def parse_options(opts)
     opts.banner =
-"Usage: #{$PROGRAM_NAME} -w <warehouse> -d <output directory>
+"Usage: #{$PROGRAM_NAME} -w <warehouse> -o <output directory>
 
 Write Salt pillar data from a Palletjack warehouse, one YAML file per system"
 

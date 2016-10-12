@@ -54,7 +54,7 @@ class PalletJack2PXELinux < PalletJack::Tool
 
   def parse_options(opts)
     opts.banner =
-"Usage: #{$PROGRAM_NAME} -w <warehouse> -d <output directory>
+"Usage: #{$PROGRAM_NAME} -w <warehouse> -o <output directory>
 
 Write PXELINUX boot configuration files from a Palletjack warehouse"
 
