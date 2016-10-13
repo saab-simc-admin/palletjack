@@ -275,7 +275,7 @@ class PalletJack
 
     def pallet_box(kind, name, box, &block)
       config_file :warehouse, kind, name, "#{box}.yaml" do |box_file|
-        box_file = block.call.deep_stringify_keys.to_yaml
+        box_file << block.call.deep_stringify_keys.to_yaml
       end
     end
 
