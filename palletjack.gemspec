@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
 
   s.platform	= Gem::Platform::RUBY
   s.required_ruby_version = '~>2'
-  s.add_runtime_dependency 'activesupport', '~>5'
+  s.add_runtime_dependency 'activesupport', '~>4'
   s.add_runtime_dependency 'rugged', '~> 0.24'
   s.add_runtime_dependency 'kvdag', '~>0.1'
   s.files	= [ 'README.md', 'LICENSE' ]
