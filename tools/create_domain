@@ -31,7 +31,7 @@ CreateDomain.run do
 
   pallet_dir 'ipv4_network', :network
   pallet_box 'ipv4_network', :network, 'dhcp' do
-    { net:{ dhcp:{ 'tftp-server':'', 'boot-file':'' } } }
+    { net:{ dhcp:{ 'tftp-server' => '', 'boot-file' => '' } } }
   end
   pallet_box 'ipv4_network', :network, 'identity' do
     { net:{ ipv4:{ gateway:'' },
@@ -42,7 +42,7 @@ CreateDomain.run do
 
   pallet_dir 'domain', :domain
   pallet_box 'domain', :domain, 'dns' do
-    { net:{ dns:{ ns:[''], 'soa-ns':'', 'soa-contact':'' } } }
+    { net:{ dns:{ ns:[''], 'soa-ns' => '', 'soa-contact' => '' } } }
   end
   pallet_box 'domain', :domain, 'services' do
     { net:{ service:{ syslog:[{address:'', port:'514', protocol:'udp' } ] } } }
