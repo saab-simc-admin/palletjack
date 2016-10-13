@@ -48,7 +48,7 @@ PalletJack2Salt.run do
 
     yaml_output['system'] = system['system']
 
-    yaml_output['service'] = { 'syslog' => system['net.service.syslog'] }
+    yaml_output['service'] = system['net.service']
 
     config_file :output, "#{system['net.dns.fqdn']}.yaml" do |yamlfile|
       yamlfile << { 'palletjack' => yaml_output }.to_yaml
