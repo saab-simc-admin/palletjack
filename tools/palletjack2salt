@@ -38,8 +38,7 @@ PalletJack2Salt.run do
   jack['system'].each do |system|
     yaml_output = { 'ipv4_interfaces' => {} }
 
-    system.children.each do |interface|
-      next unless interface.kind == 'ipv4_interface'
+    system.children(kind:'ipv4_interface') do |interface|
       yaml_output['ipv4_interfaces'][interface['net.layer2.name']] = {
         interface['net.ipv4.address'] =>
         interface.filter('net.ipv4', 'net.layer2').to_hash
