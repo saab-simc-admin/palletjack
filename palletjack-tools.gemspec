@@ -4,7 +4,7 @@ Gem::Specification.new do |s|
   s.summary	= 'Tools for the Pallet Jack Lightweight Configuration Management Database'
   s.description	= File.read(File.join(File.dirname(__FILE__), 'README.md'))
   s.homepage    = 'https://github.com/saab-simc-admin/palletjack'
-  s.version	= '0.0.4'
+  s.version	= '0.0.5'
   s.author	= 'Karl-Johan Karlsson'
   s.email	= 'karl-johan.karlsson@saabgroup.com'
   s.license	= 'MIT'
