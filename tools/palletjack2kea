@@ -73,9 +73,9 @@ PalletJack2Kea.run do
         dhcp4_option(67, 'boot-file-name', net['net.dhcp.boot-file'])
     end
 
-    net.children.each do |interface|
-      next unless interface.kind == 'ipv4_interface'
-      next unless interface['net.layer2.address']
+    net.children(kind:'ipv4_interface',
+                 none?:{ 'net.layer2.address' => nil }
+                 ) do |interface|
       net_config['reservations'] << {
         'hw-address' => interface['net.layer2.address'],
         'ip-address' => interface['net.ipv4.address'],

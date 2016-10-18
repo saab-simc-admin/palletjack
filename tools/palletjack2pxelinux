@@ -117,7 +117,7 @@ MENU INCLUDE /config/graphics.conf
 MENU TITLE #{os_label} Installation Menu
 "
 
-      os.children.select{|c| c.kind == 'netinstall'}.each do |netinstall|
+      os.children(kind:'netinstall') do |netinstall|
         config=netinstall['host.pxelinux.config']
         ks_label=(netinstall['host.kickstart.label'] ||
                   netinstall['host.kickstart.variant'] )
@@ -177,8 +177,7 @@ LABEL #{config}
   # Generate pxe default menu links for each system
 
   jack['system'].each do |system|
-    system.children.each do |nic|
-      next unless nic.kind == 'ipv4_interface'
+    system.children(kind:'ipv4_interface') do |nic|
       if system['host.pxelinux.config']
         menuname = "#{system['host.pxelinux.config']}.menu"
         linkname = "01-#{nic['net.layer2.address'].gsub(':', '-').downcase}"
