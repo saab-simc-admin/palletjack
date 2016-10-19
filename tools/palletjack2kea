@@ -79,7 +79,12 @@ PalletJack2Kea.run do
       net_config['reservations'] << {
         'hw-address' => interface['net.layer2.address'],
         'ip-address' => interface['net.ipv4.address'],
-        'hostname' => interface['net.dns.fqdn']
+        'hostname' => interface['net.dns.fqdn'],
+        'option-data' =>
+        [
+          dhcp4_option(15, 'domain-name',
+            interface.parents(kind:'system').first['net.dns.domain'])
+        ]
       }
     end
 
