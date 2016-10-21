@@ -12,7 +12,7 @@ describe 'Example warehouse' do
 
   context 'when loaded' do
     before :all do
-      @jack = PalletJack.new($EXAMPLE_WAREHOUSE)
+      @jack = PalletJack.load($EXAMPLE_WAREHOUSE)
     end
 
     it 'has pallets' do
@@ -20,12 +20,12 @@ describe 'Example warehouse' do
     end
 
     it 'has "system" kind of pallets' do
-      expect(@jack['system']).not_to be_empty
+      expect(@jack[kind:'system']).not_to be_empty
     end
 
     context 'system "vmhost1"' do
       before :all do
-        @sys = @jack.fetch('system', name:'vmhost1')
+        @sys = @jack.fetch(kind:'system', name:'vmhost1')
       end
 
       it 'has kind "system"' do
@@ -55,20 +55,20 @@ describe 'Example warehouse' do
 
     context 'system "__invalid__"' do
       it 'does not exist' do
-        expect(@jack['system', name:'__invalid__']).to be_empty
+        expect(@jack[kind:'system', name:'__invalid__']).to be_empty
       end
     end
 
     it 'has "domain" kind of pallets' do
-      expect(@jack['domain']).not_to be_empty
+      expect(@jack[kind:'domain']).not_to be_empty
     end
 
     it 'has "ipv4_interface" kind of pallets' do
-      expect(@jack['ipv4_interface']).not_to be_empty
+      expect(@jack[kind:'ipv4_interface']).not_to be_empty
     end
 
     it 'does not have "__invalid__" kind of pallets' do
-      expect(@jack['__invalid__']).to be_empty
+      expect(@jack[kind:'__invalid__']).to be_empty
     end
   end
 end
