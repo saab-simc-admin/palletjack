@@ -35,7 +35,7 @@ Write Salt pillar data from a Palletjack warehouse, one YAML file per system"
 end
 
 PalletJack2Salt.run do
-  jack['system'].each do |system|
+  jack.each(kind:'system') do |system|
     yaml_output = { 'ipv4_interfaces' => {} }
 
     system.children(kind:'ipv4_interface') do |interface|
