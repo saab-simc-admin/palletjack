@@ -25,7 +25,7 @@ class PalletJack
   #   end
   #
   #   MyTool.run do
-  #     jack['system'].each do |sys|
+  #     jack.each(kind:'system') do |sys|
   #        config_dir :output, sys.name
   #        config_file :output, sys.name, "dump.yaml" do |file|
   #          file << sys.to_yaml
@@ -44,7 +44,7 @@ class PalletJack
     #
     # Example:
     #
-    #   MyTool.run { jack['system'].each {|sys| puts sys.to_yaml } }
+    #   MyTool.run { jack.each(kind:'system') {|sys| puts sys.to_yaml } }
 
     def self.run(&block)
       instance.instance_eval(&block)
@@ -165,7 +165,7 @@ class PalletJack
 
     def jack
       abort(usage) unless options[:warehouse]
-      @jack ||= PalletJack.new(options[:warehouse])
+      @jack ||= PalletJack.load(options[:warehouse])
     end
 
     # Build a filesystem path from path components

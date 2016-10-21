@@ -5,20 +5,25 @@ require 'palletjack/version'
 require 'palletjack/keytransformer'
 require 'palletjack/pallet'
 
-class PalletJack
+class PalletJack < KVDAG
   attr_reader :pallets
-  attr_reader :dag
   attr_reader :keytrans_reader
   attr_reader :keytrans_writer
 
-  private :initialize
-  def initialize(warehouse)
+  def self.load(warehouse)
+    new.load(warehouse)
+  end
+
+  def initialize
+    super
+    @pallets = Hash.new
+  end
+
+  def load(warehouse)
     @warehouse = File.expand_path(warehouse)
     key_transforms = YAML::load_file(File.join(@warehouse, "transforms.yaml"))
     @keytrans_reader = KeyTransformer::Reader.new(key_transforms)
     @keytrans_writer = KeyTransformer::Writer.new(key_transforms)
-    @pallets = Hash.new
-    @dag = KVDAG.new
 
     Dir.foreach(@warehouse) do |kind|
       kindpath = File.join(@warehouse, kind)
@@ -30,6 +35,7 @@ class PalletJack
         Pallet.new(self, palletpath)
       end
     end
+    self
   end
 
   # Search for pallets in a PalletJack warehouse
@@ -42,7 +48,7 @@ class PalletJack
   # name:: the filesystem +basename+ of the pallet
 
   def [](filter = {})
-    @dag.vertices(filter)
+    vertices(filter)
   end
 
   # Fetch a single pallet from a PalletJack warehouse
