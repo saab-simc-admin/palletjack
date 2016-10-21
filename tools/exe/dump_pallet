@@ -41,10 +41,10 @@ DumpPallet.run do
   # Since the Tool framework uses destructive opts.parse!, all options
   # were removed from ARGV, leaving just the names to search for.
   if ARGV.empty?
-    dump_pallets(jack[options[:type]])
+    dump_pallets jack[kind: options[:type]]
   else
     ARGV.each do |name|
-      dump_pallets(jack[options[:type], name:name])
+      dump_pallets jack[kind: options[:type], name: name]
     end
   end
 end
