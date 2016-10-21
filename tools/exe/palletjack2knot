@@ -49,7 +49,7 @@ PalletJack2Knot.run do
   config_file :output, 'zones.conf' do |conf_file|
     conf_file << git_header('palletjack2knot')
 
-    jack['domain'].each do |domain|
+    jack.each(kind:'domain') do |domain|
       absolute_domain_name = "#{domain['net.dns.domain']}."
 
       zone = DNS::Zone.new
