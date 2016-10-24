@@ -1,0 +1,6 @@
+---
+pillar:
+  per-minion:
+    each-subtree:
+      system: system
+      service: net.service

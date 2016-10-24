@@ -1,0 +1,30 @@
+PalletJack2Salt Configuration
+=============================
+
+Keys under `pillar.global.each-pallet` are used to store information
+about kinds of pallets to copy into global Salt pillars under the name
+space `palletjack:global`.
+
+Keys under `pillar.per-minion.each-subtree` are used to store information
+about which key subtrees to copy from each `system` object into
+per-minion Salt pillars under the name space `palletjack`.
+
+Files:
+
+  _config/PalletJack2Salt/global.yaml
+  _config/PalletJack2Salt/per-minion.yaml
+
+
+YAML:
+
+global.yaml:
+  pillar:
+    global:
+      each-pallet:
+        <dst key>: <pallet kind>  # Copy pallets to pillars.
+
+per-minion.yaml
+  pillar:
+    per-minion:
+      each-subtree:
+        <dst key>: <src keypath>  # Copy key subtrees to pillars.
