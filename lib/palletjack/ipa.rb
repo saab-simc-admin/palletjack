@@ -56,18 +56,15 @@ class PalletJack
                 "params" => [ [], {} ]
           }
 
-          puts _login_payload.to_json
-
           # This should act as default settings troughout the session
           @@curl.set(:HTTPAUTH, Curl::CURLAUTH_GSSNEGOTIATE)
           @@curl.username = ':'
           @@curl.enable_cookies = true
-          @@curl.verbose = false ## FIXME: DEBUG
+          @@curl.verbose = false
           @@curl.headers["Referer"] = @@ipa_url + "/json"
           @@curl.headers['Content-Type'] = "application/json"
           @@curl.url = @@ipa_url + "/json"
           @@curl.http_post(_login_payload.to_json)
-          puts @@curl.body_str
           _session_result = JSON.parse(@@curl.body_str)
 
           if _session_result['error'] != nil then
@@ -77,11 +74,13 @@ class PalletJack
           #@@curl.set(:HTTPAUTH, Curl::CURLAUTH_NONE) # Reset auth, rely on cookie
         end
 
+        puts "DEBUG: Request: " + @payload
+
         @@curl.http_post(@payload)
 
         @body = @@curl.body_str
 
-        puts @body # FIXME 
+        puts "DEBUG: Response:" + @body
 
       end
 
@@ -158,11 +157,8 @@ class PalletJack
           puts "ERROR: No result"
         end
 
-        puts "DEBUG"
-
         if block_given? then
           _res_out.each do |i|
-            puts i
             yield i
           end
         end
