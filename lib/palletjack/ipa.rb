@@ -153,7 +153,7 @@ class PalletJack
            else
              _res_out = [ _res_b['result'] ]
            end
-        else
+        else # TODO: Better error handling for error results.
           puts "ERROR: No result"
         end
 
@@ -170,6 +170,38 @@ class PalletJack
         self.results.count
       end
 
+      ## Error handling
+      def error?
+        if @result['error'] then
+          true
+        else
+          false
+        end
+      end
+
+      def error_code
+        if self.error? then
+          @result['error']['code']
+        else
+          nil
+        end
+      end
+
+      def error_name
+        if self.error? then
+          @result['error']['name']
+        else
+          nil
+        end
+      end
+
+      def error_message
+        if self.error? then
+          @result['error']['message']
+        else
+          nil
+        end
+      end
     end
 
   end
