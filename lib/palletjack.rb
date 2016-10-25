@@ -1,6 +1,7 @@
 require 'active_support'
 require 'yaml'
 require 'kvdag'
+require 'palletjack/version'
 require 'palletjack/keytransformer'
 require 'palletjack/pallet'
 
