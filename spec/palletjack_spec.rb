@@ -1,11 +1,11 @@
-require "spec_helper"
+require 'spec_helper'
 
 describe PalletJack do
-  it "has a version number" do
+  it 'has a version number' do
     expect(PalletJack::VERSION).not_to be nil
   end
 
-  it "does something useful" do
-    expect(false).to eq(true)
+  it 'requires a warehouse' do
+    expect{ PalletJack.new('__INVALID__') }.to raise_error Errno::ENOENT
   end
 end
