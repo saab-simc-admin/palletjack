@@ -29,6 +29,11 @@ Write configuration for the Kea DHCP server from a Palletjack warehouse"
     }
   end
 
+  # The internal representation of the generated configuration, ready
+  # to be tested or printed.
+
+  attr_reader :kea_config
+
   def process
     @kea_config = { 'Dhcp4' => {} }
 
