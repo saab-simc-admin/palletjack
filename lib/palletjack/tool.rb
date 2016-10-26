@@ -42,12 +42,50 @@ class PalletJack
     # More complex tools probably want to override parse_options to
     # add option parsing, and split functionality into multiple methods.
     #
+    # For testable tools, see the methods #process and #output
+    # instead.
+    #
     # Example:
     #
     #   MyTool.run { jack.each(kind:'system') {|sys| puts sys.to_yaml } }
 
     def self.run(&block)
       instance.instance_eval(&block)
+    end
+
+    # Generate data in an internal format, saving it for later testing
+    # or writing to disk by #output.
+    #
+    # Override this function in specific tool classes.
+    #
+    # Example:
+    #
+    #   class MyTool < PalletJack::Tool
+    #     def process
+    #       @systems = Set.new
+    #       jack.each(kind:'system') do |s|
+    #         @systems << s
+    #       end
+    #     end
+    #   end
+
+    def process
+    end
+
+    # Run the #outputter function (defined in a specific tool class)
+    # to output data to disk in its final format.
+    #
+    # Example:
+    #
+    #   class MyTool < PalletJack::Tool
+    #     def output
+    #       @systems.each do |s|
+    #         puts s.name
+    #       end
+    #     end
+    #   end
+
+    def output
     end
 
     # Initialize the singleton instance
