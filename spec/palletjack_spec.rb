@@ -6,6 +6,6 @@ describe PalletJack do
   end
 
   it 'requires a warehouse' do
-    expect{ PalletJack.new('__INVALID__') }.to raise_error Errno::ENOENT
+    expect{ PalletJack.load('__INVALID__') }.to raise_error Errno::ENOENT
   end
 end

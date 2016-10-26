@@ -43,7 +43,7 @@ class PalletJack
       _, @kind = File.split(ppath)
       boxes = Array.new
 
-      super(jack.dag, pallet:{@kind => @name})
+      super(jack, pallet:{@kind => @name})
 
       Dir.foreach(path) do |file|
         next if file[0] == '.'

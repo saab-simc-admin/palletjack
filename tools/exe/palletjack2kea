@@ -33,13 +33,13 @@ end
 PalletJack2Kea.run do
   kea_config = { 'Dhcp4' => {} }
 
-  jack['service', name:options[:service]].each do |service_config|
+  jack.each(kind:'service', name:options[:service]) do |service_config|
     kea_config['Dhcp4'] = service_config['service.kea_v4']
   end
 
   kea_config['Dhcp4']['subnet4'] = []
 
-  jack['ipv4_network'].each do |net|
+  jack.each(kind:'ipv4_network') do |net|
     net_config = {'subnet' => net['net.ipv4.cidr'],
                   'reservations' => [],
                   'option-data' => []}

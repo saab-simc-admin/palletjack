@@ -77,8 +77,10 @@ stub-zone:
 
   # Generate unbound service configuration
 
-  def unbound_config(file_name, service_config)
-    config_file :local_dir, "#{file_name}.conf" do |configfile|
+  def unbound_config(service_name)
+    service_config = jack.fetch(kind:'service', name: service_name)
+
+    config_file :local_dir, "#{service_name}.conf" do |configfile|
       configfile << git_header('palletjack2unbound')
       service_config["service.unbound.server"].each do |config|
         config.each do |key, value|
@@ -93,12 +95,12 @@ PalletJack2Unbound.run do
   config_dir :conf_dir
   config_dir :local_dir
 
-  jack['domain'].each do |domain|
+  jack.each(kind:'domain') do |domain|
     zone = domain['net.dns.domain']
     stub_addrs = []
 
     domain['net.dns.ns'].each do |ns|
-      jack['ipv4_interface', with_all:{'net.dns.fqdn' => ns}].each do |ipv4|
+      jack.each(kind:'ipv4_interface', all?:{'net.dns.fqdn' => ns}) do |ipv4|
         stub_addrs << ipv4['net.ipv4.address']
       end
     end
@@ -123,7 +125,5 @@ PalletJack2Unbound.run do
     stub_zone(reverse_zone, stub_addrs, transparent: rfc1918?(ip_net))
   end
 
-  jack['service', name: options[:service]].each do |service_config|
-    unbound_config(options[:service], service_config)
-  end
+  unbound_config(options[:service])
 end

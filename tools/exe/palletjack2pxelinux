@@ -158,7 +158,7 @@ MENU INCLUDE /config/graphics.conf
 MENU TITLE Linux Installation Menu
 "
 
-    jack['os'].each do |os|
+    jack.each(kind:'os') do |os|
       next unless config=os['host.pxelinux.config']
 
       label=config.gsub(/-/, ' ')
@@ -176,7 +176,7 @@ LABEL #{config}
 
   # Generate pxe default menu links for each system
 
-  jack['system'].each do |system|
+  jack.each(kind:'system') do |system|
     system.children(kind:'ipv4_interface') do |nic|
       if system['host.pxelinux.config']
         menuname = "#{system['host.pxelinux.config']}.menu"
