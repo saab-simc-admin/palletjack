@@ -39,11 +39,11 @@ end
 
 DumpPallet.run do
   # Since the Tool framework uses destructive opts.parse!, all options
-  # were removed from ARGV, leaving just the names to search for.
-  if ARGV.empty?
+  # were removed from argv, leaving just the names to search for.
+  if argv.empty?
     dump_pallets jack[kind: options[:type]]
   else
-    ARGV.each do |name|
+    argv.each do |name|
       dump_pallets jack[kind: options[:type], name: name]
     end
   end

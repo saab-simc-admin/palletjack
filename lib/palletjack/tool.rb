@@ -88,6 +88,13 @@ class PalletJack
     def output
     end
 
+    # Return the command line argument list to be used. Replace this
+    # method when testing.
+
+    def argv
+      ARGV
+    end
+
     # Initialize the singleton instance
     #
     # Default initialization will add options for --warehouse and --help
@@ -111,7 +118,7 @@ class PalletJack
 
       parse_options(@parser)
 
-      @parser.parse!
+      @parser.parse!(argv)
       @option_checks.each {|check| check.call }
     rescue
       abort(usage)
