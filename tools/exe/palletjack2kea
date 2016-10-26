@@ -28,70 +28,78 @@ Write configuration for the Kea DHCP server from a Palletjack warehouse"
       'data' => data
     }
   end
-end
 
-PalletJack2Kea.run do
-  kea_config = { 'Dhcp4' => {} }
+  def process
+    @kea_config = { 'Dhcp4' => {} }
 
-  jack.each(kind:'service', name:options[:service]) do |service_config|
-    kea_config['Dhcp4'] = service_config['service.kea_v4']
-  end
-
-  kea_config['Dhcp4']['subnet4'] = []
-
-  jack.each(kind:'ipv4_network') do |net|
-    net_config = {'subnet' => net['net.ipv4.cidr'],
-                  'reservations' => [],
-                  'option-data' => []}
-    if net['net.ipv4.gateway']
-      net_config['option-data'] <<
-        dhcp4_option(3, 'routers', net['net.ipv4.gateway'])
+    jack.each(kind:'service', name:options[:service]) do |service_config|
+      @kea_config['Dhcp4'] = service_config['service.kea_v4']
     end
 
-    if net['net.dns.resolver']
-      resolvers = ''
-      net['net.dns.resolver'].each do |resolver|
-        resolvers << resolver << ', '
+    @kea_config['Dhcp4']['subnet4'] = []
+
+    jack.each(kind:'ipv4_network') do |net|
+      net_config = {'subnet' => net['net.ipv4.cidr'],
+        'reservations' => [],
+        'option-data' => []}
+      if net['net.ipv4.gateway']
+        net_config['option-data'] <<
+          dhcp4_option(3, 'routers', net['net.ipv4.gateway'])
       end
 
-      net_config['option-data'] <<
-        dhcp4_option(6, 'domain-name-servers', resolvers.chomp(', '))
+      if net['net.dns.resolver']
+        resolvers = ''
+        net['net.dns.resolver'].each do |resolver|
+          resolvers << resolver << ', '
+        end
+
+        net_config['option-data'] <<
+          dhcp4_option(6, 'domain-name-servers', resolvers.chomp(', '))
+      end
+
+      if net['net.dhcp.tftp-server']
+        net_config['option-data'] <<
+          dhcp4_option(66, 'tftp-server-name', net['net.dhcp.tftp-server'])
+
+        # Option 66/tftp-server-name is the standard way of sending a
+        # TFTP server address, but some DHCP clients still want it in
+        # the next-server field.
+        net_config['next-server'] = net['net.dhcp.tftp-server']
+      end
+
+      if net['net.dhcp.boot-file']
+        net_config['option-data'] <<
+          dhcp4_option(67, 'boot-file-name', net['net.dhcp.boot-file'])
+      end
+
+      net.children(kind:'ipv4_interface',
+                   none?:{ 'net.layer2.address' => nil }
+                  ) do |interface|
+        net_config['reservations'] << {
+          'hw-address' => interface['net.layer2.address'],
+          'ip-address' => interface['net.ipv4.address'],
+          'hostname' => interface['net.dns.fqdn'],
+          'option-data' =>
+          [
+            dhcp4_option(15, 'domain-name',
+                         interface.parents(kind:'system').first['net.dns.domain'])
+          ]
+        }
+      end
+
+      @kea_config['Dhcp4']['subnet4'] << net_config
     end
-
-    if net['net.dhcp.tftp-server']
-      net_config['option-data'] <<
-        dhcp4_option(66, 'tftp-server-name', net['net.dhcp.tftp-server'])
-
-      # Option 66/tftp-server-name is the standard way of sending a
-      # TFTP server address, but some DHCP clients still want it in
-      # the next-server field.
-      net_config['next-server'] = net['net.dhcp.tftp-server']
-    end
-
-    if net['net.dhcp.boot-file']
-      net_config['option-data'] <<
-        dhcp4_option(67, 'boot-file-name', net['net.dhcp.boot-file'])
-    end
-
-    net.children(kind:'ipv4_interface',
-                 none?:{ 'net.layer2.address' => nil }
-                 ) do |interface|
-      net_config['reservations'] << {
-        'hw-address' => interface['net.layer2.address'],
-        'ip-address' => interface['net.ipv4.address'],
-        'hostname' => interface['net.dns.fqdn'],
-        'option-data' =>
-        [
-          dhcp4_option(15, 'domain-name',
-            interface.parents(kind:'system').first['net.dns.domain'])
-        ]
-      }
-    end
-
-    kea_config['Dhcp4']['subnet4'] << net_config
   end
 
-  puts git_header('palletjack2kea')
+  def output
+    puts git_header('palletjack2kea')
 
-  jj kea_config
+    jj @kea_config
+  end
+end
+
+if __FILE__ == $0
+  tool = PalletJack2Kea.instance
+  tool.process
+  tool.output
 end
