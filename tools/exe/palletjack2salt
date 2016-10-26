@@ -51,8 +51,9 @@ Write Salt pillar data from a Palletjack warehouse, one YAML file per system"
         }
       end
 
-      yaml_output['system'] = system['system']
-      yaml_output['service'] = system['net.service']
+      config['pillar.per-minion.each-subtree'].each do |dst_key, src_key|
+        yaml_output[dst_key] = system.fetch(src_key)
+      end
 
       @salt_config[system['net.dns.fqdn']] = { 'palletjack' => yaml_output }
     end
