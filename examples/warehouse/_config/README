@@ -11,4 +11,4 @@ against a certain warehouse.
 
 Files:
 
-  _config/<name>/<somecfg>.yaml
+  _config/<ToolClassName>/<somecfg>.yaml
