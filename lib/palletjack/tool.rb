@@ -159,6 +159,22 @@ class PalletJack
 
     attr_reader :options
 
+    # Pallet containing all warehouse defined configuration options
+    #
+    # Configuration options for tools can be stored as pallets in
+    # the warehouse:
+    #
+    #   _config
+    #     |
+    #     +-- MyTool
+    #     |     |
+    #     |     `-- somecfg.yaml
+
+    def config
+      @config ||= jack.fetch(kind:'_config',
+                             name: self.class.to_s) rescue Hash.new
+    end
+
     # Return the PalletJack object for <tt>--warehouse</tt>
     # Aborts execution with usage message if the warehouse was
     # not specified.

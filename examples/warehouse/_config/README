@@ -1,0 +1,14 @@
+Tool Configuration
+================
+
+Type name: _config
+
+Represents warehouse specific configuration for a palletjack tool.
+
+Contains the tool specific information needed to run a palletjack tool
+against a certain warehouse.
+
+
+Files:
+
+  _config/<ToolClassName>/<somecfg>.yaml
