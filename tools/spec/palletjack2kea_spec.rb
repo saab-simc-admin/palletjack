@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'rspec_structure_matcher'
 require 'rspec/collection_matchers'
 
 load "palletjack2kea"
