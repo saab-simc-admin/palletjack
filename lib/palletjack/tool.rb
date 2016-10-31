@@ -50,7 +50,17 @@ class PalletJack
     #   MyTool.run { jack.each(kind:'system') {|sys| puts sys.to_yaml } }
 
     def self.run(&block)
-      instance.instance_eval(&block)
+      if block
+        # v0.1.0 API. When all tools have been ported, remove this and
+        # bump the minor version number.
+        instance.setup
+        instance.instance_eval(&block)
+      else
+        # v0.1.1 API
+        instance.setup
+        instance.process
+        instance.output
+      end
     end
 
     # Generate data in an internal format, saving it for later testing
@@ -103,7 +113,7 @@ class PalletJack
     # Any exceptions raised during option parsing will abort execution
     # with usage information.
 
-    def initialize #:notnew:
+    def setup
       @parser = OptionParser.new
       @options = {}
       @option_checks = []
@@ -122,6 +132,13 @@ class PalletJack
       @option_checks.each {|check| check.call }
     rescue
       abort(usage)
+    end
+
+    # Do nothing in the automatically called initialize function,
+    # since we want to be able to override everything before
+    # configuration.
+
+    def initialize #:notnew:
     end
 
     # Additional option parsing
