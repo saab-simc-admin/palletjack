@@ -5,17 +5,14 @@ load "palletjack2salt"
 
 describe 'palletjack2salt' do
   context 'generated configuration' do
-    before :all do
-      class PalletJack2Salt
-        def argv
-          ["-w", $EXAMPLE_WAREHOUSE,
-           "-o", Dir.tmpdir] # Won't actually be written to, but needs
-                             # to exist to make the command line
-                             # option parser happy
-        end
-      end
-
+    before :each do
       @tool = PalletJack2Salt.instance
+      allow(@tool).to receive(:argv).and_return(
+        ["-w", $EXAMPLE_WAREHOUSE,
+         "-o", Dir.tmpdir]) # Won't actually be written to, but needs
+                            # to exist to make the command line option
+                            # parser happy
+      @tool.setup
       @tool.process
     end
 

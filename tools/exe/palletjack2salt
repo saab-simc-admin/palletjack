@@ -69,7 +69,5 @@ Write Salt pillar data from a Palletjack warehouse, one YAML file per system"
 end
 
 if __FILE__ == $0
-  tool = PalletJack2Salt.instance
-  tool.process
-  tool.output
+  PalletJack2Salt.run
 end

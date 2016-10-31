@@ -5,15 +5,12 @@ load "palletjack2kea"
 
 describe 'palletjack2kea' do
   context 'generated configuration' do
-    before :all do
-      class PalletJack2Kea
-        def argv
-          ["-w", $EXAMPLE_WAREHOUSE,
-           "-s", "dhcp-server-example-net"]
-        end
-      end
-
+    before :each do
       @tool = PalletJack2Kea.instance
+      allow(@tool).to receive(:argv).and_return(
+        ["-w", $EXAMPLE_WAREHOUSE,
+         "-s", "dhcp-server-example-net"])
+      @tool.setup
       @tool.process
     end
 
