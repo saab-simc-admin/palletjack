@@ -22,28 +22,62 @@ class PalletJack
   #
   #       required_option :output
   #     end
+  #
+  #     attr_reader :state
+  #
+  #     def process
+  #       @state = {}
+  #       jack.each(kind:'system') do |sys|
+  #         @state[sys.name] = sys
+  #       end
+  #     end
+  #
+  #     def output
+  #       @state.each do |name, data|
+  #         config_dir :output, name
+  #         config_file :output, name, "dump.yaml" do |file|
+  #           file << data.to_yaml
+  #         end
+  #       end
+  #     end
   #   end
   #
-  #   MyTool.run do
-  #     jack.each(kind:'system') do |sys|
-  #        config_dir :output, sys.name
-  #        config_file :output, sys.name, "dump.yaml" do |file|
-  #          file << sys.to_yaml
-  #        end
-  #     end
+  #   if __FILE__ == $0
+  #     MyTool.run
   #   end
 
   class Tool
     include Singleton
 
+    # v0.1.1 API:
+    #
+    # :call-seq:
+    # run
+    #
+    # Main tool framework driver.
+    #
+    # Run the entire tool; setup, process and output. Actual tools
+    # will want to use this function, while testing and other
+    # activities that require poking around in internal state will
+    # want to run the partial functions instead.
+    #
+    # Example:
+    #
+    # if __FILE__ == $0
+    #   MyTool.run
+    # end
+
+    # v0.1.0 API, retained until all tools have been updated to
+    # v0.1.1:
+    #
+    # :call-seq:
+    # run &block
+    #
     # Run the +block+ given in the context of the tool singleton instance
     # as convenience for simple tools.
     #
     # More complex tools probably want to override parse_options to
     # add option parsing, and split functionality into multiple methods.
-    #
-    # For testable tools, see the methods #process and #output
-    # instead.
     #
     # Example:
     #
@@ -82,8 +116,7 @@ class PalletJack
     def process
     end
 
-    # Run the #outputter function (defined in a specific tool class)
-    # to output data to disk in its final format.
+    # Output data in its final format, probably to disk or stdout.
     #
     # Example:
     #
@@ -105,10 +138,10 @@ class PalletJack
       ARGV
     end
 
-    # Initialize the singleton instance
+    # Set up the singleton instance
     #
-    # Default initialization will add options for --warehouse and --help
-    # to the OptionParser, and set the banner to something useful.
+    # Default setup will add options for --warehouse and --help to the
+    # OptionParser, and set the banner to something useful.
     #
     # Any exceptions raised during option parsing will abort execution
     # with usage information.
@@ -132,13 +165,6 @@ class PalletJack
       @option_checks.each {|check| check.call }
     rescue
       abort(usage)
-    end
-
-    # Do nothing in the automatically called initialize function,
-    # since we want to be able to override everything before
-    # configuration.
-
-    def initialize #:notnew:
     end
 
     # Additional option parsing
