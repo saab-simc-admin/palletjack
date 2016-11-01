@@ -14,8 +14,9 @@ class PalletJack
 
       @@ipa_url = nil
 
-      def initialize(payload)
+      def initialize(payload, debug = false)
         @payload = payload.to_json
+        @debug = debug
         if @@curl == nil then
           @@curl = Curl::Easy.new # TODO: Test
         end
@@ -74,13 +75,17 @@ class PalletJack
           #@@curl.set(:HTTPAUTH, Curl::CURLAUTH_NONE) # Reset auth, rely on cookie
         end
 
-        puts "DEBUG: Request: " + @payload
+        if @debug then
+          puts "DEBUG: Request: " + @payload
+        end
 
         @@curl.http_post(@payload)
 
         @body = @@curl.body_str
 
-        puts "DEBUG: Response:" + @body
+        if @debug then
+          puts "DEBUG: Response:" + @body
+        end
 
       end
 
@@ -98,12 +103,13 @@ class PalletJack
 
       @@api_version = "2.156"
 
-      def initialize(method, name=nil, params={})
+      def initialize(method, name=nil, params={}, debug = false)
         @method = method
         @name = name
         @params = params
         @payload = _build_payload
-        @request = PalletJack::Ipa::Request.new(@payload)
+        @request = PalletJack::Ipa::Request.new(@payload, debug)
+        @debug = debug
         @response = @request.response
       end
 
@@ -124,7 +130,7 @@ class PalletJack
         if @name then
           if @name.is_a? Array
             _name = @name
-          elsif @name.is_a? String
+          else
             _name = [ @name ]
           end
         end
@@ -133,7 +139,7 @@ class PalletJack
           "id"     => 0,
           "method" => @method,
           "params" => [
-            [ @name ],
+            _name,
             @params
           ]
 
