@@ -22,20 +22,57 @@ class PalletJack
   #
   #       required_option :output
   #     end
+  #
+  #     attr_reader :state
+  #
+  #     def process
+  #       @state = {}
+  #       jack.each(kind:'system') do |sys|
+  #         @state[sys.name] = sys
+  #       end
+  #     end
+  #
+  #     def output
+  #       @state.each do |name, data|
+  #         config_dir :output, name
+  #         config_file :output, name, "dump.yaml" do |file|
+  #           file << data.to_yaml
+  #         end
+  #       end
+  #     end
   #   end
   #
-  #   MyTool.run do
-  #     jack.each(kind:'system') do |sys|
-  #        config_dir :output, sys.name
-  #        config_file :output, sys.name, "dump.yaml" do |file|
-  #          file << sys.to_yaml
-  #        end
-  #     end
+  #   if __FILE__ == $0
+  #     MyTool.run
   #   end
 
   class Tool
     include Singleton
 
+    # v0.1.1 API:
+    #
+    # :call-seq:
+    # run
+    #
+    # Main tool framework driver.
+    #
+    # Run the entire tool; setup, process and output. Actual tools
+    # will want to use this function, while testing and other
+    # activities that require poking around in internal state will
+    # want to run the partial functions instead.
+    #
+    # Example:
+    #
+    # if __FILE__ == $0
+    #   MyTool.run
+    # end
+
+    # v0.1.0 API, retained until all tools have been updated to
+    # v0.1.1:
+    #
+    # :call-seq:
+    # run &block
+    #
     # Run the +block+ given in the context of the tool singleton instance
     # as convenience for simple tools.
     #
@@ -47,18 +84,69 @@ class PalletJack
     #   MyTool.run { jack.each(kind:'system') {|sys| puts sys.to_yaml } }
 
     def self.run(&block)
-      instance.instance_eval(&block)
+      if block
+        # v0.1.0 API. When all tools have been ported, remove this and
+        # bump the minor version number.
+        instance.setup
+        instance.instance_eval(&block)
+      else
+        # v0.1.1 API
+        instance.setup
+        instance.process
+        instance.output
+      end
     end
 
-    # Initialize the singleton instance
+    # Generate data in an internal format, saving it for later testing
+    # or writing to disk by #output.
     #
-    # Default initialization will add options for --warehouse and --help
-    # to the OptionParser, and set the banner to something useful.
+    # Override this function in specific tool classes.
+    #
+    # Example:
+    #
+    #   class MyTool < PalletJack::Tool
+    #     def process
+    #       @systems = Set.new
+    #       jack.each(kind:'system') do |s|
+    #         @systems << s
+    #       end
+    #     end
+    #   end
+
+    def process
+    end
+
+    # Output data in its final format, probably to disk or stdout.
+    #
+    # Example:
+    #
+    #   class MyTool < PalletJack::Tool
+    #     def output
+    #       @systems.each do |s|
+    #         puts s.name
+    #       end
+    #     end
+    #   end
+
+    def output
+    end
+
+    # Return the command line argument list to be used. Replace this
+    # method when testing.
+
+    def argv
+      ARGV
+    end
+
+    # Set up the singleton instance
+    #
+    # Default setup will add options for --warehouse and --help to the
+    # OptionParser, and set the banner to something useful.
     #
     # Any exceptions raised during option parsing will abort execution
     # with usage information.
 
-    def initialize #:notnew:
+    def setup
       @parser = OptionParser.new
       @options = {}
       @option_checks = []
@@ -73,7 +161,7 @@ class PalletJack
 
       parse_options(@parser)
 
-      @parser.parse!
+      @parser.parse!(argv)
       @option_checks.each {|check| check.call }
     rescue
       abort(usage)

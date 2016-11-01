@@ -7,25 +7,31 @@ describe PalletJack::Tool do
     expect{ PalletJack::Tool.instance }.not_to raise_error
   end
 
-  it 'can run a block in its instance context' do
-    expect(PalletJack::Tool.run { self.class }).to be PalletJack::Tool
-  end
+  context 'without a command line' do
+    before :each do
+      allow(PalletJack::Tool.instance).to receive(:argv).and_return([])
+    end
 
-  it 'keeps state between invocations' do
-    PalletJack::Tool.run { @__rspec__remember_me = true }
-    expect(PalletJack::Tool.run { @__rspec__remember_me }).to be true
-  end
+    it 'can run a block in its instance context' do
+      expect(PalletJack::Tool.run { self.class }).to be PalletJack::Tool
+    end
 
-  it 'requires a warehouse' do
-    allow($stderr).to receive :write # Drop stderr output from #abort
-    expect{ PalletJack::Tool.run { jack } }.to raise_error SystemExit
+    it 'keeps state between invocations' do
+      PalletJack::Tool.run { @__rspec__remember_me = true }
+      expect(PalletJack::Tool.run { @__rspec__remember_me }).to be true
+    end
+
+    it 'requires a warehouse' do
+      allow($stderr).to receive :write # Drop stderr output from #abort
+      expect{ PalletJack::Tool.run { jack } }.to raise_error SystemExit
+    end
   end
 
   context 'with example warehouse' do
     before :each do
       class TestTool < PalletJack::Tool
-        def parse_options(_)
-          options[:warehouse] = $EXAMPLE_WAREHOUSE
+        def options
+          { warehouse:$EXAMPLE_WAREHOUSE }
         end
       end
 

@@ -32,25 +32,42 @@ Write Salt pillar data from a Palletjack warehouse, one YAML file per system"
 
     required_option :output
   end
-end
 
-PalletJack2Salt.run do
-  jack.each(kind:'system') do |system|
-    yaml_output = { 'ipv4_interfaces' => {} }
+  # The internal representation of the generated configuration, ready
+  # to be tested or printed.
 
-    system.children(kind:'ipv4_interface') do |interface|
-      yaml_output['ipv4_interfaces'][interface['net.layer2.name']] = {
-        interface['net.ipv4.address'] =>
-        interface.filter('net.ipv4', 'net.layer2').to_hash
-      }
-    end
+  attr_reader :salt_config
 
-    yaml_output['system'] = system['system']
+  def process
+    @salt_config = {}
 
-    yaml_output['service'] = system['net.service']
+    jack.each(kind:'system') do |system|
+      yaml_output = { 'ipv4_interfaces' => {} }
 
-    config_file :output, "#{system['net.dns.fqdn']}.yaml" do |yamlfile|
-      yamlfile << { 'palletjack' => yaml_output }.to_yaml
+      system.children(kind:'ipv4_interface') do |interface|
+        yaml_output['ipv4_interfaces'][interface['net.layer2.name']] = {
+          interface['net.ipv4.address'] =>
+          interface.filter('net.ipv4', 'net.layer2').to_hash
+        }
+      end
+
+      yaml_output['system'] = system['system']
+      yaml_output['service'] = system['net.service']
+
+      @salt_config[system['net.dns.fqdn']] = { 'palletjack' => yaml_output }
     end
   end
+
+  def output
+    @salt_config.each do |id, config|
+      config_file :output, "#{id}.yaml" do |yamlfile|
+        yamlfile << git_header('palletjack2salt')
+        yamlfile << config.to_yaml
+      end
+    end
+  end
+end
+
+if __FILE__ == $0
+  PalletJack2Salt.run
 end
