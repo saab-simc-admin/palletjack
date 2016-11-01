@@ -103,6 +103,6 @@ Write configuration for the Kea DHCP server from a Palletjack warehouse"
   end
 end
 
-if __FILE__ == $0
+if PalletJack2Kea.standalone?(__FILE__)
   PalletJack2Kea.run
 end
