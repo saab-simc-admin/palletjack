@@ -4,22 +4,55 @@ require 'tmpdir'
 load "palletjack2salt"
 
 describe 'palletjack2salt' do
-  context 'generated configuration' do
+  context 'generated global configuration' do
     before :each do
       @tool = PalletJack2Salt.instance
       allow(@tool).to receive(:argv).and_return(
         ["-w", $EXAMPLE_WAREHOUSE,
-         "-o", Dir.tmpdir]) # Won't actually be written to, but needs
+         "-g", Dir.tmpdir]) # Won't actually be written to, but needs
                             # to exist to make the command line option
                             # parser happy
       @tool.setup
       @tool.process
+      @global = @tool.salt_config[:global]
+    end
+
+    it 'contains configuration for os images' do
+      os_pillar = { 'host' => { 'kickstart' => Hash,
+                                'pxelinux' => Hash },
+                    'system' => Hash }
+      @tool.jack.each(kind:'os') do |os|
+        expect(@global['os'][os.name]).to have_structure(os_pillar)
+      end
+    end
+
+    it 'contains configuration for netinstall configurations' do
+      ni_pillar = { 'host' => { 'kickstart' => Hash,
+                                'pxelinux' => Hash },
+                    'system' => Hash }
+      @tool.jack.each(kind:'netinstall') do |ni|
+        expect(@global['netinstall'][ni.name]).to have_structure(ni_pillar)
+      end
+    end
+  end
+
+  context 'generated per-minion configuration' do
+    before :each do
+      @tool = PalletJack2Salt.instance
+      allow(@tool).to receive(:argv).and_return(
+        ["-w", $EXAMPLE_WAREHOUSE,
+         "-m", Dir.tmpdir]) # Won't actually be written to, but needs
+                            # to exist to make the command line option
+                            # parser happy
+      @tool.setup
+      @tool.process
+      @minion = @tool.salt_config[:minion]
     end
 
     it 'contains configuration for some known clients' do
       basic_structure = { 'palletjack' => Hash }
-      expect(@tool.salt_config['vmhost1.example.com']).to have_structure(basic_structure)
-      expect(@tool.salt_config['testvm.example.com']).to have_structure(basic_structure)
+      expect(@minion['vmhost1.example.com']).to have_structure(basic_structure)
+      expect(@minion['testvm.example.com']).to have_structure(basic_structure)
     end
 
     it 'contains configuration for all clients in the warehouse' do
@@ -27,7 +60,7 @@ describe 'palletjack2salt' do
       @tool.jack.each(kind:'system') do |system|
         minions[system['net.dns.fqdn']] = { 'palletjack' => Hash }
       end
-      expect(@tool.salt_config).to have_structure(minions)
+      expect(@minion).to have_structure(minions)
     end
 
     it 'contains network configuration' do
@@ -55,7 +88,7 @@ describe 'palletjack2salt' do
           }
         }
       }
-      expect(@tool.salt_config['vmhost1.example.com']['palletjack']['ipv4_interfaces']).to have_structure(interfaces)
+      expect(@minion['vmhost1.example.com']['palletjack']['ipv4_interfaces']).to have_structure(interfaces)
     end
 
     it 'contains system configuration' do
@@ -66,7 +99,7 @@ describe 'palletjack2salt' do
         'role' => ['kvm-server', 'ssh-server'],
         'name' => 'vmhost1'
       }
-      expect(@tool.salt_config['vmhost1.example.com']['palletjack']['system']).to have_structure(system)
+      expect(@minion['vmhost1.example.com']['palletjack']['system']).to have_structure(system)
     end
 
     context 'contains service configuration' do
@@ -85,7 +118,7 @@ describe 'palletjack2salt' do
           }
         ]
         0.upto(syslog_config.length) do |i|
-          expect(@tool.salt_config['vmhost1.example.com']['palletjack']['service']['syslog'][i]).to have_structure(syslog_config[i])
+          expect(@minion['vmhost1.example.com']['palletjack']['service']['syslog'][i]).to have_structure(syslog_config[i])
         end
       end
 
@@ -99,7 +132,7 @@ describe 'palletjack2salt' do
           }
         ]
         0.upto(zabbix_config.length) do |i|
-          expect(@tool.salt_config['vmhost1.example.com']['palletjack']['service']['zabbix'][i]).to have_structure(zabbix_config[i])
+          expect(@minion['vmhost1.example.com']['palletjack']['service']['zabbix'][i]).to have_structure(zabbix_config[i])
         end
       end
     end

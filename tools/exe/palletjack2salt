@@ -1,21 +1,40 @@
 #!/usr/bin/env ruby
 
-# Write YAML files containing Salt external pillar data for all
-# systems, one file per system.
+# Write YAML files containing Salt pillar data.
 #
-# Intended to be run from a Git post-update hook or similar, writing
-# YAML files which will be read by a Salt palletjack_yaml_file
-# external pillar (which you will have to install manually), since
+# Intended to be run from a Git post-update hook or similar, since
 # running the entire Pallet Jack infrastructure once per minion for
-# every pillar refresh is a bit excessive.
+# every pillar refresh is a bit excessive, writing YAML files which
+# will be read by a Salt pillar, in one of two modes of operation:
 #
-# Example Salt master configuration:
+# 1. Global pillar data
 #
-#   ext_pillar:
-#     - palletjack_yaml_file: /var/cache/palletjack/{environment}/{minion}.yaml
+#    Intended to be included in an ordinary Salt pillar root.
 #
-# Data model assumptions:
-# - Salt minion ID is FQDN
+#    Example Salt master configuration:
+#
+#    pillar_roots:
+#      base:
+#        - /etc/salt/pillar
+#
+#    Example /etc/salt/pillar/top.sls:
+#
+#    base:
+#      '*':
+#        - palletjack.global
+#
+# 2. Per-minion pillar data
+#
+#    Intended to be read by the `palletjack_yaml_file` external pillar
+#    (which you will have to install manually).
+#
+#    Example Salt master configuration:
+#
+#    ext_pillar:
+#      - palletjack_yaml_file: /var/cache/palletjack/{saltenv}/{minion}.yaml
+#
+#    Data model assumptions:
+#      - Salt minion ID is FQDN
 
 require 'palletjack/tool'
 require 'yaml'
@@ -23,14 +42,64 @@ require 'yaml'
 class PalletJack2Salt < PalletJack::Tool
   def parse_options(opts)
     opts.banner =
-"Usage: #{$PROGRAM_NAME} -w <warehouse> -o <output directory>
+"Usage: #{$PROGRAM_NAME} -w <warehouse> [ -g <dir> ] [ -m <dir> ]
 
-Write Salt pillar data from a Palletjack warehouse, one YAML file per system"
+Write Salt pillar data from a Palletjack warehouse."
 
-    opts.on('-o DIR', '--output DIR', 'output directory', String) {|dir|
-      options[:output] = dir }
+    opts.on('-g DIR', '--global DIR', 'global pillar directory',
+            String ) {|dir| options[:global_pillar] = dir }
+    opts.on('-m DIR', '--minion DIR', 'per-minion pillar directory',
+            String) {|dir| options[:minion_pillar] = dir }
 
-    required_option :output
+    required_option :global_pillar, :minion_pillar
+  end
+
+  # Helpers for generating global pillars
+
+  def process_global_pillar
+    result = {}
+
+    config['pillar.global.each-pallet'].each do |dst_key, kind|
+      result[dst_key] ||= {}
+
+      jack.each(kind: kind) do |pallet|
+        result[dst_key][pallet.name] = pallet.to_hash.except('pallet')
+      end
+    end
+
+    result
+  end
+
+  # Helpers for generating per-minion pillars
+
+  def ipv4_interfaces(system)
+    result = Hash.new
+
+    system.children(kind:'ipv4_interface') do |interface|
+      result[interface['net.layer2.name']] = {
+        interface['net.ipv4.address'] =>
+        interface.filter('net.ipv4', 'net.layer2').to_hash
+      }
+    end
+
+    result
+  end
+
+  def process_minion_pillars
+    result = {}
+
+    jack.each(kind:'system') do |system|
+      yaml_output = {}
+      yaml_output['ipv4_interfaces'] = ipv4_interfaces(system)
+
+      config['pillar.per-minion.each-subtree'].each do |dst_key, src_key|
+        yaml_output[dst_key] = system.fetch(src_key)
+      end
+
+      result[system['net.dns.fqdn']] = { 'palletjack' => yaml_output }
+    end
+
+    result
   end
 
   # The internal representation of the generated configuration, ready
@@ -41,28 +110,26 @@ Write Salt pillar data from a Palletjack warehouse, one YAML file per system"
   def process
     @salt_config = {}
 
-    jack.each(kind:'system') do |system|
-      yaml_output = { 'ipv4_interfaces' => {} }
-
-      system.children(kind:'ipv4_interface') do |interface|
-        yaml_output['ipv4_interfaces'][interface['net.layer2.name']] = {
-          interface['net.ipv4.address'] =>
-          interface.filter('net.ipv4', 'net.layer2').to_hash
-        }
-      end
-
-      yaml_output['system'] = system['system']
-      yaml_output['service'] = system['net.service']
-
-      @salt_config[system['net.dns.fqdn']] = { 'palletjack' => yaml_output }
-    end
+    @salt_config[:global] = process_global_pillar if options[:global_pillar]
+    @salt_config[:minion] = process_minion_pillars if options[:minion_pillar]
   end
 
   def output
-    @salt_config.each do |id, config|
-      config_file :output, "#{id}.yaml" do |yamlfile|
-        yamlfile << git_header('palletjack2salt')
-        yamlfile << config.to_yaml
+    if @salt_config[:global]
+      config_dir :global_pillar, 'palletjack'
+      config_file :global_pillar, 'palletjack', 'global.sls' do |slsfile|
+        slsfile << git_header('palletjack2salt')
+        slsfile <<
+          { 'palletjack' => { 'global' => @salt_config[:global] } }.to_yaml
+      end
+    end
+
+    if @salt_config[:minion]
+      @salt_config[:minion].each do |id, config|
+        config_file :minion_pillar, "#{id}.yaml" do |yamlfile|
+          yamlfile << git_header('palletjack2salt')
+          yamlfile << config.to_yaml
+        end
       end
     end
   end

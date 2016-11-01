@@ -1,0 +1,6 @@
+---
+pillar:
+  global:
+    each-pallet:
+      netinstall: netinstall
+      os: os
