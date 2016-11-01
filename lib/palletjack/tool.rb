@@ -63,9 +63,9 @@ class PalletJack
     #
     # Example:
     #
-    # if __FILE__ == $0
-    #   MyTool.run
-    # end
+    #   if MyTool.standalone?(__FILE__)
+    #     MyTool.run
+    #   end
 
     # v0.1.0 API, retained until all tools have been updated to
     # v0.1.1:
@@ -95,6 +95,13 @@ class PalletJack
         instance.process
         instance.output
       end
+    end
+
+    # Predicate for detecting if we are being invoked as a standalone
+    # tool, or loaded by e.g. a test framework.
+
+    def self.standalone?(file)
+      File::basename(file) == File::basename($0)
     end
 
     # Generate data in an internal format, saving it for later testing
