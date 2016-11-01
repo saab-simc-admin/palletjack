@@ -68,6 +68,6 @@ Write Salt pillar data from a Palletjack warehouse, one YAML file per system"
   end
 end
 
-if __FILE__ == $0
+if PalletJack2Salt.standalone?(__FILE__)
   PalletJack2Salt.run
 end
