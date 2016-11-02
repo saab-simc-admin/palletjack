@@ -28,8 +28,8 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'rugged', '~> 0.24'
   spec.add_runtime_dependency 'kvdag', '~> 0.1.3'
 
-  spec.add_development_dependency "bundler", "~> 1.7.8"
-  spec.add_development_dependency "rake", "~> 0.9.6"
+  spec.add_development_dependency "bundler", "~> 1.13"
+  spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
 
   spec.has_rdoc	= true
