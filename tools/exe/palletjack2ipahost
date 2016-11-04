@@ -61,14 +61,16 @@ class PalletJack2Ipahost < PalletJack::Tool
 
       unless add_host.error? then
 
-        @ipa_pallets[system['net.dns.name']] = {
-          system: {
-            ipa: {
-              otp: add_host.results[0]['randompassword'],
-              hostgroups: system['system.ipa.hostgroups']
-            }
-          }
-        }
+        # Read
+        pallet = system['system.ipa']
+        # Modify
+        if pallet == nil then
+          pallet = { otp: add_host.results[0]['randompassword'][0] }
+        else
+          pallet['otp'] = add_host.results[0]['randompassword'][0]
+        end
+        # Write, or at least save for writing.
+        @ipa_pallets[system['net.dns.name']] = pallet
         # Add the host to any specified hostgroups
         if system['system.ipa.hostgroups'] then
           system['system.ipa.hostgroups'].each do |group|
@@ -90,7 +92,7 @@ class PalletJack2Ipahost < PalletJack::Tool
   def output
     @ipa_pallets.each do |name, pallet|
       pallet_box 'system', name, 'ipa' do
-        pallet
+        { system: { ipa: pallet } }
       end
     end
   end
