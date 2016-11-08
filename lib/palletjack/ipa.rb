@@ -199,14 +199,13 @@ class PalletJack
 
       # The response given by the command.
       #
-      # This method will always return an array. Single results will be
-      # converted to a single element array.
+      # This method returns +nil+ or an +array+ of +hash+.
       #
       #--
       # TODO: Implement proper error handling.
-      # Currently handles empty results badly.
       def results
         _res_b = @response['result']
+        _res_out = nil
         if _res_b['result'] then
           if _res_b['result'].is_a? Array then
             _res_out =_res_b['result']
@@ -217,9 +216,11 @@ class PalletJack
           puts "ERROR: No result"
         end
 
-        if block_given? then
-          _res_out.each do |i|
-            yield i
+        unless _res_out == nil then
+          if block_given? then
+            _res_out.each do |i|
+              yield i
+            end
           end
         end
 
