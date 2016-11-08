@@ -5,6 +5,23 @@ require 'json'
 class PalletJack
   class Ipa
 
+    # Helper class for the <tt>PalletJack::Ipa::Command</tt> class
+    #
+    # This class is initialized with a payload dict that resembles
+    # the data to be sent to the JSON-RPC endpoint. The class will
+    # take care of session management troughout the lifetime of the
+    # application.
+    #
+    # Authentication is done trough GSSAPI. It is assumed that whoever
+    # running the script has a valid kerberos credential.
+    #
+    # The endpoint is automatically determined and it is assumed that
+    # the FQDN of the current machine is the same as the IPA domain.
+    #
+    # See the Red Hat documentation about JSON-RPC for more info:
+    # https://access.redhat.com/articles/2728021
+    #
+
     class Request
 
       # Save the curl object, when we login we will recive a session
@@ -14,6 +31,7 @@ class PalletJack
 
       @@ipa_url = nil
 
+      # Perform a HTTP request against the JSON-RPC endpoint of a IPA server.
       def initialize(payload, debug = false)
         @payload = payload.to_json
         @debug = debug
@@ -26,7 +44,7 @@ class PalletJack
         self._make_request()
       end
 
-      def _set_server
+      def _set_server # :nodoc:
 
         domainname_base = `hostname -d`.strip()
 
@@ -43,7 +61,7 @@ class PalletJack
         @@ipa_url = "https://" + target_server + "/ipa"
       end
 
-      def _make_request
+      def _make_request # :nodoc:
 
         # Authenticate to request a new session
         # By creating a session and then using the session ID, we do not need
@@ -89,10 +107,12 @@ class PalletJack
 
       end
 
+      # Return a +hash+ with the command response
       def response
         JSON.parse(@body)
       end
 
+      # Return a +string+ with the command reponse JSON.
       def raw_response
         @body
       end
@@ -103,6 +123,30 @@ class PalletJack
 
       @@api_version = "2.156"
 
+      # Execute RPC Commands on a IPA server.
+      #
+      # :call-seq:
+      #   new("method")                   -> Command
+      #   new("method", [pos1])           -> Command
+      #   new("method", [pos1], {params}) -> Command
+      #
+      # This class will take a method name, positional parameters and named
+      # parameters and make a JSON-RPC request against a IPA server.
+      #
+      # <tt>ipa -vv <command> [params]</tt> may be used to see an example of the data
+      # structure used by the API. In general the API parameters is very similar
+      # to the command line tool.
+      #
+      # === Attributes
+      #
+      # * +method+ - The JSON-RPC Method to call
+      # * +name+ - The positional parameters to the method. Can be an array or string.
+      # * +params+ - Named parameters to the method.
+      # * +debug+ - Enable debugging output, default: false
+      #
+      # Examples:
+      #   <tt>PalletJack::Ipa::Command.new("host_add", "new_system", { ip_address: "192.168.13.37" })</tt>
+      #   <tt>PalletJack::Ipa::Command.new("host_find")</tt>
       def initialize(method, name=nil, params={}, debug = false)
         @method = method
         @name = name
@@ -114,7 +158,7 @@ class PalletJack
       end
 
 
-      def _build_payload
+      def _build_payload # :nodoc:
 
         if not @params["all"] then
           @params["all"] = false
@@ -147,10 +191,18 @@ class PalletJack
         }
       end 
 
+      # The API version from the server.
       def server_version
         @response['version']
       end
 
+      # The response given by the command.
+      #
+      # This method will always return an array. Single results will be
+      # converted to a single element array.
+      #
+      #--
+      # Currently handles empty results badly.
       def results
         _res_b = @response['result']
         if _res_b['result'] then
@@ -172,11 +224,12 @@ class PalletJack
         _res_out
       end
 
+      # The amount of results returned
       def count
         self.results.count
       end
 
-      ## Error handling
+      # Was there an error?
       def error?
         if @result['error'] then
           true
@@ -185,6 +238,7 @@ class PalletJack
         end
       end
 
+      # The error code returned by the API.
       def error_code
         if self.error? then
           @result['error']['code']
@@ -193,6 +247,7 @@ class PalletJack
         end
       end
 
+      # The error short name returned by the API.
       def error_name
         if self.error? then
           @result['error']['name']
@@ -201,6 +256,7 @@ class PalletJack
         end
       end
 
+      # Descriptive error message returned by the API.
       def error_message
         if self.error? then
           @result['error']['message']
