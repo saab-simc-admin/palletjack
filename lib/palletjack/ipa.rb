@@ -36,7 +36,7 @@ class PalletJack
         @payload = payload.to_json
         @debug = debug
         if @@curl == nil then
-          @@curl = Curl::Easy.new # TODO: Test
+          @@curl = Curl::Easy.new
         end
         if @@ipa_url == nil then
           _set_server
@@ -126,9 +126,7 @@ class PalletJack
       # Execute RPC Commands on a IPA server.
       #
       # :call-seq:
-      #   new("method")                   -> Command
-      #   new("method", [pos1])           -> Command
-      #   new("method", [pos1], {params}) -> Command
+      #   new(method [,pos1 [,params]]) -> command
       #
       # This class will take a method name, positional parameters and named
       # parameters and make a JSON-RPC request against a IPA server.
@@ -160,6 +158,7 @@ class PalletJack
 
       def _build_payload # :nodoc:
 
+        # Add defaults for required parameters
         if not @params["all"] then
           @params["all"] = false
         end
@@ -170,6 +169,7 @@ class PalletJack
           @params["version"] = @@api_version
         end
 
+        # The positional argument always need to be an array in the payload.
         _name = []
         if @name then
           if @name.is_a? Array
@@ -179,6 +179,7 @@ class PalletJack
           end
         end
 
+        # Construct the payload.
         @payload = {
           "id"     => 0,
           "method" => @method,
@@ -202,6 +203,7 @@ class PalletJack
       # converted to a single element array.
       #
       #--
+      # TODO: Implement proper error handling.
       # Currently handles empty results badly.
       def results
         _res_b = @response['result']
@@ -211,7 +213,7 @@ class PalletJack
            else
              _res_out = [ _res_b['result'] ]
            end
-        else # TODO: Better error handling for error results.
+        else
           puts "ERROR: No result"
         end
 
