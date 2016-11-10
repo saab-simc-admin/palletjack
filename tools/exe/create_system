@@ -26,20 +26,24 @@ Create system objects in a warehouse"
     required_option :os, :netinstall
     exclusive_options :os, :netinstall
   end
+
+  def output
+    pallet_dir 'system', :system
+    pallet_box 'system', :system, 'role' do
+      { system:{ role:[ '' ] } }
+    end
+    pallet_links 'system', :system, 'domain' => ['domain', :domain]
+    pallet_links 'system', :system,
+      if options[:os]
+        { 'os' => ['os', :os], 'netinstall' => [] }
+      elsif options[:netinstall]
+        { 'os' => [], 'netinstall' => ['netinstall', :netinstall] }
+      else
+        abort('Both --os and --netinstall were nil; should not happen!')
+      end
+  end
 end
 
-CreateSystem.run do
-  pallet_dir 'system', :system
-  pallet_box 'system', :system, 'role' do
-    { system:{ role:[ '' ] } }
-  end
-  pallet_links 'system', :system, 'domain' => ['domain', :domain]
-  pallet_links 'system', :system,
-    if options[:os]
-      { 'os' => ['os', :os], 'netinstall' => [] }
-    elsif options[:netinstall]
-      { 'os' => [], 'netinstall' => ['netinstall', :netinstall] }
-    else
-      abort('Both --os and --netinstall were nil; should not happen!')
-    end
+if CreateSystem.standalone?(__FILE__)
+  CreateSystem.run
 end
