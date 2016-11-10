@@ -7,7 +7,6 @@ require 'palletjack/pallet'
 
 class PalletJack < KVDAG
   attr_reader :warehouse
-  attr_reader :pallets
   attr_reader :keytrans_reader
   attr_reader :keytrans_writer
 
