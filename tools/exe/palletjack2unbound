@@ -31,6 +31,8 @@ class PalletJack2Unbound < PalletJack::Tool
     # override the builtin RFC1918 blocking in unbound.
 
     def initialize(zone, *stub_addrs, transparent: false)
+      raise ArgumentError.new if stub_addrs.empty?
+
       @tool = PalletJack2Unbound.instance
       @zone = zone
       @stub_addrs = stub_addrs
@@ -40,7 +42,6 @@ class PalletJack2Unbound < PalletJack::Tool
     # Write a stub-zone declaration to a file in conf.d/
 
     def output
-      return if @stub_addrs.empty?
       @tool.config_file :conf_dir, "#{@zone}.conf" do |stubfile|
         stubfile << @tool.git_header('palletjack2unbound')
         stubfile << "
