@@ -19,7 +19,7 @@ describe 'palletjack2unbound' do
     @tool = PalletJack2Unbound.instance
     allow(@tool).to receive(:argv).and_return([
       '-w', $EXAMPLE_WAREHOUSE,
-      '-s', 'dns-resolver-example-com'
+      '-s', 'example-com'
     ])
     allow($stderr).to receive(:write)
     expect{@tool.setup}.to raise_error SystemExit
@@ -31,7 +31,7 @@ describe 'palletjack2unbound' do
       allow(@tool).to receive(:argv).and_return([
         '-w', $EXAMPLE_WAREHOUSE,
         '-o', Dir.tmpdir,
-        '-s', 'dns-resolver-example-com'
+        '-s', 'example-com'
       ])
       @tool.setup
       @tool.process_service_config
@@ -63,7 +63,7 @@ describe 'palletjack2unbound' do
       allow(@tool).to receive(:argv).and_return([
         '-w', $EXAMPLE_WAREHOUSE,
         '-o', Dir.tmpdir,
-        '-s', 'dns-resolver-example-com'
+        '-s', 'example-com'
       ])
       @tool.setup
       @tool.process_stub_zones

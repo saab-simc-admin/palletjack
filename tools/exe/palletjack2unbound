@@ -66,7 +66,9 @@ stub-zone:
     def initialize(service_name)
       @tool = PalletJack2Unbound.instance
       @service_name = service_name
-      @service_config = @tool.jack.fetch(kind:'service', name: @service_name)
+      @service_config = @tool.jack.fetch(kind:'service',
+                                         parent_name: 'dns-resolver',
+                                         name: @service_name)
     end
 
     # Generate unbound service configuration
