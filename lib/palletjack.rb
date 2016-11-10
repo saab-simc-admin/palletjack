@@ -6,9 +6,12 @@ require 'palletjack/keytransformer'
 require 'palletjack/pallet'
 
 class PalletJack < KVDAG
+  attr_reader :warehouse
   attr_reader :pallets
   attr_reader :keytrans_reader
   attr_reader :keytrans_writer
+
+  # Create and load a PalletJack warehouse, and all its pallets
 
   def self.load(warehouse)
     new.load(warehouse)
@@ -18,6 +21,8 @@ class PalletJack < KVDAG
     super
     @pallets = Hash.new
   end
+
+  # Load a PalletJack warehouse, and all its pallets
 
   def load(warehouse)
     @warehouse = File.expand_path(warehouse)
@@ -32,10 +37,24 @@ class PalletJack < KVDAG
       Dir.foreach(kindpath) do |pallet|
         palletpath = File.join(kindpath, pallet)
         next unless File.directory?(palletpath) and pallet !~ /^\.{1,2}$/
-        Pallet.new(self, palletpath)
+        pallet(kind, pallet)
       end
     end
     self
+  end
+
+  # Return a named pallet from the warehouse
+  #
+  # If the pallet is not yet loaded, it will be.
+  #
+  # Raises RuntimeError if the warehouse is not loaded.
+  # Raises Errno::ENOENT if the pallet can't be loaded.
+
+  def pallet(kind, name)
+    raise "warehouse is not loaded" unless @warehouse
+
+    @pallets[kind] ||= Hash.new
+    @pallets[kind][name] ||= Pallet.load(self, kind, name)
   end
 
   # Search for pallets in a PalletJack warehouse

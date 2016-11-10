@@ -5,29 +5,23 @@ class PalletJack
     attr_reader :name
     attr_reader :kind
 
-    # N.B: A pallet should never be created manually; use
-    # +PalletJack::new+ to initialize a complete warehouse.
+    # N.B: A pallet should never be loaded manually; use
+    # +PalletJack.load+ to initialize a complete warehouse.
     #
     # [+jack+] PalletJack that will manage this pallet.
-    # [+path+] Filesystem path to pallet data.
+    # [+kind+] Kind of pallet.
+    # [+name+] Name of pallet.
     #
-    # Create PalletJack managed singletonish pallet.
-    #
-    # Use relative path inside of warehouse as kind/name for this
-    # pallet, and make a singletonish object for that key.
+    # Creates and loads a new PalletJack warehouse pallet.
 
-    def Pallet.new(jack, path) #:doc:
-      ppath, name = File.split(path)
-      _, kind = File.split(ppath)
-
-      jack.pallets[kind] ||= Hash.new
-      jack.pallets[kind][name] || super
+    def self.load(jack, kind, name)
+      path = File.join(jack.warehouse, kind, name)
+      new(jack, pallet:{kind => name}).load(path)
     end
 
-    # N.B: A pallet should never be created manually; use
-    # +PalletJack::new+ to initialize a complete warehouse.
+    # N.B: A pallet should never be loaded manually; use
+    # +PalletJack::load+ to initialize a complete warehouse.
     #
-    # [+jack+] PalletJack that will manage this pallet.
     # [+path+] Filesystem path to pallet data.
     #
     # Loads and merges all YAML files in +path+ into this Vertex.
@@ -35,15 +29,10 @@ class PalletJack
     # Follows all symlinks in +path+ and creates edges towards
     # the pallet located in the symlink target.
 
-    private :initialize
-    def initialize(jack, path) #:notnew:
-      @jack = jack
-      @path = path
+    def load(path)
       ppath, @name = File.split(path)
       _, @kind = File.split(ppath)
       boxes = Array.new
-
-      super(jack, pallet:{@kind => @name})
 
       Dir.foreach(path) do |file|
         next if file[0] == '.'
@@ -56,14 +45,17 @@ class PalletJack
         when filestat.symlink?
           link = File.readlink(filepath)
           _, lname = File.split(link)
+          ppath, pname = File.split(File.absolute_path(link, path))
+          _, pkind = File.split(ppath)
 
-          pallet = Pallet.new(jack, File.absolute_path(link, path))
+          pallet = jack.pallet(pkind, pname)
           edge(pallet, pallet:{references:{file => lname}})
         end
       end
       merge!(pallet:{boxes: boxes})
-      @jack.keytrans_writer.transform!(self)
-      @jack.pallets[@kind][@name] = self
+      jack.keytrans_writer.transform!(self)
+
+      self
     end
 
     def inspect
@@ -76,5 +68,9 @@ class PalletJack
     def to_yaml
       to_hash.to_yaml
     end
+
+    private
+
+    alias :jack :dag
   end
 end
