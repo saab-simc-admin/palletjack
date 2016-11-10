@@ -17,6 +17,72 @@ require 'palletjack/tool'
 require 'ip'
 
 class PalletJack2Unbound < PalletJack::Tool
+
+  # Representation of a stub zone configuration for Unbound
+
+  class StubZone
+
+    # :call-seq:
+    # new(TOOL, ZONE, AUTH-NS, ...)
+    # new(TOOL, ZONE, AUTH-NS, ..., transparent: true)
+    #
+    # If the +transparent+ option is true, it represents
+    # a <tt>local-zone ... transparent</tt>, declaration to
+    # override the builtin RFC1918 blocking in unbound.
+
+    def initialize(zone, *stub_addrs, transparent: false)
+      @tool = PalletJack2Unbound.instance
+      @zone = zone
+      @stub_addrs = stub_addrs
+      @transparent = transparent
+    end
+
+    # Write a stub-zone declaration to a file in conf.d/
+
+    def output
+      return if @stub_addrs.empty?
+      @tool.config_file :conf_dir, "#{@zone}.conf" do |stubfile|
+        stubfile << @tool.git_header('palletjack2unbound')
+        stubfile << "
+stub-zone:
+  name: #{@zone}\n"
+
+        @stub_addrs.each do |addr|
+          stubfile << "  stub-addr: #{addr}\n"
+        end
+
+        if @transparent then
+          stubfile << "\nserver:\n  local-zone: \"#{@zone}\" transparent\n"
+        end
+      end
+    end
+  end
+
+  # Representation of a service wide configuration for Unbound
+
+  class UnboundConfig
+    def initialize(service_name)
+      @tool = PalletJack2Unbound.instance
+      @service_name = service_name
+      @service_config = @tool.jack.fetch(kind:'service', name: @service_name)
+    end
+
+    # Generate unbound service configuration
+
+    def output
+      @tool.config_file :local_dir, "#{@service_name}.conf" do |configfile|
+        configfile << @tool.git_header('palletjack2unbound')
+        @service_config["service.unbound.server"].each do |config|
+          config.each do |key, value|
+            configfile << "#{key}: #{value}\n"
+          end
+        end
+      end
+    end
+  end
+
+  # Setup command line options parser
+
   def parse_options(opts)
     opts.banner =
 "Usage: #{$PROGRAM_NAME} -w <warehouse> -s <service> -o <output directory>
@@ -42,30 +108,6 @@ E.g.
     required_option :service
   end
 
-  # Write a stub-zone declaration to a file in conf.d/
-  # If the +transparent+ option is true, also write
-  # a local-zone ... transparent, declaration e.g. to
-  # override the builtin RFC1918 blocking in unbound.
-
-  def stub_zone(zone, stub_addrs, transparent: false)
-    return if stub_addrs.empty?
-
-    config_file :conf_dir, "#{zone}.conf" do |stubfile|
-      stubfile << git_header('palletjack2unbound')
-      stubfile << "
-stub-zone:
-  name: #{zone}\n"
-
-      stub_addrs.each do |addr|
-        stubfile << "  stub-addr: #{addr}\n"
-      end
-
-      if transparent then
-        stubfile << "\nserver:\n  local-zone: \"#{zone}\" transparent\n"
-      end
-    end
-  end
-
   # Check if +ip+ belongs to some RFC1918 network
 
   def rfc1918?(ip)
@@ -75,55 +117,56 @@ stub-zone:
     rfc1918_nets.any? {|net| ip.is_in?(net)}
   end
 
-  # Generate unbound service configuration
+  # Main processing stage
 
-  def unbound_config(service_name)
-    service_config = jack.fetch(kind:'service', name: service_name)
+  def process
+    @stub_zones = []
 
-    config_file :local_dir, "#{service_name}.conf" do |configfile|
-      configfile << git_header('palletjack2unbound')
-      service_config["service.unbound.server"].each do |config|
-        config.each do |key, value|
-          configfile << "#{key}: #{value}\n"
+    jack.each(kind:'domain') do |domain|
+      zone = domain['net.dns.domain']
+      stub_addrs = []
+
+      domain['net.dns.ns'].each do |ns|
+        jack.each(kind:'ipv4_interface', all?:{'net.dns.fqdn' => ns}) do |ipv4|
+          stub_addrs << ipv4['net.ipv4.address']
         end
       end
+
+      @stub_zones << StubZone.new(zone, *stub_addrs)
+
+      next unless domain['net.ipv4.cidr']
+
+      # Assume all delegations happen on octet boundaries for now.
+      # TODO: RFC 2317 classless in-addr.arpa delegation
+
+      ip_net = IP.new(domain['net.ipv4.cidr'])
+      reverse_zone = ip_net.to_arpa
+      prefix_octets, _ = domain['net.ipv4.prefixlen'].to_i.divmod(8)
+      reverse_zone =
+        ip_net.to_arpa.split('.')[-(2 + prefix_octets) .. 5].join('.')
+
+      # Make the same assumption that palletjack2knot does;
+      # reverse delegations are made to the same nameserver
+      # as forward delegations.
+
+      @stub_zones << StubZone.new(reverse_zone, *stub_addrs,
+                                  transparent: rfc1918?(ip_net))
     end
+
+    @unbound_config = UnboundConfig.new(options[:service])
+  end
+
+  # Config file output stage
+
+  def output
+    config_dir :conf_dir
+    config_dir :local_dir
+
+    @stub_zones.each {|stub_zone| stub_zone.output }
+    @unbound_config.output
   end
 end
 
-PalletJack2Unbound.run do
-  config_dir :conf_dir
-  config_dir :local_dir
-
-  jack.each(kind:'domain') do |domain|
-    zone = domain['net.dns.domain']
-    stub_addrs = []
-
-    domain['net.dns.ns'].each do |ns|
-      jack.each(kind:'ipv4_interface', all?:{'net.dns.fqdn' => ns}) do |ipv4|
-        stub_addrs << ipv4['net.ipv4.address']
-      end
-    end
-
-    stub_zone(zone, stub_addrs)
-
-    next unless domain['net.ipv4.cidr']
-
-    # Assume all delegations happen on octet boundaries for now.
-    # TODO: RFC 2317 classless in-addr.arpa delegation
-
-    ip_net = IP.new(domain['net.ipv4.cidr'])
-    reverse_zone = ip_net.to_arpa
-    prefix_octets, _ = domain['net.ipv4.prefixlen'].to_i.divmod(8)
-    reverse_zone =
-      ip_net.to_arpa.split('.')[-(2 + prefix_octets) .. 5].join('.')
-
-    # Make the same assumption that palletjack2knot does;
-    # reverse delegations are made to the same nameserver
-    # as forward delegations.
-
-    stub_zone(reverse_zone, stub_addrs, transparent: rfc1918?(ip_net))
-  end
-
-  unbound_config(options[:service])
+if PalletJack2Unbound.standalone?(__FILE__)
+  PalletJack2Unbound.run
 end
