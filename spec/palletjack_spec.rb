@@ -8,4 +8,10 @@ describe PalletJack do
   it 'requires a warehouse' do
     expect{ PalletJack.load('__INVALID__') }.to raise_error Errno::ENOENT
   end
+
+  it 'requires a warehouse to load a pallet' do
+    expect{
+      PalletJack.new.pallet('domain', 'example.com')
+    }.to raise_error RuntimeError
+  end
 end
