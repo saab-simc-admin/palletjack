@@ -15,6 +15,7 @@
 
 require 'palletjack/tool'
 require 'ip'
+require 'resolv'
 
 class PalletJack2Unbound < PalletJack::Tool
 
@@ -128,7 +129,12 @@ E.g.
       stub_addrs = []
 
       domain['net.dns.ns'].each do |ns|
-        jack.each(kind:'ipv4_interface', all?:{'net.dns.fqdn' => ns}) do |ipv4|
+        nsname = Resolv::DNS::Name.create(ns)
+        nsname =
+          Resolv::DNS::Name.create("#{ns}.#{zone}.") unless nsname.absolute?
+
+        jack.each(kind:'ipv4_interface',
+                  all?:{'net.dns.fqdn' => nsname.to_s}) do |ipv4|
           stub_addrs << ipv4['net.ipv4.address']
         end
       end
