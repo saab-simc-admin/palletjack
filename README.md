@@ -241,3 +241,11 @@ We are happy to accept contributions in the form of issues and pull requests on 
     - If your code needs larger chunks of static data to work, please provide it in a separate directory under `examples/`. See e.g. [the `examples/pxelinux/` tree](https://github.com/saab-simc-admin/palletjack/tree/master/examples/pxelinux), which contains files required to make sense of the output from `palletjack2pxelinux`.
 
   - Write your commit messages in the usual Git style: a short summary in the first line, then paragraphs of explanatory text, line wrapped.
+
+- Test your code.
+
+  - Tests shall be written in [RSpec](http://rspec.info/).
+
+  - Library code shall have unit tests.
+
+  - Tools shall have integration and end-to-end tests.
