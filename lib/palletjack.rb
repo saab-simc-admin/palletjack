@@ -82,7 +82,7 @@ class PalletJack < KVDAG
     result = self[filter]
 
     if result.length != 1
-      raise KeyError.new("#{options} matched #{result.length} pallets")
+      raise KeyError.new("#{filter} matched #{result.length} pallets")
     end
     result.first
   end
