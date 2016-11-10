@@ -35,16 +35,20 @@ pallets of the specified type."
       puts p.to_yaml
     end
   end
-end
 
-DumpPallet.run do
-  # Since the Tool framework uses destructive opts.parse!, all options
-  # were removed from argv, leaving just the names to search for.
-  if argv.empty?
-    dump_pallets jack[kind: options[:type]]
-  else
-    argv.each do |name|
-      dump_pallets jack[kind: options[:type], name: name]
+  def output
+    # Since the Tool framework uses destructive opts.parse!, all options
+    # were removed from argv, leaving just the names to search for.
+    if argv.empty?
+      dump_pallets jack[kind: options[:type]]
+    else
+      argv.each do |name|
+        dump_pallets jack[kind: options[:type], name: name]
+      end
     end
   end
+end
+
+if DumpPallet.standalone?(__FILE__)
+  DumpPallet.run
 end
