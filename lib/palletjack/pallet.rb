@@ -46,6 +46,9 @@ class PalletJack < KVDAG
 
           pallet = jack.pallet(link_id.kind, link_id.full_name)
           edge(pallet, pallet:{references:{file => link_id.full_name}})
+        when filestat.directory?
+          child = jack.pallet(kind, File.join(name, file))
+          child.edge(self, pallet:{references:{_parent: name}})
         end
       end
       merge!(pallet:{kind => name, boxes: boxes})
