@@ -32,19 +32,14 @@ class PalletJack
       @@ipa_url = nil
 
       # Perform a HTTP request against the JSON-RPC endpoint of a IPA server.
-      def initialize(payload, debug = false)
+      def initialize(payload)
         @payload = payload.to_json
-        @debug = debug
-        if @@curl == nil then
-          @@curl = Curl::Easy.new
-        end
-        if @@ipa_url == nil then
-          _set_server
-        end
-        self._make_request()
+        @@curl ||= Curl::Easy.new
+        @@ipa_url ||= get_server
+        make_request()
       end
 
-      def _set_server # :nodoc:
+      def get_server
 
         domainname_base = `hostname -d`.strip()
 
@@ -58,18 +53,19 @@ class PalletJack
           end
         end
 
-        @@ipa_url = "https://" + target_server + "/ipa"
+        "https://" + target_server + "/ipa"
       end
+      private :get_server
 
-      def _make_request # :nodoc:
+      def make_request
 
         # Authenticate to request a new session
         # By creating a session and then using the session ID, we do not need
         # to do a GSSAPI Authentication for every API request made within the
         # same script.
-        if @@session_init == false then
+        unless @@session_init then
           # The session is automatically initialized if a request is made towards the API
-          _login_payload = {
+          login_payload = {
                 "id"     => 0, 
                 "method" => "ping",
                 "params" => [ [], {} ]
@@ -83,17 +79,17 @@ class PalletJack
           @@curl.headers["Referer"] = @@ipa_url + "/json"
           @@curl.headers['Content-Type'] = "application/json"
           @@curl.url = @@ipa_url + "/json"
-          @@curl.http_post(_login_payload.to_json)
-          _session_result = JSON.parse(@@curl.body_str)
+          @@curl.http_post(login_payload.to_json)
+          session_result = JSON.parse(@@curl.body_str)
 
-          if _session_result['error'] != nil then
+          if session_result['error'] then
             puts "Error authentication!"
           end
           @@curl.url = @@ipa_url + "/session/json"
           #@@curl.set(:HTTPAUTH, Curl::CURLAUTH_NONE) # Reset auth, rely on cookie
         end
 
-        if @debug then
+        if debug? then
           puts "DEBUG: Request: " + @payload
         end
 
@@ -101,11 +97,12 @@ class PalletJack
 
         @body = @@curl.body_str
 
-        if @debug then
+        if debug? then
           puts "DEBUG: Response:" + @body
         end
 
       end
+      private :make_request
 
       # Return a +hash+ with the command response
       def response
@@ -116,6 +113,19 @@ class PalletJack
       def raw_response
         @body
       end
+
+      def self.debug=(maybe)
+        @@debug = maybe
+      end
+
+      def self.debug
+        @@debug ||= false
+      end
+
+      def debug?
+        self.class.debug
+      end
+      private :debug?
 
     end
 
@@ -145,18 +155,17 @@ class PalletJack
       # Examples:
       #   <tt>PalletJack::Ipa::Command.new("host_add", "new_system", { ip_address: "192.168.13.37" })</tt>
       #   <tt>PalletJack::Ipa::Command.new("host_find")</tt>
-      def initialize(method, name=nil, params={}, debug = false)
+      def initialize(method, name=nil, params={})
         @method = method
         @name = name
         @params = params
-        @payload = _build_payload
-        @request = PalletJack::Ipa::Request.new(@payload, debug)
-        @debug = debug
+        @payload = build_payload
+        @request = PalletJack::Ipa::Request.new(@payload)
         @response = @request.response
       end
 
 
-      def _build_payload # :nodoc:
+      def build_payload
 
         # Add defaults for required parameters
         if not @params["all"] then
@@ -170,12 +179,12 @@ class PalletJack
         end
 
         # The positional argument always need to be an array in the payload.
-        _name = []
+        name = []
         if @name then
           if @name.is_a? Array
-            _name = @name
+            name = @name
           else
-            _name = [ @name ]
+            name = [ @name ]
           end
         end
 
@@ -184,13 +193,14 @@ class PalletJack
           "id"     => 0,
           "method" => @method,
           "params" => [
-            _name,
+            name,
             @params
           ]
 
 
         }
-      end 
+      end
+      private :build_payload
 
       # The API version from the server.
       def server_version
@@ -204,27 +214,25 @@ class PalletJack
       #--
       # TODO: Implement proper error handling.
       def results
-        _res_b = @response['result']
-        _res_out = nil
-        if _res_b['result'] then
-          if _res_b['result'].is_a? Array then
-            _res_out =_res_b['result']
+        res_b = @response['result']
+        res_out = nil
+        if res_b['result'] then
+          if res_b['result'].is_a? Array then
+            res_out =res_b['result']
            else
-             _res_out = [ _res_b['result'] ]
+             res_out = [ res_b['result'] ]
            end
         else
           puts "ERROR: No result"
         end
 
-        unless _res_out == nil then
-          if block_given? then
-            _res_out.each do |i|
-              yield i
-            end
+        if res_out and block_given? then
+          res_out.each do |i|
+            yield i
           end
         end
 
-        _res_out
+        res_out
       end
 
       # The amount of results returned
@@ -234,40 +242,30 @@ class PalletJack
 
       # Was there an error?
       def error?
-        if @result['error'] then
-          true
-        else
-          false
-        end
+        not @response['error'].nil?
       end
 
       # The error code returned by the API.
       def error_code
         if self.error? then
-          @result['error']['code']
-        else
-          nil
+          @response['error']['code']
         end
       end
 
       # The error short name returned by the API.
       def error_name
         if self.error? then
-          @result['error']['name']
-        else
-          nil
+          @response['error']['name']
         end
       end
 
       # Descriptive error message returned by the API.
       def error_message
         if self.error? then
-          @result['error']['message']
-        else
-          nil
+          @response['error']['message']
         end
       end
-    end
 
+    end
   end
 end
