@@ -8,19 +8,25 @@ describe PalletJack::Pallet do
   
   it 'can load contents of a pallet' do
     expect {
-      PalletJack::Pallet.load(@jack, 'domain', 'example.com')
+      path = File.join('domain', 'example.com')
+      identity = PalletJack::Pallet::Identity.new(@jack, path)
+      PalletJack::Pallet.load(@jack, identity)
     }.not_to raise_error
   end
   
   it 'cannot load contents of a non-existent pallet' do
     expect {
-      PalletJack::Pallet.load(@jack, '__invalid__', '__no_such__')
+      path = File.join('__invalid__', '__no_such__')
+      identity = PalletJack::Pallet::Identity.new(@jack, path)
+      PalletJack::Pallet.load(@jack, identity)
     }.to raise_error Errno::ENOENT
   end
   
   context 'a loaded pallet' do
     before :context do
-      @pallet = PalletJack::Pallet.load(@jack, 'domain', 'example.com')
+      path = File.join('domain', 'example.com')
+      identity = PalletJack::Pallet::Identity.new(@jack, path)
+      @pallet = PalletJack::Pallet.load(@jack, identity)
     end
     
     it 'has a kind' do

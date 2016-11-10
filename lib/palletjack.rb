@@ -52,8 +52,8 @@ class PalletJack < KVDAG
   def pallet(kind, name)
     raise "warehouse is not loaded" unless @warehouse
 
-    @pallets[kind] ||= Hash.new
-    @pallets[kind][name] ||= Pallet.load(self, kind, name)
+    identity = Pallet::Identity.new(self, File.join(kind, name))
+    @pallets[identity.path] ||= Pallet.load(self, identity)
   end
 
   # Search for pallets in a PalletJack warehouse

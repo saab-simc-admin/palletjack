@@ -1,41 +1,39 @@
-class PalletJack
+require 'palletjack/pallet/identity'
+
+class PalletJack < KVDAG
   # PalletJack managed pallet of key boxes inside a warehouse.
   class Pallet < KVDAG::Vertex
-
-    attr_reader :name
-    attr_reader :kind
 
     # N.B: A pallet should never be loaded manually; use
     # +PalletJack.load+ to initialize a complete warehouse.
     #
     # [+jack+] PalletJack that will manage this pallet.
-    # [+kind+] Kind of pallet.
-    # [+name+] Name of pallet.
+    # [+identity+] Identity of the pallet to be loaded.
     #
     # Creates and loads a new PalletJack warehouse pallet.
 
-    def self.load(jack, kind, name)
-      path = File.join(jack.warehouse, kind, name)
-      new(jack, pallet:{kind => name}).load(path)
+    def self.load(jack, identity)
+      new(jack).load(identity)
     end
 
     # N.B: A pallet should never be loaded manually; use
     # +PalletJack::load+ to initialize a complete warehouse.
     #
-    # [+path+] Filesystem path to pallet data.
+    # [+identity+] Identity of the pallet to be loaded.
     #
     # Loads and merges all YAML files in +path+ into this Vertex.
     #
     # Follows all symlinks in +path+ and creates edges towards
     # the pallet located in the symlink target.
 
-    def load(path)
-      ppath, @name = File.split(path)
-      _, @kind = File.split(ppath)
+    def load(identity)
+      @identity = identity
       boxes = Array.new
+      path = @identity.path
 
       Dir.foreach(path) do |file|
-        next if file[0] == '.'
+        next if file[0] == '.' # skip dot.files
+
         filepath = File.join(path, file)
         filestat = File.lstat(filepath)
         case
@@ -44,15 +42,13 @@ class PalletJack
           boxes << file
         when filestat.symlink?
           link = File.readlink(filepath)
-          _, lname = File.split(link)
-          ppath, pname = File.split(File.absolute_path(link, path))
-          _, pkind = File.split(ppath)
+          link_id = Identity.new(jack, File.expand_path(link, path))
 
-          pallet = jack.pallet(pkind, pname)
-          edge(pallet, pallet:{references:{file => lname}})
+          pallet = jack.pallet(link_id.kind, link_id.full_name)
+          edge(pallet, pallet:{references:{file => link_id.full_name}})
         end
       end
-      merge!(pallet:{boxes: boxes})
+      merge!(pallet:{kind => name, boxes: boxes})
       jack.keytrans_writer.transform!(self)
 
       self
@@ -65,8 +61,37 @@ class PalletJack
     # Override standard to_yaml serialization, because pallet objects
     # are ephemeral by nature. The natural serialization is that of
     # their to_hash analogue.
+
     def to_yaml
       to_hash.to_yaml
+    end
+
+    # The kind of this pallet
+
+    def kind
+      @identity.kind
+    end
+
+    # The leaf name of this pallet in its hierarchy
+
+    def leaf_name
+      @identity.leaf_name
+    end
+
+    # Compatibility alias name is the leaf name
+
+    alias name leaf_name
+
+    # The full hierarchical name of this pallet
+
+    def full_name
+      @identity.full_name
+    end
+
+    # The hierarchical _parent name for this pallet, or nil
+
+    def parent_name
+      @identity.parent_name
     end
 
     private
