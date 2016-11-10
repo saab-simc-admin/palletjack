@@ -12,18 +12,14 @@ describe PalletJack::Tool do
       allow(PalletJack::Tool.instance).to receive(:argv).and_return([])
     end
 
-    it 'can run a block in its instance context' do
-      expect(PalletJack::Tool.run { self.class }).to be PalletJack::Tool
-    end
-
-    it 'keeps state between invocations' do
-      PalletJack::Tool.run { @__rspec__remember_me = true }
-      expect(PalletJack::Tool.run { @__rspec__remember_me }).to be true
-    end
-
     it 'requires a warehouse' do
+      class TestTool < PalletJack::Tool
+        def process
+          jack
+        end
+      end
       allow($stderr).to receive :write # Drop stderr output from #abort
-      expect{ PalletJack::Tool.run { jack } }.to raise_error SystemExit
+      expect{ TestTool.run }.to raise_error SystemExit
     end
   end
 
