@@ -142,15 +142,14 @@ LABEL MainMenu
 "
     end
   end
-end
 
-PalletJack2PXELinux.run do
-  config_dir :output, 'config'
-  config_dir :output, 'pxelinux.cfg'
+  def output
+    config_dir :output, 'config'
+    config_dir :output, 'pxelinux.cfg'
 
-  config_file :output, 'config', 'linux.menu' do |menufile|
-    menufile << git_header('palletjack2pxelinux')
-    menufile << "
+    config_file :output, 'config', 'linux.menu' do |menufile|
+      menufile << git_header('palletjack2pxelinux')
+      menufile << "
 UI menu.c32
 PROMPT 0
 MENU INCLUDE /config/graphics.conf
@@ -158,34 +157,39 @@ MENU INCLUDE /config/graphics.conf
 MENU TITLE Linux Installation Menu
 "
 
-    jack.each(kind:'os') do |os|
-      next unless config=os['host.pxelinux.config']
+      jack.each(kind:'os') do |os|
+        next unless config=os['host.pxelinux.config']
 
-      label=config.gsub(/-/, ' ')
+        label=config.gsub(/-/, ' ')
 
-      pxemenu_for_operating_system(os)
+        pxemenu_for_operating_system(os)
 
-      menufile << "
+        menufile << "
 LABEL #{config}
   MENU LABEL Install #{label}
   KERNEL menu.c32
   APPEND /config/#{config}.menu
 "
+      end
     end
-  end
 
-  # Generate pxe default menu links for each system
+    # Generate pxe default menu links for each system
 
-  jack.each(kind:'system') do |system|
-    system.children(kind:'ipv4_interface') do |nic|
-      if system['host.pxelinux.config']
-        menuname = "#{system['host.pxelinux.config']}.menu"
-        linkname = "01-#{nic['net.layer2.address'].gsub(':', '-').downcase}"
+    jack.each(kind:'system') do |system|
+      system.children(kind:'ipv4_interface') do |nic|
+        if system['host.pxelinux.config']
+          menuname = "#{system['host.pxelinux.config']}.menu"
+          linkname = "01-#{nic['net.layer2.address'].gsub(':', '-').downcase}"
 
-        FileUtils.ln_s(config_path('..', 'config', menuname),
-                       config_path(:output, 'pxelinux.cfg', linkname),
-                       :force => true)
+          FileUtils.ln_s(config_path('..', 'config', menuname),
+                         config_path(:output, 'pxelinux.cfg', linkname),
+                         :force => true)
+        end
       end
     end
   end
+end
+
+if PalletJack2PXELinux.standalone?(__FILE__)
+  PalletJack2PXELinux.run
 end

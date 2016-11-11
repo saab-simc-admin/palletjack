@@ -23,30 +23,32 @@ Create domain and ipv4_network objects in a warehouse"
     required_option :domain
     required_option :network
   end
+
+  def output
+    # Create the IPv4 Network object
+
+    pallet_dir 'ipv4_network', :network
+    pallet_box 'ipv4_network', :network, 'dhcp' do
+      { net:{ dhcp:{ 'tftp-server' => '', 'boot-file' => '' } } }
+    end
+    pallet_box 'ipv4_network', :network, 'identity' do
+      { net:{ ipv4:{ gateway:'' },
+          dns:{ resolver:[''] } } }
+    end
+
+    # Create the DNS domain object
+
+    pallet_dir 'domain', :domain
+    pallet_box 'domain', :domain, 'dns' do
+      { net:{ dns:{ ns:[''], 'soa-ns' => '', 'soa-contact' => '' } } }
+    end
+    pallet_box 'domain', :domain, 'services' do
+      { net:{ service:{ syslog:[{address:'', port:'514', protocol:'udp' } ] } } }
+    end
+    pallet_links 'domain', :domain, 'ipv4_network' => ['ipv4_network', :network]
+  end
 end
 
-CreateDomain.run do
-
-  # Create the IPv4 Network object
-
-  pallet_dir 'ipv4_network', :network
-  pallet_box 'ipv4_network', :network, 'dhcp' do
-    { net:{ dhcp:{ 'tftp-server' => '', 'boot-file' => '' } } }
-  end
-  pallet_box 'ipv4_network', :network, 'identity' do
-    { net:{ ipv4:{ gateway:'' },
-            dns:{ resolver:[''] } } }
-  end
-
-  # Create the DNS domain object
-
-  pallet_dir 'domain', :domain
-  pallet_box 'domain', :domain, 'dns' do
-    { net:{ dns:{ ns:[''], 'soa-ns' => '', 'soa-contact' => '' } } }
-  end
-  pallet_box 'domain', :domain, 'services' do
-    { net:{ service:{ syslog:[{address:'', port:'514', protocol:'udp' } ] } } }
-  end
-  pallet_links 'domain', :domain, 'ipv4_network' => ['ipv4_network', :network]
-
+if CreateDomain.standalone?(__FILE__)
+  CreateDomain.run
 end

@@ -49,8 +49,6 @@ class PalletJack
   class Tool
     include Singleton
 
-    # v0.1.1 API:
-    #
     # :call-seq:
     # run
     #
@@ -67,34 +65,10 @@ class PalletJack
     #     MyTool.run
     #   end
 
-    # v0.1.0 API, retained until all tools have been updated to
-    # v0.1.1:
-    #
-    # :call-seq:
-    # run &block
-    #
-    # Run the +block+ given in the context of the tool singleton instance
-    # as convenience for simple tools.
-    #
-    # More complex tools probably want to override parse_options to
-    # add option parsing, and split functionality into multiple methods.
-    #
-    # Example:
-    #
-    #   MyTool.run { jack.each(kind:'system') {|sys| puts sys.to_yaml } }
-
     def self.run(&block)
-      if block
-        # v0.1.0 API. When all tools have been ported, remove this and
-        # bump the minor version number.
-        instance.setup
-        instance.instance_eval(&block)
-      else
-        # v0.1.1 API
-        instance.setup
-        instance.process
-        instance.output
-      end
+      instance.setup
+      instance.process
+      instance.output
     end
 
     # Predicate for detecting if we are being invoked as a standalone

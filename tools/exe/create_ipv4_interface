@@ -29,23 +29,26 @@ Create phy_nic and ipv4_interface objects in a warehouse"
     required_option :addr
     required_option :network
   end
+
+  def output
+    # Create Physical NIC object
+
+    pallet_dir 'phy_nic', :mac
+    pallet_box 'phy_nic', :mac, 'identity' do
+      { net:{ layer2:{ name:'' } } }
+    end
+
+    # Create IPv4 Interface object
+
+    pallet_dir 'ipv4_interface', :addr
+    pallet_links 'ipv4_interface', :addr,
+      'ipv4_network' => ['ipv4_network', :network],
+      'domain' => ['domain', :domain],
+      'phy_nic' => ['phy_nic', :mac],
+      'system' => ['system', :system]
+  end
 end
 
-CreateIPv4Interface.run do
-
-  # Create Physical NIC object
-
-  pallet_dir 'phy_nic', :mac
-  pallet_box 'phy_nic', :mac, 'identity' do
-    { net:{ layer2:{ name:'' } } }
-  end
-
-  # Create IPv4 Interface object
-
-  pallet_dir 'ipv4_interface', :addr
-  pallet_links 'ipv4_interface', :addr,
-    'ipv4_network' => ['ipv4_network', :network],
-    'domain' => ['domain', :domain],
-    'phy_nic' => ['phy_nic', :mac],
-    'system' => ['system', :system]
+if CreateIPv4Interface.standalone?(__FILE__)
+  CreateIPv4Interface.run
 end
