@@ -47,9 +47,10 @@ class PalletJack
         target_server = nil
 
         resolver = Resolv::DNS.new
-        resolver.each_resource("_ldap._tcp." + domainname_base, Resolv::DNS::Resource::IN::SRV) do |srv|
+        resolver.each_resource('_ldap._tcp', Resolv::DNS::Resource::IN::SRV) do |srv|
           if srv.priority < lowest_prio then
             target_server = srv.target.to_s
+            lowest_prio = srv.priority
           end
         end
 
