@@ -22,6 +22,16 @@ pallets of the specified type."
     parser.on('-t TYPE', '--type TYPE',
               'type (default "system")',
               String) {|type| options[:type] = type }
+
+    options[:match_name] = :leaf_name
+    parser.on('-f', '--[no-]full-name',
+              'match full_name of pallets instead of leaf_name'
+              ) {|maybe| options[:match_name] = if maybe
+                                                  :full_name
+                                                else
+                                                  :leaf_name
+                                                end
+    }
   end
 
   # Dump the yaml contents of all pallets given to STDOUT
@@ -43,7 +53,7 @@ pallets of the specified type."
       dump_pallets jack[kind: options[:type]]
     else
       argv.each do |name|
-        dump_pallets jack[kind: options[:type], name: name]
+        dump_pallets jack[kind: options[:type], options[:match_name] => name]
       end
     end
   end

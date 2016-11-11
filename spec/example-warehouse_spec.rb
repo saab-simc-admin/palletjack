@@ -16,7 +16,9 @@ describe 'Example warehouse' do
     end
 
     it 'has pallets' do
-      expect(@jack.pallets).not_to be_empty
+      # because KVDAG currently does not respond to #empty?, we have to
+      # use this instead, that compares against #count.
+      expect(@jack).to have_at_least(1).item 
     end
 
     it 'has "system" kind of pallets' do
