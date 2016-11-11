@@ -39,7 +39,7 @@ class PalletJack2Ipahost < PalletJack::Tool
       next unless system['system.role'].include? 'ipa-client' # Only ipa clients
 
       # Generate a random password
-      add_host_params = { 'random' => true } 
+      add_host_params = { :random => true }
 
       ip_address = nil
       system.children(kind:'ipv4_interface') do |interface|
@@ -50,14 +50,14 @@ class PalletJack2Ipahost < PalletJack::Tool
       end
 
       if ip_address then
-        add_host_params['ip_address'] = ip_address
+        add_host_params[:ip_address] = ip_address
       else
         puts " ! WARNING: No IP Address found for " + system['net.dns.fqdn'] + ", setting force = true."
-        add_host_params['force'] = true
+        add_host_params[:force] = true
       end
 
       # Add the host
-      add_host = PalletJack::Ipa::Command.new("host_add", system['net.dns.fqdn'], add_host_params)
+      add_host = PalletJack::Ipa::Command.new("host_add", system['net.dns.fqdn'], **add_host_params)
 
       unless add_host.error? then
 
@@ -76,8 +76,7 @@ class PalletJack2Ipahost < PalletJack::Tool
           system['system.ipa.hostgroups'].each do |group|
             hostgroup_add = PalletJack::Ipa::Command.new('hostgroup_add_member',
                                                          group,
-                                                         params={"host"=>[system['net.dns.fqdn']]}
-                                                        )
+                                                         host: [system['net.dns.fqdn']] )
           end
           # Add service.ipa.otp to warehouse
           puts " * Added host " + system['net.dns.name']

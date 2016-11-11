@@ -136,29 +136,27 @@ class PalletJack
       # Execute RPC Commands on a IPA server.
       #
       # :call-seq:
-      #   new(method [,pos1 [,params]]) -> command
+      #   new(method[, arg, ...]) -> obj
+      #   new(method[, arg, ...], key: value, ...) -> obj
+      #   new(method, key: value, ...) -> obj
       #
-      # This class will take a method name, positional parameters and named
-      # parameters and make a JSON-RPC request against a IPA server.
+      # Takes the JSON-RPC method as the first parameter. Optional parameters
+      # are positional arguments to the method and named parameters are passed
+      # as key/value pairs.
       #
-      # <tt>ipa -vv <command> [params]</tt> may be used to see an example of the data
-      # structure used by the API. In general the API parameters is very similar
-      # to the command line tool.
-      #
-      # === Attributes
-      #
-      # * +method+ - The JSON-RPC Method to call
-      # * +name+ - The positional parameters to the method. Can be an array or string.
-      # * +params+ - Named parameters to the method.
-      # * +debug+ - Enable debugging output, default: false
+      # <tt>ipa -vv <command> ...</tt> can be used to see an example of the
+      # data structure used by the API. Also see the Red Hat documentation of
+      # the JSON-RPC API: https://access.redhat.com/articles/2728021
       #
       # Examples:
-      #   <tt>PalletJack::Ipa::Command.new("host_add", "new_system", { ip_address: "192.168.13.37" })</tt>
-      #   <tt>PalletJack::Ipa::Command.new("host_find")</tt>
-      def initialize(method, name=nil, params={})
+      #   PalletJack::Ipa::Command.new('host_find')
+      #   PalletJack::Ipa::Command.new('dnsrecord_find', 'ipa.example.com')
+      #   PalletJack::Ipa::Command.new('host_find', nsosversion: 'RHEL7')
+      #   PalletJack::Ipa::Command.new('host_add', 'new-system', ip_address: '192.168.13.37' )
+      def initialize(method, *args, **kwargs)
         @method = method
-        @name = name
-        @params = params
+        @args = args
+        @kwargs = kwargs
         @payload = build_payload
         @request = PalletJack::Ipa::Request.new(@payload)
         @response = @request.response
@@ -168,23 +166,23 @@ class PalletJack
       def build_payload
 
         # Add defaults for required parameters
-        if not @params["all"] then
-          @params["all"] = false
+        if not @kwargs[:all] then
+          @kwargs[:all] = false
         end
-        if not @params["raw"] then
-          @params["raw"] = true
+        if not @kwargs[:raw] then
+          @kwargs[:raw] = true
         end
-        if not @params["version"] then
-          @params["version"] = @@api_version
+        if not @kwargs[:version] then
+          @kwargs[:version] = @@api_version
         end
 
         # The positional argument always need to be an array in the payload.
         name = []
-        if @name then
-          if @name.is_a? Array
-            name = @name
+        if @args then
+          if @args.is_a? Array
+            name = @args
           else
-            name = [ @name ]
+            name = [ @args ]
           end
         end
 
@@ -194,7 +192,7 @@ class PalletJack
           "method" => @method,
           "params" => [
             name,
-            @params
+            @kwargs
           ]
 
 
@@ -209,7 +207,11 @@ class PalletJack
 
       # The response given by the command.
       #
-      # This method returns +nil+ or an +array+ of +hash+.
+      # Returns +nil+ or an +array+ of +hash+.
+      #
+      # :call-seq:
+      #   results -> array
+      #   results { |item| block }
       #
       #--
       # TODO: Implement proper error handling.
