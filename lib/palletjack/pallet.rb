@@ -91,7 +91,8 @@ class PalletJack < KVDAG
       @identity.full_name
     end
 
-    # The hierarchical _parent name for this pallet, or nil
+    # The full name of the hierarchical parent for this pallet,
+    # or nil if there is no parent.
 
     def parent_name
       @identity.parent_name
