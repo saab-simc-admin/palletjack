@@ -4,8 +4,10 @@ the power of a Posix file system to store yaml serialized key-value trees.
 
 A database is created from a warehouse (directory) of different kinds
 (directory) of pallets (directory), each containing boxes (yaml files)
-with keys. Pallets can also contain references to other pallets (symlinks)
-to build a Directed Acyclic Graph of key-value search nodes.
+with keys. Pallets can contain other pallets, recursively, to form
+hierarchical inheritance. Pallets can also contain references to other
+pallets (symlinks) out of hierarchy, to build a Directed Acyclic Graph
+of key-value search nodes.
 
 The entire structure is indended to live beside configuration management
 code and data in a version control system repository, to enable tagged
@@ -84,8 +86,9 @@ warehouse
 ├── service
 │   ├── dhcp-server-example-net
 │   │   └── kea.yaml
-│   └── dns-resolver-example-com
-│       └── unbound.yaml
+│   └── dns-resolver
+│       └── example-com
+│           └── unbound.yaml
 ├── system
 │   ├── testvm
 │   │   ├── architecture.yaml
