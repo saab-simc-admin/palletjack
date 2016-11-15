@@ -84,8 +84,10 @@ warehouse
 │       ├── identity.yaml
 │       └── location.yaml
 ├── service
-│   ├── dhcp-server-example-net
-│   │   └── kea.yaml
+│   ├── dhcp-server
+│   │   ├── kea.yaml
+│   │   └── example-com
+│   │       └── kea.yaml
 │   └── dns-resolver
 │       └── example-com
 │           └── unbound.yaml

@@ -6,6 +6,9 @@
 # Kea configuration structure under "Dhcp4". See the documentation at
 # <URL:http://kea.isc.org/docs/kea-guide.html#dhcp4-configuration> for
 # details.
+#
+# This file resides in the 'dhcp-server' directory and provides
+# defaults for all DHCP server instances in subdirectories.
 
 service:
   kea_v4:
@@ -14,4 +17,3 @@ service:
         - '*'
     lease-database:
       type: memfile
-    valid-lifetime: 4000

@@ -1,0 +1,7 @@
+# This file provides overrides for configuration items specific to
+# this particular DHCP server instance. Other values are inherited
+# from the defaults in the parent directory.
+
+service:
+  kea_v4:
+    valid-lifetime: 4000
