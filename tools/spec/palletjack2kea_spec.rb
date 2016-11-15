@@ -9,7 +9,7 @@ describe 'palletjack2kea' do
       @tool = PalletJack2Kea.instance
       allow(@tool).to receive(:argv).and_return(
         ["-w", $EXAMPLE_WAREHOUSE,
-         "-s", "dhcp-server-example-net"])
+         "-s", "example-com"])
       @tool.setup
       @tool.process
     end
