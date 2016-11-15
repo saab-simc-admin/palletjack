@@ -55,15 +55,15 @@ warehouse
 │       ├── chassis -> ../../chassis/Example:FastServer-128:1234ABCD/
 │       └── type.yaml
 ├── netinstall
-│   ├── CentOS-7.2.1511-x86_64-Kickstart_sda
-│   │   ├── kickstart.yaml
+│   ├── CentOS-7.2.1511-x86_64
+│   │   ├── Kickstart_sda
+│   │   │   └── kickstart.yaml
+│   │   ├── Kickstart_vda
+│   │   │   └── kickstart.yaml
+│   │   ├── Manual
+│   │   │   └── kickstart.yaml
 │   │   └── os -> ../../os/CentOS-7.2.1511-x86_64
-│   ├── CentOS-7.2.1511-x86_64-Kickstart_vda
-│   │   ├── kickstart.yaml
-│   │   └── os -> ../../os/CentOS-7.2.1511-x86_64
-│   └── CentOS-7.2.1511-x86_64-Manual
-│       ├── kickstart.yaml
-│       └── os -> ../../os/CentOS-7.2.1511-x86_64
+│   └── README
 ├── os
 │   └── CentOS-7.2.1511-x86_64
 │       └── kickstart.yaml
@@ -96,13 +96,13 @@ warehouse
 │   │   ├── architecture.yaml
 │   │   ├── domain -> ../../domain/example.com/
 │   │   ├── machine -> ../../machine/testvm/
-│   │   ├── netinstall -> ../../netinstall/CentOS-7.2.1511-x86_64-Kickstart_vda/
+│   │   ├── netinstall -> ../../netinstall/CentOS-7.2.1511-x86_64/Kickstart_vda/
 │   │   └── role.yaml
 │   └── vmhost1
 │       ├── architecture.yaml
 │       ├── domain -> ../../domain/example.com/
 │       ├── machine -> ../../machine/vmhost1/
-│       ├── netinstall -> ../../netinstall/CentOS-7.2.1511-x86_64-Kickstart_sda/
+│       ├── netinstall -> ../../netinstall/CentOS-7.2.1511-x86_64/Kickstart_sda/
 │       └── role.yaml
 └── transforms.yaml
 ```

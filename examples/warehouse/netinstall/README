@@ -15,7 +15,12 @@ installation PXE menus.
 
 Links:
 
-  netinstall/<name>/os -> ../../os/<name>
+  netinstall/<os>/os -> ../../os/<name>
+
+
+Files:
+
+  netinstall/<os>/<variant>/kickstart.yaml
 
 
 Transformed values:
