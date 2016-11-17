@@ -68,12 +68,20 @@ class TraceableString < String
     coder.tag = nil
     coder.scalar = self.to_str
     if $traceable_string_output_position
+      # LibYAML, the C YAML library which underlies Ruby's Psych
+      # library, does not handle comments at all. The parser ignores
+      # them and the emitter cannot write them. Thus, to output the
+      # sourcing information in a manner that is at least semi-sane,
+      # we need to put it in the actual value, behind some sort of
+      # separator.
+      #
       # The separator needs to be representable in Latin-1, otherwise
-      # libyaml quotes it. It needs to be non-breaking, otherwise
-      # libyaml will break here to wrap at 80 characters. It cannot
-      # have any special meaning in YAML, otherwise libyaml quotes it.
-      # It shouldn't appear in real data, sine we'll need to
-      # substitute all instances of it.
+      # LibYAML quotes it. It needs to be non-breaking, otherwise
+      # LibYAML will break here to wrap at 80 characters. It cannot
+      # have any special meaning in YAML (including the quote
+      # character), otherwise LibYAML quotes it. It shouldn't appear
+      # in real data, sine we'll need to substitute all instances of
+      # it.
       #
       # Also, I like cats, even ASCII ones.
       coder.scalar += " =^.^= #{@file} (line #{@line}, column #{@column})"
