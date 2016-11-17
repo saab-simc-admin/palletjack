@@ -32,6 +32,11 @@ pallets of the specified type."
                                                   :leaf_name
                                                 end
     }
+
+    options[:position] = false
+    parser.on('-p', '--[no-]position',
+              'output source file name and position of each value'
+              ) {|maybe| $traceable_string_output_position = maybe }
   end
 
   # Dump the yaml contents of all pallets given to STDOUT
@@ -42,7 +47,7 @@ pallets of the specified type."
     pallets.each do |p|
       puts "---"
       puts "# #{p.kind}: #{p.name}"
-      puts p.to_yaml
+      puts p.to_yaml.gsub(' =^.^= ', '   # ')
     end
   end
 
