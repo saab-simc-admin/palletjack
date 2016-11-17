@@ -48,11 +48,10 @@ class PalletJack < KVDAG
           edge(pallet, pallet:{references:{file => link_id.full_name}})
         when filestat.directory?
           child = jack.pallet(kind, File.join(name, file))
-          child.edge(self, pallet:{references:{_parent: name}})
+          child.edge(self, pallet:{references:{_parent: full_name}})
         end
       end
       merge!(pallet:{kind => name, boxes: boxes})
-      jack.keytrans_writer.transform!(self)
 
       self
     end

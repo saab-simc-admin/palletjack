@@ -7,8 +7,6 @@ require 'palletjack/pallet'
 
 class PalletJack < KVDAG
   attr_reader :warehouse
-  attr_reader :keytrans_reader
-  attr_reader :keytrans_writer
 
   # Create and load a PalletJack warehouse, and all its pallets
 
@@ -39,6 +37,12 @@ class PalletJack < KVDAG
         pallet(kind, pallet)
       end
     end
+
+    # Apply transforms in reverse DAG order, parents before children
+    sort.reverse.each do |pallet|
+      @keytrans_writer.transform! pallet
+    end
+
     self
   end
 
