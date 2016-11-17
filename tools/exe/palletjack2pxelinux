@@ -116,9 +116,9 @@ MENU INCLUDE /config/graphics.conf
 MENU TITLE #{os_label} Installation Menu
 "
 
-      os.children(kind:'netinstall') do |netinstall|
+      os.descendants(kind:'netinstall') do |netinstall|
+        next unless ks_label=netinstall['host.kickstart.label']
         config=netinstall['host.pxelinux.config']
-        ks_label=netinstall['host.kickstart.label']
         kernel=netinstall['host.pxelinux.kernel']
         append=netinstall['host.pxelinux.append']
 
