@@ -1,4 +1,5 @@
 require 'palletjack/pallet/identity'
+require 'traceable'
 
 class PalletJack < KVDAG
   # PalletJack managed pallet of key boxes inside a warehouse.
@@ -38,8 +39,16 @@ class PalletJack < KVDAG
         filestat = File.lstat(filepath)
         case
         when (filestat.file? and file =~ /\.yaml$/)
-          merge!(YAML::load_file(filepath))
-          boxes << file
+          File.open(filepath) do |f|
+            handler = PositionHandler.new(filepath.sub(@identity.warehouse, '')[1..-1])
+            parser = Psych::Parser.new(handler)
+            handler.parser = parser
+            parser.parse f.read
+            visitor = PositionVisitor.new
+            tree = visitor.accept(handler.root)
+            merge!(tree[0])
+            boxes << file
+          end
         when filestat.symlink?
           link = File.readlink(filepath)
           link_id = Identity.new(jack, File.expand_path(link, path))
