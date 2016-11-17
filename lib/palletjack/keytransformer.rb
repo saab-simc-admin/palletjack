@@ -1,3 +1,5 @@
+require 'traceable'
+
 class PalletJack
   class KeyTransformer
     class Reader < KeyTransformer
@@ -251,6 +253,11 @@ class PalletJack
             if self.respond_to?(transform.to_sym) then
               if new_value = self.send(transform.to_sym, param, context)
               then
+                new_value = TraceableString.new(new_value)
+                new_value.file = 'transformed'
+                new_value.line = 0
+                new_value.column = 0
+                new_value.byte = 0
                 pallet[key] = new_value
                 break
               end
