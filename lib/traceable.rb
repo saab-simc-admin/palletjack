@@ -87,6 +87,11 @@ class TraceableString < String
       coder.scalar += " =^.^= #{@file} (line #{@line}, column #{@column})"
     end
   end
+
+  def inspect
+    "\"%s\" (%s, line: %i, col: %i, byte: %i)" %
+      [self.to_str, @file, @line, @column, @byte]
+  end
 end
 
 # Make the nodes in Psych's YAML parse tree track their positions.
