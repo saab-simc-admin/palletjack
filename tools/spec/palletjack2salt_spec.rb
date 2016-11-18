@@ -108,12 +108,12 @@ describe 'palletjack2salt' do
         [
           {
             'address' => 'syslog-archive.example.com',
-            'port' => 514,
+            'port' => '514',
             'protocol' => 'udp'
           },
           {
             'address' => 'logstash.example.com',
-            'port' => 5514,
+            'port' => '5514',
             'protocol' => 'tcp'
           }
         ]
@@ -128,7 +128,7 @@ describe 'palletjack2salt' do
           { 'address' => 'zabbix.example.com' },
           {
             'address' => 'zabbix2',
-            'port' => 10051
+            'port' => '10051'
           }
         ]
         0.upto(zabbix_config.length) do |i|
