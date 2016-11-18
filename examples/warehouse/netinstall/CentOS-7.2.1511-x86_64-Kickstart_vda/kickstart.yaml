@@ -1,3 +1,4 @@
 host:
   kickstart:
     label: single disk virtual machine
+    use_disk: vda
