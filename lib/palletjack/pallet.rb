@@ -39,16 +39,9 @@ class PalletJack < KVDAG
         filestat = File.lstat(filepath)
         case
         when (filestat.file? and file =~ /\.yaml$/)
-          File.open(filepath) do |f|
-            handler = PositionHandler.new(filepath.sub(@identity.warehouse, '')[1..-1])
-            parser = Psych::Parser.new(handler)
-            handler.parser = parser
-            parser.parse f.read
-            visitor = PositionVisitor.new
-            tree = visitor.accept(handler.root)
-            merge!(tree[0])
-            boxes << file
-          end
+          merge!(TraceableYAML::load_file(filepath,
+                   filepath.sub(@identity.warehouse, '')[1..-1]))
+          boxes << file
         when filestat.symlink?
           link = File.readlink(filepath)
           link_id = Identity.new(jack, File.expand_path(link, path))

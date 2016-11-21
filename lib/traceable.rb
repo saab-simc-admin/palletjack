@@ -184,3 +184,28 @@ class PositionVisitor < Psych::Visitors::ToRuby
     record_position(super, o)
   end
 end
+
+module TraceableYAML
+
+  # Parse a YAML document from the string +doc+, tagging each value
+  # with the source +tag+, and return a Ruby object tree representing
+  # the result.
+  def self.parse(doc, tag)
+    handler = PositionHandler.new(tag)
+    parser = Psych::Parser.new(handler)
+    handler.parser = parser
+    parser.parse doc
+    visitor = PositionVisitor.new
+    tree = visitor.accept(handler.root)
+    tree[0]
+  end
+
+  # Load a YAML document from the file +path+, tagging each value with
+  # the source +tag+, and return a Ruby object tree representing the
+  # result.
+  def self.load_file(path, tag)
+    File.open(path) do |f|
+      parse(f.read, tag)
+    end
+  end
+end

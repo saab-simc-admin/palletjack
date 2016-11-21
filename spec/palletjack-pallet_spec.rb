@@ -40,13 +40,7 @@ describe PalletJack::Pallet do
 
     it 'serializes into YAML of its key contents' do
       pallet_hash = @pallet.to_hash
-
-      handler = PositionHandler.new('@pallet')
-      parser = Psych::Parser.new(handler)
-      handler.parser = parser
-      parser.parse(@pallet.to_yaml)
-      visitor = PositionVisitor.new
-      yaml_hash = visitor.accept(handler.root)[0]
+      yaml_hash = TraceableYAML::parse(@pallet.to_yaml, @pallet.name)
 
       expect(yaml_hash).to have_structure pallet_hash
     end
