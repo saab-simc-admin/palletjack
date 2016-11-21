@@ -36,7 +36,7 @@ pallets of the specified type."
     options[:position] = false
     parser.on('-p', '--[no-]position',
               'output source file name and position of each value'
-              ) {|maybe| $traceable_string_output_position = maybe }
+              ) {|maybe| TraceableString.debug = maybe }
   end
 
   # Dump the yaml contents of all pallets given to STDOUT

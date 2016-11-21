@@ -6,9 +6,9 @@ require 'psych'
 # Traceable can be asked for their position by calling file(), line(),
 # column() and byte().
 #
-# If the global variable $traceable_string_output_position is set,
-# to_yaml outputs position information for each atom, separated from
-# its value by the string " =^.^= ".
+# If the class attribute TraceableString.debug is set, +inspect+ and
+# +to_yaml+ output position information for each atom, in the case of
+# +to_yaml+ separated from its value by the string " =^.^= ".
 #
 # Example:
 #
@@ -42,7 +42,7 @@ require 'psych'
 #     - gazonk
 #     - foobar
 #
-#   $dump_with_position = true
+#   TraceableString.debug = true
 #   puts tree[0].to_yaml.gsub(' =^.^= ', '  # ')
 #   ---
 #   foo  # <STDIN> (line 1, column 4):
@@ -67,7 +67,7 @@ class TraceableString < String
   def encode_with(coder)
     coder.tag = nil
     coder.scalar = self.to_str
-    if $traceable_string_output_position
+    if debug?
       # LibYAML, the C YAML library which underlies Ruby's Psych
       # library, does not handle comments at all. The parser ignores
       # them and the emitter cannot write them. Thus, to output the
@@ -89,8 +89,26 @@ class TraceableString < String
   end
 
   def inspect
-    "\"%s\" (%s, line: %i, col: %i, byte: %i)" %
-      [self.to_str, @file, @line, @column, @byte]
+    if debug?
+      "\"%s\" (%s, line: %i, col: %i, byte: %i)" %
+        [self.to_str, @file, @line, @column, @byte]
+    else
+      super
+    end
+  end
+
+  def self.debug=(maybe)
+    @@debug = maybe
+  end
+
+  def self.debug
+    @@debug ||= false
+  end
+
+  private
+
+  def debug?
+    self.class.debug
   end
 end
 
