@@ -254,10 +254,10 @@ class PalletJack
               if new_value = self.send(transform.to_sym, param, context)
               then
                 new_value = TraceableString.new(new_value)
-                new_value.file = 'transformed'
-                new_value.line = 0
-                new_value.column = 0
-                new_value.byte = 0
+                new_value.file = transform.file
+                new_value.line = transform.line
+                new_value.column = transform.column
+                new_value.byte = transform.byte
                 pallet[key] = new_value
                 break
               end
