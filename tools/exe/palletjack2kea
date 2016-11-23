@@ -35,15 +35,15 @@ Write configuration for the Kea DHCP server from a Palletjack warehouse"
   attr_reader :kea_config
 
   def process
-    @kea_config = { 'Dhcp4' =>
-        jack.fetch(kind: 'service',
-                   parent_name: 'dhcp-server',
-                   name: options[:service])['service.kea_v4']
-      }
+    service = jack.fetch(kind: 'service',
+                         parent_name: 'dhcp-server',
+                         name:options[:service])
+
+    @kea_config = { 'Dhcp4' => service['service.kea_v4'] }
 
     @kea_config['Dhcp4']['subnet4'] = []
 
-    jack.each(kind: 'ipv4_network') do |net|
+    service.descendants(kind: 'ipv4_network') do |net|
       net_config = {'subnet' => net['net.ipv4.cidr'],
                     'reservations' => [],
                     'option-data' => []}
