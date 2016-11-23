@@ -4,6 +4,7 @@ require 'kvdag'
 require 'palletjack/version'
 require 'palletjack/keytransformer'
 require 'palletjack/pallet'
+require 'traceable'
 
 class PalletJack < KVDAG
   attr_reader :warehouse
@@ -23,7 +24,7 @@ class PalletJack < KVDAG
 
   def load(warehouse)
     @warehouse = File.expand_path(warehouse)
-    key_transforms = YAML::load_file(File.join(@warehouse, "transforms.yaml"))
+    key_transforms = TraceableYAML::load_file(File.join(@warehouse, 'transforms.yaml'), 'transforms.yaml')
     @keytrans_reader = KeyTransformer::Reader.new(key_transforms)
     @keytrans_writer = KeyTransformer::Writer.new(key_transforms)
 

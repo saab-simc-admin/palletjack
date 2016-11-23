@@ -27,7 +27,10 @@ describe 'palletjack2kea' do
           'lease-database' => {
             'type' => 'memfile'
           },
-          'valid-lifetime' => Integer,
+          'valid-lifetime' => lambda { |value|
+                              value.is_a?(String) &&
+                              value.to_i != 0
+                            },
           'subnet4' => Array
         }
       }
