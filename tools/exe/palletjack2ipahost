@@ -2,11 +2,25 @@
 
 # Create host objects in a FreeIPA or Red Hat IdM instance.
 #
-# If the IPA server is configured as authoritative DNS server, records will
-# be created for the new host.
+# Unless a specific system is specified this will loop trough all systems
+# in the warehouse and ensure that a corresponding host object exists.
+# Hostgroups are synchronized with the warehouse and any group not
+# specified in the warehouse will be removed.
+#
+# Host objects will be created with a randomly generated password. The
+# password is saved in the warehouse as system.ipa.otp, which can later be
+# exported to the Configuration Management tool.
+#
+# When specifying the --reinstall parameter the existing host object will
+# be removed and a new one created, allowing the machine be be reinstalled.
+#
+# If the IPA server is configured as authoritative DNS server, an A record
+# will be created for the systems primary interface (interface whose
+# domain matches with the system).
+#
+# TODO: Implement full synchronization of all relevant DNS records
 #
 # Data model assumptions:
-# - Only one valid FQDN per system
 # - Multiple IP addresses in the same domain is equivalent
 
 require 'palletjack/tool'
@@ -16,14 +30,14 @@ require 'yaml'
 class PalletJack2IPAHost < PalletJack::Tool
   def parse_options(opts)
     opts.banner =
-"Usage: #{$PROGRAM_NAME} -w <warehouse> -s <system> -i <IPA server> [--reinstall]
+"Usage: #{$PROGRAM_NAME} -w <warehouse> -i <IPA server> [ -s <system> ] [--reinstall]
 
 Add hosts from the warehouse to the IPA server."
 
     opts.on('-i SERVER', '--ipa-server SERVER', 'IPA server fqdn', String) {|srv|
       options[:ipa] = srv
     }
-    opts.on('-s SYSTEM', '--system SYSTEM', 'name of system to synchronize', String) {|system|
+    opts.on('-s SYSTEM', '--system SYSTEM', 'Name of system to synchronize', String) {|system|
       options[:system] = system
     }
     opts.on('-r', '--reinstall', 'Reinstall the system') {|reinstall|
