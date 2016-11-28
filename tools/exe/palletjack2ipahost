@@ -48,10 +48,19 @@ Add hosts from the warehouse to the IPA server."
   end
 
   def sync_system(system)
+    # Create the IPA session and load pallet data
+    ipa = IPA::Client.new(host: options[:ipa])
+    @ipa_pallet = system['system.ipa'] || {}
+
+    puts "Processing #{system['net.dns.fqdn']}..."
 
     # Remove the host object
     if options[:reinstall] then
-      ipa.host_del(hostname: system['net.dns.fqdn'], params { 'update_dns' => true } )
+      del_host = ipa.host_del(hostname: system['net.dns.fqdn'], params: { 'updatedns' => true } )
+      puts " * Deleted host object"
+      if del_host['error'] then
+        puts " ! #{del_host['error']['code']} #{del_host['error']['name']}: #{del_host['error']['message']}"
+      end
     end
 
     #
@@ -78,13 +87,14 @@ Add hosts from the warehouse to the IPA server."
       add_host = ipa.host_add(hostname: system['net.dns.fqdn'], params: add_host_params)
 
       if add_host['error'] then
-        abort("Encountered error while adding host object. Unable to continue")
+        puts " ! #{add_host['error']['code']} #{add_host['error']['name']}: #{add_host['error']['message']}"
+        abort(" ! Encountered error while adding host object. Unable to continue")
       end
 
+      puts " * Created host object"
       # Update the pallet
       # Note that ['result']['result'] is not acutally a typo, the API
       # returns data like that.
-      @ipa_pallet = system['system.ipa'] || {}
       @ipa_pallet['otp'] = add_host['result']['result']['randompassword']
     end
 
@@ -99,18 +109,28 @@ Add hosts from the warehouse to the IPA server."
     # is a member of and leave any group not specified in the warehouse.
     if system['system.ipa.hostgroups'] then
 
-      hostgroups = host_data['memberof_hostgroup']
+      hostgroups = host_data['memberof_hostgroup'] || []
       system['system.ipa.hostgroups'].each do |group|
         unless hostgroups.include? group then
-          ipa.api_post(method: 'hostgroup_add_member', item: [group],
+          ipa_mod = ipa.api_post(method: 'hostgroup_add_member', item: group,
                        params: { 'host' => [ system['net.dns.fqdn'] ] })
+          if ipa_mod['error'] then
+            puts " ! #{ipa_mod['error']['code']} #{ipa_mod['error']['name']}: #{ipa_mod['error']['message']}"
+          else
+            puts " * Added to hostgroup #{group}"
+          end
         end
       end
 
       hostgroups.each do |group|
         unless system['system.ipa.hostgroups'].include? group then
-          ipa.api_post(method: 'hostgroup_remove_member', item: [group],
+          ipa_mod = ipa.api_post(method: 'hostgroup_remove_member', item: group,
                        params: { 'host' => [ system['net.dns.fqdn'] ] })
+          if ipa_mod['error'] then
+            puts " ! #{ipa_mod['error']['code']} #{ipa_mod['error']['name']}: #{ipa_mod['error']['message']}"
+          else
+            puts " * Removed from hostgroup #{group}"
+          end
         end
       end
 
@@ -119,8 +139,6 @@ Add hosts from the warehouse to the IPA server."
   end
 
   def process
-    # Create the IPA session
-    ipa = IPA::Client.new(host: options[:ipa])
 
     if options[:reinstall] then
       unless options[:system] then
@@ -134,6 +152,7 @@ Add hosts from the warehouse to the IPA server."
     else
       # Make a sync operation of all systems in the database
       jack.each(kind: 'system') do |system|
+        next unless system['system.role'].include? 'ipa-client'
         sync_system system
       end
     end
@@ -142,11 +161,11 @@ Add hosts from the warehouse to the IPA server."
 
   def output
     pallet_box 'system', options[:system], 'ipa' do
-      { system: { ipa: pallet } }
+      { system: { ipa: @ipa_pallet } }
     end
   end
 end
 
-if PalletJack2Ipahost.standalone?(__FILE__) then
-  PalletJack2Ipahost.run
+if PalletJack2IPAHost.standalone?(__FILE__) then
+  PalletJack2IPAHost.run
 end
