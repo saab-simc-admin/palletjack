@@ -179,7 +179,7 @@
 - net.layer2.address:
   - synthesize: "#[pallet.phy_nic]"
 - host.kickstart.config:
-  - synthesize: "#[pallet.netinstall]"
+  - synthesize: "#[pallet.os]-#[pallet.netinstall]"
 
 
 # Simple pasting of previous values to synthesize a new one. Note that
@@ -205,7 +205,7 @@
       - "em#[chassis.nic.port]"
 - host.pxelinux.config:
   - synthesize:
-    - "#[pallet.netinstall]"
+    - "#[pallet.os]-#[pallet.netinstall]"
     - "#[pallet.os]"
 
 
@@ -291,11 +291,3 @@
   - synthesize_regexp:
       sources: *pallet_chassis
       produce: "#[serial]"
-
-- host.kickstart.variant:
-  - synthesize_regexp:
-      sources:
-        netinstall:
-          key: "pallet.netinstall"
-          regexp: "^.*-(?<variant>[^-]+)$"
-      produce: "#[variant]"

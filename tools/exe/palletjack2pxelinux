@@ -69,8 +69,7 @@ Write PXELINUX boot configuration files from a Palletjack warehouse"
   def pxemenu_for_netinstall(netinstall)
     config=netinstall['host.pxelinux.config']
     os_label=netinstall['system.os'].gsub(/-/, ' ')
-    ks_label=(netinstall['host.kickstart.label'] ||
-              netinstall['host.kickstart.variant'] )
+    ks_label=netinstall['host.kickstart.label']
     kernel=netinstall['host.pxelinux.kernel']
     append=netinstall['host.pxelinux.append']
 
@@ -117,10 +116,9 @@ MENU INCLUDE /config/graphics.conf
 MENU TITLE #{os_label} Installation Menu
 "
 
-      os.children(kind:'netinstall') do |netinstall|
+      os.descendants(kind:'netinstall') do |netinstall|
+        next unless ks_label=netinstall['host.kickstart.label']
         config=netinstall['host.pxelinux.config']
-        ks_label=(netinstall['host.kickstart.label'] ||
-                  netinstall['host.kickstart.variant'] )
         kernel=netinstall['host.pxelinux.kernel']
         append=netinstall['host.pxelinux.append']
 
