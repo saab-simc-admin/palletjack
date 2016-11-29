@@ -57,9 +57,11 @@ Add hosts from the warehouse to the IPA server."
     # Remove the host object
     if options[:reinstall] then
       del_host = ipa.host_del(hostname: system['net.dns.fqdn'], params: { 'updatedns' => true } )
-      puts " * Deleted host object"
       if del_host['error'] then
-        puts " ! #{del_host['error']['code']} #{del_host['error']['name']}: #{del_host['error']['message']}"
+        puts " ! ERROR#{del_host['error']['code']} #{del_host['error']['name']}: #{del_host['error']['message']}"
+        return
+      else
+        puts " * Deleted host object"
       end
     end
 
@@ -87,8 +89,8 @@ Add hosts from the warehouse to the IPA server."
       add_host = ipa.host_add(hostname: system['net.dns.fqdn'], params: add_host_params)
 
       if add_host['error'] then
-        puts " ! #{add_host['error']['code']} #{add_host['error']['name']}: #{add_host['error']['message']}"
-        abort(" ! Encountered error while adding host object. Unable to continue")
+        puts " ! ERROR#{add_host['error']['code']} #{add_host['error']['name']}: #{add_host['error']['message']}"
+        return
       end
 
       puts " * Created host object"
@@ -114,6 +116,7 @@ Add hosts from the warehouse to the IPA server."
         unless hostgroups.include? group then
           ipa_mod = ipa.api_post(method: 'hostgroup_add_member', item: group,
                        params: { 'host' => [ system['net.dns.fqdn'] ] })
+
           if ipa_mod['error'] then
             puts " ! #{ipa_mod['error']['code']} #{ipa_mod['error']['name']}: #{ipa_mod['error']['message']}"
           else
@@ -126,6 +129,7 @@ Add hosts from the warehouse to the IPA server."
         unless system['system.ipa.hostgroups'].include? group then
           ipa_mod = ipa.api_post(method: 'hostgroup_remove_member', item: group,
                        params: { 'host' => [ system['net.dns.fqdn'] ] })
+
           if ipa_mod['error'] then
             puts " ! #{ipa_mod['error']['code']} #{ipa_mod['error']['name']}: #{ipa_mod['error']['message']}"
           else
@@ -142,7 +146,7 @@ Add hosts from the warehouse to the IPA server."
 
     if options[:reinstall] then
       unless options[:system] then
-        abort("No system specified. Removal of all host objects not allowed!")
+        abort("--reinstall specified when operating on all systems. This would cause the domain to break and is not allowed.")
       end
     end
 
