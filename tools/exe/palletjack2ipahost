@@ -50,7 +50,7 @@ Add hosts from the warehouse to the IPA server."
   def sync_system(system)
     # Create the IPA session and load pallet data
     ipa = IPA::Client.new(host: options[:ipa])
-    @ipa_pallet = system['system.ipa'] || {}
+    box = system['system.ipa'] || {}
 
     puts "Processing #{system['net.dns.fqdn']}..."
 
@@ -94,10 +94,10 @@ Add hosts from the warehouse to the IPA server."
       end
 
       puts " * Created host object"
-      # Update the pallet
+      # Update the box
       # Note that ['result']['result'] is not acutally a typo, the API
       # returns data like that.
-      @ipa_pallet['otp'] = add_host['result']['result']['randompassword']
+      box['otp'] = add_host['result']['result']['randompassword']
     end
 
     # Now we know that there is a host object, so query
@@ -140,9 +140,13 @@ Add hosts from the warehouse to the IPA server."
 
     end
 
+    @ipa_boxes[system['system.name']] = box
+
   end
 
   def process
+
+    @ipa_boxes = {}
 
     if options[:reinstall] then
       unless options[:system] then
@@ -164,8 +168,10 @@ Add hosts from the warehouse to the IPA server."
   end
 
   def output
-    pallet_box 'system', options[:system], 'ipa' do
-      { system: { ipa: @ipa_pallet } }
+    @ipa_boxes.each do |system, content|
+      pallet_box 'system', system, 'ipa' do
+        { system: { ipa: content } }
+      end
     end
   end
 end
