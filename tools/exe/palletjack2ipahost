@@ -30,17 +30,17 @@ require 'yaml'
 class PalletJack2IPAHost < PalletJack::Tool
   def parse_options(opts)
     opts.banner =
-"Usage: #{$PROGRAM_NAME} -w <warehouse> -i <IPA server> [ -s <system> ] [--reinstall]
+"Usage: #{$PROGRAM_NAME} -w <warehouse> -i <IPA server> [-s <system> [--reinstall]]
 
-Add hosts from the warehouse to the IPA server."
+Synchronize the warehouse with the IPA server."
 
     opts.on('-i SERVER', '--ipa-server SERVER', 'IPA server fqdn', String) {|srv|
       options[:ipa] = srv
     }
-    opts.on('-s SYSTEM', '--system SYSTEM', 'Name of system to synchronize', String) {|system|
+    opts.on('-s SYSTEM', '--system SYSTEM', 'name of system to synchronize', String) {|system|
       options[:system] = system
     }
-    opts.on('-r', '--reinstall', 'Reinstall the system') {|reinstall|
+    opts.on('-r', '--reinstall', 'reinstall the system (can only be used when a system is specified)') {|reinstall|
       options[:reinstall] = reinstall
     }
 
