@@ -45,6 +45,15 @@ Synchronize the warehouse with the IPA server."
     }
 
     required_option :ipa
+
+    @option_checks << Proc.new do
+      if options[:reinstall] then
+        unless options[:system] then
+          raise ArgumentError
+        end
+      end
+    end
+
   end
 
   def sync_system(system)
@@ -147,12 +156,6 @@ Synchronize the warehouse with the IPA server."
   def process
 
     @ipa_boxes = {}
-
-    if options[:reinstall] then
-      unless options[:system] then
-        abort("--reinstall specified when operating on all systems. This would cause the domain to break and is not allowed.")
-      end
-    end
 
     if options[:system] then
       system = jack.fetch(kind: 'system', name: options[:system])
