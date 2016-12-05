@@ -41,19 +41,11 @@ Synchronize the warehouse with the IPA server."
       options[:system] = system
     }
     opts.on('-r', '--reinstall', 'reinstall the system (can only be used when a system is specified)') {|reinstall|
+      required_option :system
       options[:reinstall] = reinstall
     }
 
     required_option :ipa
-
-    @option_checks << Proc.new do
-      if options[:reinstall] then
-        unless options[:system] then
-          raise ArgumentError
-        end
-      end
-    end
-
   end
 
   def sync_system(system)
