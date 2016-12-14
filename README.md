@@ -199,7 +199,7 @@ net:
     address: 52:54:00:8d:be:fe
 host:
   kickstart:
-    baseurl: http://mirror.centos.org/centos/7.2.1511/os/x86_64/
+    baseurl: http://mirror.centos.org/centos/7.3.1611/os/x86_64/
   pxelinux:
     kernel: "/boot/CentOS-7.3.1611-x86_64/vmlinuz"
     config: CentOS-7.3.1611-x86_64
