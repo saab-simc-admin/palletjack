@@ -55,17 +55,16 @@ warehouse
 │       ├── chassis -> ../../chassis/Example:FastServer-128:1234ABCD/
 │       └── type.yaml
 ├── netinstall
-│   ├── CentOS-7.2.1511-x86_64
-│   │   ├── Kickstart_sda
-│   │   │   └── kickstart.yaml
-│   │   ├── Kickstart_vda
-│   │   │   └── kickstart.yaml
-│   │   ├── Manual
-│   │   │   └── kickstart.yaml
-│   │   └── os -> ../../os/CentOS-7.2.1511-x86_64
-│   └── README
+│   └── CentOS-7.3.1611-x86_64
+│       ├── Kickstart_sda
+│       │   └── kickstart.yaml
+│       ├── Kickstart_vda
+│       │   └── kickstart.yaml
+│       ├── Manual
+│       │   └── kickstart.yaml
+│       └── os -> ../../os/CentOS-7.3.1611-x86_64
 ├── os
-│   └── CentOS-7.2.1511-x86_64
+│   └── CentOS-7.3.1611-x86_64
 │       └── kickstart.yaml
 ├── phy_nic
 │   ├── 14:18:77:ab:cd:ef
@@ -96,13 +95,13 @@ warehouse
 │   │   ├── architecture.yaml
 │   │   ├── domain -> ../../domain/example.com/
 │   │   ├── machine -> ../../machine/testvm/
-│   │   ├── netinstall -> ../../netinstall/CentOS-7.2.1511-x86_64/Kickstart_vda/
+│   │   ├── netinstall -> ../../netinstall/CentOS-7.3.1611-x86_64/Kickstart_vda/
 │   │   └── role.yaml
 │   └── vmhost1
 │       ├── architecture.yaml
 │       ├── domain -> ../../domain/example.com/
 │       ├── machine -> ../../machine/vmhost1/
-│       ├── netinstall -> ../../netinstall/CentOS-7.2.1511-x86_64/Kickstart_sda/
+│       ├── netinstall -> ../../netinstall/CentOS-7.3.1611-x86_64/Kickstart_sda/
 │       └── role.yaml
 └── transforms.yaml
 ```
@@ -147,7 +146,7 @@ objects with standard links and YAML structures for you. Example:
 
 ```bash
 $ create_domain --warehouse /tmp/warehouse --domain example.com --network 192.168.42.0/24
-$ create_system --warehouse /tmp/warehouse --system vmhost --domain example.com --os CentOS-7.2.1511-x86_64
+$ create_system --warehouse /tmp/warehouse --system vmhost --domain example.com --os CentOS-7.3.1611-x86_64
 $ create_ipv4_interface --warehouse /tmp/warehouse --system vmhost --domain example.com --mac 52:54:00:8d:be:fe --ipv4 192.168.42.1 --network 192.168.42.0/24
 $ dump_pallet --warehouse /tmp/warehouse --type ipv4_interface 192.168.42.1
 ```
@@ -161,11 +160,11 @@ pallet:
     ipv4_network: 192.168.42.0_24
     domain: example.com
     phy_nic: 52:54:00:8d:be:fe
-    os: CentOS-7.2.1511-x86_64
+    os: CentOS-7.3.1611-x86_64
     system: vmhost
   domain: example.com
   phy_nic: 52:54:00:8d:be:fe
-  os: CentOS-7.2.1511-x86_64
+  os: CentOS-7.3.1611-x86_64
   system: vmhost
   ipv4_interface: 192.168.42.1
 net:
@@ -200,12 +199,12 @@ net:
     address: 52:54:00:8d:be:fe
 host:
   kickstart:
-    baseurl: http://mirror.centos.org/centos/7.2.1511/os/x86_64/
+    baseurl: http://mirror.centos.org/centos/7.3.1611/os/x86_64/
   pxelinux:
-    kernel: "/boot/CentOS-7.2.1511-x86_64/vmlinuz"
-    config: CentOS-7.2.1511-x86_64
+    kernel: "/boot/CentOS-7.3.1611-x86_64/vmlinuz"
+    config: CentOS-7.3.1611-x86_64
 system:
-  os: CentOS-7.2.1511-x86_64
+  os: CentOS-7.3.1611-x86_64
   role:
   - ''
   name: vmhost
