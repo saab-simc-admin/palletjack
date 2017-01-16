@@ -3,13 +3,16 @@ require 'active_support'
 require 'yaml'
 require 'kvdag'
 
+# Declare inheritance before any `require` that uses our name space
+class PalletJack < KVDAG; end
+
 # Internal dependencies
 require 'palletjack/version'
 require 'palletjack/keytransformer'
 require 'palletjack/pallet'
 require 'traceable'
 
-class PalletJack < KVDAG
+class PalletJack
   attr_reader :warehouse
 
   # Create and load a PalletJack warehouse, and all its pallets
