@@ -1,5 +1,3 @@
-require 'kvdag'
-
-class PalletJack < KVDAG
-  VERSION = "0.4.1"
+class PalletJack
+  VERSION = "0.4.2"
 end
