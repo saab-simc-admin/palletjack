@@ -1,6 +1,9 @@
+# External dependencies
 require 'active_support'
 require 'yaml'
 require 'kvdag'
+
+# Internal dependencies
 require 'palletjack/version'
 require 'palletjack/keytransformer'
 require 'palletjack/pallet'
