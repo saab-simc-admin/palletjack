@@ -471,12 +471,6 @@ Style/RescueModifier:
   Exclude:
     - 'lib/palletjack/tool.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/SpaceAfterComma:
-  Exclude:
-    - 'tools/exe/create_ipv4_interface'
-
 # Offense count: 3
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
