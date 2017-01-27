@@ -66,11 +66,11 @@ Write PXELINUX boot configuration files from a Palletjack warehouse"
   # Generate pxe menus for each OS configuration
 
   def pxemenu_for_netinstall(netinstall)
-    config=netinstall['host.pxelinux.config']
-    os_label=netinstall['system.os'].gsub(/-/, ' ')
-    ks_label=netinstall['host.kickstart.label']
-    kernel=netinstall['host.pxelinux.kernel']
-    append=netinstall['host.pxelinux.append']
+    config = netinstall['host.pxelinux.config']
+    os_label = netinstall['system.os'].gsub(/-/, ' ')
+    ks_label = netinstall['host.kickstart.label']
+    kernel = netinstall['host.pxelinux.kernel']
+    append = netinstall['host.pxelinux.append']
 
     config_file :output, 'config', "#{config}.menu" do |menufile|
       menufile << git_header('palletjack2pxelinux')
@@ -100,10 +100,10 @@ LABEL MainMenu
   # Generate pxe menus for each OS version
 
   def pxemenu_for_operating_system(os)
-    config=os['host.pxelinux.config']
-    os_label=config.gsub(/-/, ' ')
-    kernel=os['host.pxelinux.kernel']
-    append=os['host.pxelinux.append']
+    config = os['host.pxelinux.config']
+    os_label = config.gsub(/-/, ' ')
+    kernel = os['host.pxelinux.kernel']
+    append = os['host.pxelinux.append']
 
     config_file :output, 'config', "#{config}.menu" do |menufile|
       menufile << git_header('palletjack2pxelinux')
@@ -116,10 +116,10 @@ MENU TITLE #{os_label} Installation Menu
 "
 
       os.descendants(kind: 'netinstall') do |netinstall|
-        next unless ks_label=netinstall['host.kickstart.label']
-        config=netinstall['host.pxelinux.config']
-        kernel=netinstall['host.pxelinux.kernel']
-        append=netinstall['host.pxelinux.append']
+        next unless ks_label = netinstall['host.kickstart.label']
+        config = netinstall['host.pxelinux.config']
+        kernel = netinstall['host.pxelinux.kernel']
+        append = netinstall['host.pxelinux.append']
 
         pxemenu_for_netinstall(netinstall)
 
@@ -155,9 +155,9 @@ MENU TITLE Linux Installation Menu
 "
 
       jack.each(kind: 'os') do |os|
-        next unless config=os['host.pxelinux.config']
+        next unless config = os['host.pxelinux.config']
 
-        label=config.gsub(/-/, ' ')
+        label = config.gsub(/-/, ' ')
 
         pxemenu_for_operating_system(os)
 

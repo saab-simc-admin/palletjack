@@ -48,8 +48,8 @@ class PalletJack
       def synthesize_internal(param, dictionary, result = String.new)
         case param
         when String
-          rex=/#\[([[:alnum:]._-]+)\]/
-          if md=rex.match(param) then
+          rex = /#\[([[:alnum:]._-]+)\]/
+          if md = rex.match(param) then
             result << md.pre_match
             return unless lookup = dictionary[md[1]]
             result << lookup.to_s

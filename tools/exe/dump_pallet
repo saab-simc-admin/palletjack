@@ -17,7 +17,7 @@ pallets of the specified type."
     # the parse! method of the parser is eventually run and finds
     # a --type option. Keep declarations in that order for clarity.
 
-    options[:type]='system'
+    options[:type] = 'system'
     parser.on('-t TYPE', '--type TYPE',
               'type (default "system")',
               String) {|type| options[:type] = type }

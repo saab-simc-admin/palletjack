@@ -471,17 +471,6 @@ Style/RescueModifier:
   Exclude:
     - 'lib/palletjack/tool.rb'
 
-# Offense count: 20
-# Cop supports --auto-correct.
-# Configuration parameters: AllowForAlignment.
-Style/SpaceAroundOperators:
-  Exclude:
-    - 'lib/palletjack/keytransformer.rb'
-    - 'palletjack.gemspec'
-    - 'tools/exe/dump_pallet'
-    - 'tools/exe/palletjack2pxelinux'
-    - 'tools/palletjack-tools.gemspec'
-
 # Offense count: 10
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
