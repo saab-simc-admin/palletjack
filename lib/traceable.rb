@@ -119,7 +119,6 @@ end
 
 # Extend the parser to remember the position of each object.
 class PositionHandler < Psych::TreeBuilder
-
   # The handler needs access to the parser in order to call mark
   attr_accessor :parser
 
@@ -157,7 +156,6 @@ end
 
 # Extend the Ruby structure builder to remeber each object's position.
 class PositionVisitor < Psych::Visitors::ToRuby
-
   # Copy a parser position from a parse tree node to a primitive
   # object.
   def record_position(s, o)

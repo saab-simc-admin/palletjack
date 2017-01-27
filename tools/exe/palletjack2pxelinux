@@ -51,7 +51,6 @@ require 'palletjack/tool'
 require 'fileutils'
 
 class PalletJack2PXELinux < PalletJack::Tool
-
   def parse_options(opts)
     opts.banner =
 "Usage: #{$PROGRAM_NAME} -w <warehouse> -o <output directory>

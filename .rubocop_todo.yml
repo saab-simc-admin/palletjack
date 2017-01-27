@@ -236,19 +236,6 @@ Style/EmptyCaseCondition:
   Exclude:
     - 'lib/palletjack/pallet.rb'
 
-# Offense count: 8
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: empty_lines, empty_lines_except_namespace, empty_lines_special, no_empty_lines
-Style/EmptyLinesAroundClassBody:
-  Exclude:
-    - 'lib/palletjack/pallet.rb'
-    - 'lib/palletjack/pallet/identity.rb'
-    - 'lib/palletjack/tool.rb'
-    - 'lib/traceable.rb'
-    - 'tools/exe/palletjack2pxelinux'
-    - 'tools/exe/palletjack2unbound'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 Style/EmptyLinesAroundMethodBody:

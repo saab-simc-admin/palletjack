@@ -5,7 +5,6 @@ require 'singleton'
 require 'rugged'
 
 class PalletJack
-
   # Superclass for PalletJack tool implementations
   #
   # Provides convenience methods for option parsing, file generation,

@@ -18,11 +18,9 @@ require 'ip'
 require 'resolv'
 
 class PalletJack2Unbound < PalletJack::Tool
-
   # Representation of a stub zone configuration for Unbound
 
   class StubZone
-
     # :call-seq:
     # new(TOOL, ZONE, AUTH-NS, ...)
     # new(TOOL, ZONE, AUTH-NS, ..., transparent: true)
