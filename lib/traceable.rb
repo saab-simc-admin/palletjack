@@ -169,6 +169,7 @@ class PositionVisitor < Psych::Visitors::ToRuby
     s
   end
 
+  # rubocop:disable Style/MethodName
   def visit_Psych_Nodes_Scalar o
     # Primitive YAML values can be either strings or integers. Ruby
     # integers cannot be extended, so convert everything to strings
@@ -183,6 +184,7 @@ class PositionVisitor < Psych::Visitors::ToRuby
   def visit_Psych_Nodes_Mapping o
     record_position(super, o)
   end
+  # rubocop:enable Style/MethodName
 end
 
 module TraceableYAML
