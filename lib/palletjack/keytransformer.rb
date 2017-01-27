@@ -109,7 +109,7 @@ class PalletJack
 
       def synthesize(param, context = {})
         return if context[:value]
-        
+
         synthesize_internal(param, context[:pallet])
       end
 

@@ -541,14 +541,6 @@ Style/TrailingUnderscoreVariable:
     - 'tools/exe/palletjack2knot'
     - 'tools/exe/palletjack2unbound'
 
-# Offense count: 6
-# Cop supports --auto-correct.
-Style/TrailingWhitespace:
-  Exclude:
-    - 'lib/palletjack/keytransformer.rb'
-    - 'spec/example-warehouse_spec.rb'
-    - 'spec/palletjack_spec.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 Style/WhileUntilDo:

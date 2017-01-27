@@ -18,7 +18,7 @@ describe 'Example warehouse' do
     it 'has pallets' do
       # because KVDAG currently does not respond to #empty?, we have to
       # use this instead, that compares against #count.
-      expect(@jack).to have_at_least(1).item 
+      expect(@jack).to have_at_least(1).item
     end
 
     it 'has "system" kind of pallets' do
