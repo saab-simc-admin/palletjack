@@ -236,7 +236,6 @@ class PalletJack
 
     def transform!(pallet)
       @key_transforms.each do |keytrans_item|
-
         # Enable early termination of transforms for a key
         # by wrapping execution in a catch block.
         catch do |abort_tag|
