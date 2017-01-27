@@ -502,13 +502,6 @@ Style/SpaceInsideBlockBraces:
     - 'tools/spec/palletjack2knot_spec.rb'
     - 'tools/spec/palletjack2unbound_spec.rb'
 
-# Offense count: 3
-# Cop supports --auto-correct.
-Style/SpaceInsideBrackets:
-  Exclude:
-    - 'tools/exe/create_domain'
-    - 'tools/exe/create_system'
-
 # Offense count: 31
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles, EnforcedStyleForEmptyBraces, SupportedStylesForEmptyBraces.
