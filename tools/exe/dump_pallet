@@ -45,7 +45,7 @@ pallets of the specified type."
     abort('No matching pallets found.') if pallets.empty?
 
     pallets.each do |p|
-      puts "---"
+      puts '---'
       puts "# #{p.kind}: #{p.name}"
       puts p.to_yaml.gsub(' =^.^= ', '   # ')
     end

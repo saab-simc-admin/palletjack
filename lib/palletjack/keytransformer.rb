@@ -171,20 +171,20 @@ class PalletJack
 
         captures = {}
 
-        param["sources"].each do |_, source|
+        param['sources'].each do |_, source|
           # Trying to read values from a non-existent key. Return nil
           # and let another transform try.
-          return unless lookup = context[:pallet][source["key"]]
+          return unless lookup = context[:pallet][source['key']]
 
           # Save all named captures
-          Regexp.new(source["regexp"]).match(lookup) do |md|
+          Regexp.new(source['regexp']).match(lookup) do |md|
             md.names.each do |name|
               captures[name] = md[name.to_sym]
             end
           end
         end
 
-        synthesize_internal(param["produce"], captures)
+        synthesize_internal(param['produce'], captures)
       end
 
       # Synthesized value will override an inherited value for a

@@ -670,13 +670,6 @@ Style/SpecialGlobalVars:
   Exclude:
     - 'lib/palletjack/tool.rb'
 
-# Offense count: 62
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, ConsistentQuotesInMultiline.
-# SupportedStyles: single_quotes, double_quotes
-Style/StringLiterals:
-  Enabled: false
-
 # Offense count: 2
 # Cop supports --auto-correct.
 # Configuration parameters: IgnoredMethods.

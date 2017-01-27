@@ -54,7 +54,7 @@ describe PalletJack::Pallet do
     end
 
     it 'exist for loaded values' do
-      expect(@pallet['net.dns.soa-ns'].file).to eq "domain/example.com/dns.yaml"
+      expect(@pallet['net.dns.soa-ns'].file).to eq 'domain/example.com/dns.yaml'
       expect(@pallet['net.dns.soa-ns'].line).to be_an Integer
       expect(@pallet['net.dns.soa-ns'].line).not_to be 0
       expect(@pallet['net.dns.soa-ns'].column).to be_an Integer
@@ -64,7 +64,7 @@ describe PalletJack::Pallet do
     end
 
     it 'exist for transformed values' do
-      expect(@pallet['net.dns.domain'].file).to eq "transforms.yaml"
+      expect(@pallet['net.dns.domain'].file).to eq 'transforms.yaml'
       expect(@pallet['net.dns.domain'].line).to be_an Integer
       expect(@pallet['net.dns.domain'].line).not_to be 0
       expect(@pallet['net.dns.domain'].column).to be_an Integer

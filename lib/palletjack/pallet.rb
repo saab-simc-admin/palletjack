@@ -59,7 +59,7 @@ class PalletJack
     end
 
     def inspect
-      "#<%s:%x>" % [self.class, self.object_id, @path]
+      '#<%s:%x>' % [self.class, self.object_id, @path]
     end
 
     # Override standard to_yaml serialization, because pallet objects

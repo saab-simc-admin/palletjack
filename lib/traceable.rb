@@ -90,7 +90,7 @@ class TraceableString < String
 
   def inspect
     if debug?
-      "\"%s\" (%s, line: %i, col: %i, byte: %i)" %
+      '"%s" (%s, line: %i, col: %i, byte: %i)' %
         [self.to_str, @file, @line, @column, @byte]
     else
       super

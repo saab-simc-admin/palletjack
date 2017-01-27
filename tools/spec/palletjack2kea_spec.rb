@@ -1,15 +1,15 @@
 require 'spec_helper'
 require 'rspec/collection_matchers'
 
-load "palletjack2kea"
+load 'palletjack2kea'
 
 describe 'palletjack2kea' do
   context 'generated configuration' do
     before :each do
       @tool = PalletJack2Kea.instance
       allow(@tool).to receive(:argv).and_return(
-        ["-w", $EXAMPLE_WAREHOUSE,
-         "-s", "example-com"])
+        ['-w', $EXAMPLE_WAREHOUSE,
+         '-s', 'example-com'])
       @tool.setup
       @tool.process
     end

@@ -1,15 +1,15 @@
 require 'spec_helper'
 require 'tmpdir'
 
-load "palletjack2salt"
+load 'palletjack2salt'
 
 describe 'palletjack2salt' do
   context 'generated global configuration' do
     before :each do
       @tool = PalletJack2Salt.instance
       allow(@tool).to receive(:argv).and_return(
-        ["-w", $EXAMPLE_WAREHOUSE,
-         "-g", Dir.tmpdir]) # Won't actually be written to, but needs
+        ['-w', $EXAMPLE_WAREHOUSE,
+         '-g', Dir.tmpdir]) # Won't actually be written to, but needs
                             # to exist to make the command line option
                             # parser happy
       @tool.setup
@@ -40,8 +40,8 @@ describe 'palletjack2salt' do
     before :each do
       @tool = PalletJack2Salt.instance
       allow(@tool).to receive(:argv).and_return(
-        ["-w", $EXAMPLE_WAREHOUSE,
-         "-m", Dir.tmpdir]) # Won't actually be written to, but needs
+        ['-w', $EXAMPLE_WAREHOUSE,
+         '-m', Dir.tmpdir]) # Won't actually be written to, but needs
                             # to exist to make the command line option
                             # parser happy
       @tool.setup
