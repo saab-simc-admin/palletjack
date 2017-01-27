@@ -236,12 +236,6 @@ Style/EmptyCaseCondition:
   Exclude:
     - 'lib/palletjack/pallet.rb'
 
-# Offense count: 3
-# Cop supports --auto-correct.
-Style/EmptyLines:
-  Exclude:
-    - 'tools/exe/palletjack2knot'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.

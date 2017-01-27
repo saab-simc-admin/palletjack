@@ -113,7 +113,6 @@ Write DNS server zone files from a Palletjack warehouse"
     @forward_zones[domain['net.dns.domain']] = zone
   end
 
-
   # Generate and store reverse zone data for the IPv4 network
   # associated with a Pallet Jack domain object.
 
@@ -153,7 +152,6 @@ Write DNS server zone files from a Palletjack warehouse"
     @reverse_zones[zone_file_name] = reverse_zone
   end
 
-
   def process
     config_dir :zone_dir
 
@@ -170,7 +168,6 @@ Write DNS server zone files from a Palletjack warehouse"
       process_reverse_zone(domain)
     end
   end
-
 
   def output
     config_file :output, 'zones.conf' do |conf_file|
