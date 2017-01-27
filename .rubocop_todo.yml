@@ -516,14 +516,6 @@ Style/SpaceInsideHashLiteralBraces:
     - 'tools/spec/palletjack2kea_spec.rb'
     - 'tools/spec/palletjack2unbound_spec.rb'
 
-# Offense count: 4
-# Cop supports --auto-correct.
-Style/SpaceInsideRangeLiteral:
-  Exclude:
-    - 'tools/exe/palletjack2knot'
-    - 'tools/exe/palletjack2unbound'
-    - 'tools/spec/palletjack2knot_spec.rb'
-
 # Offense count: 2
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.

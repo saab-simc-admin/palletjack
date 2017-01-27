@@ -150,7 +150,7 @@ E.g.
       reverse_zone = ip_net.to_arpa
       prefix_octets, _ = domain['net.ipv4.prefixlen'].to_i.divmod(8)
       reverse_zone =
-        ip_net.to_arpa.split('.')[-(2 + prefix_octets) .. 5].join('.')
+        ip_net.to_arpa.split('.')[-(2 + prefix_octets)..5].join('.')
 
       # Make the same assumption that palletjack2knot does;
       # reverse delegations are made to the same nameserver
