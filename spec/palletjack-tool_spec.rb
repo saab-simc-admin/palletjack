@@ -27,7 +27,7 @@ describe PalletJack::Tool do
     before :each do
       class TestTool < PalletJack::Tool
         def options
-          { warehouse:$EXAMPLE_WAREHOUSE }
+          { warehouse: $EXAMPLE_WAREHOUSE }
         end
       end
 
@@ -37,7 +37,7 @@ describe PalletJack::Tool do
     it 'can load a config pallet from a warehouse' do
       expect(@tool.config.kind).to match /^_config$/
       expect(@tool.config.name).to match TestTool.to_s
-      expect(@tool.config['rspec.test_ok']).to eq "true"
+      expect(@tool.config['rspec.test_ok']).to eq 'true'
     end
   end
 end

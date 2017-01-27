@@ -6,7 +6,6 @@ require 'palletjack/tool'
 
 class DumpPallet < PalletJack::Tool
   def parse_options(parser)
-
     parser.banner = "Usage: #{$PROGRAM_NAME} [options] [<name> ...]
 
 Dump the YAML representation of all named pallets in a Palletjack warehouse
@@ -18,7 +17,7 @@ pallets of the specified type."
     # the parse! method of the parser is eventually run and finds
     # a --type option. Keep declarations in that order for clarity.
 
-    options[:type]='system'
+    options[:type] = 'system'
     parser.on('-t TYPE', '--type TYPE',
               'type (default "system")',
               String) {|type| options[:type] = type }
@@ -26,17 +25,17 @@ pallets of the specified type."
     options[:match_name] = :leaf_name
     parser.on('-f', '--[no-]full-name',
               'match full_name of pallets instead of leaf_name'
-              ) {|maybe| options[:match_name] = if maybe
-                                                  :full_name
-                                                else
-                                                  :leaf_name
-                                                end
+             ) {|maybe| options[:match_name] = if maybe
+                                                 :full_name
+                                               else
+                                                 :leaf_name
+                                               end
     }
 
     options[:position] = false
     parser.on('-p', '--[no-]position',
               'output source file name and position of each value'
-              ) {|maybe| TraceableString.debug = maybe }
+             ) {|maybe| TraceableString.debug = maybe }
   end
 
   # Dump the yaml contents of all pallets given to STDOUT
@@ -45,7 +44,7 @@ pallets of the specified type."
     abort('No matching pallets found.') if pallets.empty?
 
     pallets.each do |p|
-      puts "---"
+      puts '---'
       puts "# #{p.kind}: #{p.name}"
       puts p.to_yaml.gsub(' =^.^= ', '   # ')
     end

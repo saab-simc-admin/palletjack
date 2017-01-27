@@ -18,11 +18,9 @@ require 'ip'
 require 'resolv'
 
 class PalletJack2Unbound < PalletJack::Tool
-
   # Representation of a stub zone configuration for Unbound
 
   class StubZone
-
     # :call-seq:
     # new(TOOL, ZONE, AUTH-NS, ...)
     # new(TOOL, ZONE, AUTH-NS, ..., transparent: true)
@@ -66,7 +64,7 @@ stub-zone:
     def initialize(service_name)
       @tool = PalletJack2Unbound.instance
       @service_name = service_name
-      @service_config = @tool.jack.fetch(kind:'service',
+      @service_config = @tool.jack.fetch(kind: 'service',
                                          parent_name: 'dns-resolver',
                                          name: @service_name)
     end
@@ -76,7 +74,7 @@ stub-zone:
     def output
       @tool.config_file :local_dir, "#{@service_name}.conf" do |configfile|
         configfile << @tool.git_header('palletjack2unbound')
-        @service_config["service.unbound.server"].each do |config|
+        @service_config['service.unbound.server'].each do |config|
           config.each do |key, value|
             configfile << "#{key}: #{value}\n"
           end
@@ -126,7 +124,7 @@ E.g.
   def process_stub_zones
     @stub_zones = []
 
-    jack.each(kind:'domain') do |domain|
+    jack.each(kind: 'domain') do |domain|
       zone = domain['net.dns.domain']
       stub_addrs = []
 
@@ -135,8 +133,8 @@ E.g.
         nsname =
           Resolv::DNS::Name.create("#{ns}.#{zone}.") unless nsname.absolute?
 
-        jack.each(kind:'ipv4_interface',
-                  all?:{'net.dns.fqdn' => nsname.to_s}) do |ipv4|
+        jack.each(kind: 'ipv4_interface',
+                  all?: {'net.dns.fqdn' => nsname.to_s}) do |ipv4|
           stub_addrs << ipv4['net.ipv4.address']
         end
       end
@@ -152,7 +150,7 @@ E.g.
       reverse_zone = ip_net.to_arpa
       prefix_octets, _ = domain['net.ipv4.prefixlen'].to_i.divmod(8)
       reverse_zone =
-        ip_net.to_arpa.split('.')[-(2 + prefix_octets) .. 5].join('.')
+        ip_net.to_arpa.split('.')[-(2 + prefix_octets)..5].join('.')
 
       # Make the same assumption that palletjack2knot does;
       # reverse delegations are made to the same nameserver

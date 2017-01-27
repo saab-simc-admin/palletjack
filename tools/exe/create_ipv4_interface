@@ -14,7 +14,7 @@ Create phy_nic and ipv4_interface objects in a warehouse"
 
     opts.on('-s SYSTEM', '--system SYSTEM', 'system name', String) {|system|
       options[:system] = system }
-    opts.on('-d DOMAIN', '--domain DOMAIN', 'domain name',String) {|domain|
+    opts.on('-d DOMAIN', '--domain DOMAIN', 'domain name', String) {|domain|
       options[:domain] = domain }
     opts.on('-m MAC', '--mac MAC', 'MAC address', String) {|mac|
       options[:mac] = mac }
@@ -35,7 +35,7 @@ Create phy_nic and ipv4_interface objects in a warehouse"
 
     pallet_dir 'phy_nic', :mac
     pallet_box 'phy_nic', :mac, 'identity' do
-      { net:{ layer2:{ name:'' } } }
+      { net: { layer2: { name: '' } } }
     end
 
     # Create IPv4 Interface object

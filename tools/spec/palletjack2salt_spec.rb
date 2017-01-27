@@ -1,15 +1,15 @@
 require 'spec_helper'
 require 'tmpdir'
 
-load "palletjack2salt"
+load 'palletjack2salt'
 
 describe 'palletjack2salt' do
   context 'generated global configuration' do
     before :each do
       @tool = PalletJack2Salt.instance
       allow(@tool).to receive(:argv).and_return(
-        ["-w", $EXAMPLE_WAREHOUSE,
-         "-g", Dir.tmpdir]) # Won't actually be written to, but needs
+        ['-w', $EXAMPLE_WAREHOUSE,
+         '-g', Dir.tmpdir]) # Won't actually be written to, but needs
                             # to exist to make the command line option
                             # parser happy
       @tool.setup
@@ -21,7 +21,7 @@ describe 'palletjack2salt' do
       os_pillar = { 'host' => { 'kickstart' => Hash,
                                 'pxelinux' => Hash },
                     'system' => Hash }
-      @tool.jack.each(kind:'os') do |os|
+      @tool.jack.each(kind: 'os') do |os|
         expect(@global['os'][os.name]).to have_structure(os_pillar)
       end
     end
@@ -30,7 +30,7 @@ describe 'palletjack2salt' do
       ni_pillar = { 'host' => { 'kickstart' => Hash,
                                 'pxelinux' => Hash },
                     'system' => Hash }
-      @tool.jack.each(kind:'netinstall') do |ni|
+      @tool.jack.each(kind: 'netinstall') do |ni|
         expect(@global['netinstall'][ni.name]).to have_structure(ni_pillar)
       end
     end
@@ -40,8 +40,8 @@ describe 'palletjack2salt' do
     before :each do
       @tool = PalletJack2Salt.instance
       allow(@tool).to receive(:argv).and_return(
-        ["-w", $EXAMPLE_WAREHOUSE,
-         "-m", Dir.tmpdir]) # Won't actually be written to, but needs
+        ['-w', $EXAMPLE_WAREHOUSE,
+         '-m', Dir.tmpdir]) # Won't actually be written to, but needs
                             # to exist to make the command line option
                             # parser happy
       @tool.setup
@@ -57,7 +57,7 @@ describe 'palletjack2salt' do
 
     it 'contains configuration for all clients in the warehouse' do
       minions = {}
-      @tool.jack.each(kind:'system') do |system|
+      @tool.jack.each(kind: 'system') do |system|
         minions[system['net.dns.fqdn']] = { 'palletjack' => Hash }
       end
       expect(@minion).to have_structure(minions)

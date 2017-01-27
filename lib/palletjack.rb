@@ -61,7 +61,7 @@ class PalletJack
   # Raises Errno::ENOENT if the pallet can't be loaded.
 
   def pallet(kind, name)
-    raise "warehouse is not loaded" unless @warehouse
+    raise 'warehouse is not loaded' unless @warehouse
 
     identity = Pallet::Identity.new(self, File.join(kind, name))
     @pallets[identity.path] ||= Pallet.load(self, identity)

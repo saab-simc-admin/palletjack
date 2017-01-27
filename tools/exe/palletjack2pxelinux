@@ -51,7 +51,6 @@ require 'palletjack/tool'
 require 'fileutils'
 
 class PalletJack2PXELinux < PalletJack::Tool
-
   def parse_options(opts)
     opts.banner =
 "Usage: #{$PROGRAM_NAME} -w <warehouse> -o <output directory>
@@ -67,11 +66,11 @@ Write PXELINUX boot configuration files from a Palletjack warehouse"
   # Generate pxe menus for each OS configuration
 
   def pxemenu_for_netinstall(netinstall)
-    config=netinstall['host.pxelinux.config']
-    os_label=netinstall['system.os'].gsub(/-/, ' ')
-    ks_label=netinstall['host.kickstart.label']
-    kernel=netinstall['host.pxelinux.kernel']
-    append=netinstall['host.pxelinux.append']
+    config = netinstall['host.pxelinux.config']
+    os_label = netinstall['system.os'].gsub(/-/, ' ')
+    ks_label = netinstall['host.kickstart.label']
+    kernel = netinstall['host.pxelinux.kernel']
+    append = netinstall['host.pxelinux.append']
 
     config_file :output, 'config', "#{config}.menu" do |menufile|
       menufile << git_header('palletjack2pxelinux')
@@ -101,10 +100,10 @@ LABEL MainMenu
   # Generate pxe menus for each OS version
 
   def pxemenu_for_operating_system(os)
-    config=os['host.pxelinux.config']
-    os_label=config.gsub(/-/, ' ')
-    kernel=os['host.pxelinux.kernel']
-    append=os['host.pxelinux.append']
+    config = os['host.pxelinux.config']
+    os_label = config.gsub(/-/, ' ')
+    kernel = os['host.pxelinux.kernel']
+    append = os['host.pxelinux.append']
 
     config_file :output, 'config', "#{config}.menu" do |menufile|
       menufile << git_header('palletjack2pxelinux')
@@ -116,11 +115,11 @@ MENU INCLUDE /config/graphics.conf
 MENU TITLE #{os_label} Installation Menu
 "
 
-      os.descendants(kind:'netinstall') do |netinstall|
-        next unless ks_label=netinstall['host.kickstart.label']
-        config=netinstall['host.pxelinux.config']
-        kernel=netinstall['host.pxelinux.kernel']
-        append=netinstall['host.pxelinux.append']
+      os.descendants(kind: 'netinstall') do |netinstall|
+        next unless ks_label = netinstall['host.kickstart.label']
+        config = netinstall['host.pxelinux.config']
+        kernel = netinstall['host.pxelinux.kernel']
+        append = netinstall['host.pxelinux.append']
 
         pxemenu_for_netinstall(netinstall)
 
@@ -155,10 +154,10 @@ MENU INCLUDE /config/graphics.conf
 MENU TITLE Linux Installation Menu
 "
 
-      jack.each(kind:'os') do |os|
-        next unless config=os['host.pxelinux.config']
+      jack.each(kind: 'os') do |os|
+        next unless config = os['host.pxelinux.config']
 
-        label=config.gsub(/-/, ' ')
+        label = config.gsub(/-/, ' ')
 
         pxemenu_for_operating_system(os)
 
@@ -173,8 +172,8 @@ LABEL #{config}
 
     # Generate pxe default menu links for each system
 
-    jack.each(kind:'system') do |system|
-      system.children(kind:'ipv4_interface') do |nic|
+    jack.each(kind: 'system') do |system|
+      system.children(kind: 'ipv4_interface') do |nic|
         if system['host.pxelinux.config']
           menuname = "#{system['host.pxelinux.config']}.menu"
           linkname = "01-#{nic['net.layer2.address'].gsub(':', '-').downcase}"

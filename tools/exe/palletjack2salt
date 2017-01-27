@@ -47,7 +47,7 @@ class PalletJack2Salt < PalletJack::Tool
 Write Salt pillar data from a Palletjack warehouse."
 
     opts.on('-g DIR', '--global DIR', 'global pillar directory',
-            String ) {|dir| options[:global_pillar] = dir }
+            String) {|dir| options[:global_pillar] = dir }
     opts.on('-m DIR', '--minion DIR', 'per-minion pillar directory',
             String) {|dir| options[:minion_pillar] = dir }
 
@@ -75,7 +75,7 @@ Write Salt pillar data from a Palletjack warehouse."
   def ipv4_interfaces(system)
     result = Hash.new
 
-    system.children(kind:'ipv4_interface') do |interface|
+    system.children(kind: 'ipv4_interface') do |interface|
       result[interface['net.layer2.name']] = {
         interface['net.ipv4.address'] =>
         interface.filter('net.ipv4', 'net.layer2').to_hash
@@ -88,7 +88,7 @@ Write Salt pillar data from a Palletjack warehouse."
   def process_minion_pillars
     result = {}
 
-    jack.each(kind:'system') do |system|
+    jack.each(kind: 'system') do |system|
       yaml_output = {}
       yaml_output['ipv4_interfaces'] = ipv4_interfaces(system)
 

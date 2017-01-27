@@ -248,6 +248,8 @@ We are happy to accept contributions in the form of issues and pull requests on 
 
 - Test your code.
 
+  - Code shall pass [Rubocop](https://github.com/bbatsov/rubocop) tests. See [.rubocop.yml](.rubocop.yml) for configured options. Rubocop is automaticallly run with the default Rake task.
+
   - Tests shall be written in [RSpec](http://rspec.info/).
 
   - Library code shall have unit tests.

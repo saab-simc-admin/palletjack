@@ -24,7 +24,7 @@ Write DNS server zone files from a Palletjack warehouse"
 
     opts.on('-o DIR', '--output DIR', 'output directory', String) {|dir|
       options[:output] = dir
-      options[:zone_dir] = config_path(:output, "zones")
+      options[:zone_dir] = config_path(:output, 'zones')
     }
 
     required_option :output
@@ -94,7 +94,7 @@ Write DNS server zone files from a Palletjack warehouse"
       end
     end
 
-    domain.children(kind:'ipv4_interface') do |interface|
+    domain.children(kind: 'ipv4_interface') do |interface|
       a = DNS::Zone::RR::A.new
       a.label = interface['net.dns.name']
       a.address = interface['net.ipv4.address']
@@ -113,7 +113,6 @@ Write DNS server zone files from a Palletjack warehouse"
     @forward_zones[domain['net.dns.domain']] = zone
   end
 
-
   # Generate and store reverse zone data for the IPv4 network
   # associated with a Pallet Jack domain object.
 
@@ -126,7 +125,7 @@ Write DNS server zone files from a Palletjack warehouse"
     absolute_reverse_zone_name = IP.new(domain['net.ipv4.cidr']).to_arpa
 
     prefix_octets, _ = domain['net.ipv4.prefixlen'].to_i.divmod(8)
-    zone_file_name = absolute_reverse_zone_name.split('.')[-(2 + prefix_octets) .. 5].join('.')
+    zone_file_name = absolute_reverse_zone_name.split('.')[-(2 + prefix_octets)..5].join('.')
     reverse_zone.origin = zone_file_name + '.'
 
     reverse_zone.ttl = domain['net.dns.ttl']
@@ -143,7 +142,7 @@ Write DNS server zone files from a Palletjack warehouse"
       reverse_zone.records << ns
     end
 
-    domain.children(kind:'ipv4_interface') do |interface|
+    domain.children(kind: 'ipv4_interface') do |interface|
       ptr = DNS::Zone::RR::PTR.new
       ptr.label = IP.new(interface['net.ipv4.address']).to_arpa
       ptr.name = "#{interface['net.dns.fqdn']}."
@@ -152,7 +151,6 @@ Write DNS server zone files from a Palletjack warehouse"
 
     @reverse_zones[zone_file_name] = reverse_zone
   end
-
 
   def process
     config_dir :zone_dir
@@ -165,12 +163,11 @@ Write DNS server zone files from a Palletjack warehouse"
     # the same one
     @serial = Time.now.utc.to_i
 
-    jack.each(kind:'domain') do |domain|
+    jack.each(kind: 'domain') do |domain|
       process_forward_zone(domain)
       process_reverse_zone(domain)
     end
   end
-
 
   def output
     config_file :output, 'zones.conf' do |conf_file|

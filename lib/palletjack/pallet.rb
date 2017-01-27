@@ -4,7 +4,6 @@ require 'traceable'
 class PalletJack
   # PalletJack managed pallet of key boxes inside a warehouse.
   class Pallet < KVDAG::Vertex
-
     # N.B: A pallet should never be loaded manually; use
     # +PalletJack.load+ to initialize a complete warehouse.
     #
@@ -47,19 +46,19 @@ class PalletJack
           link_id = Identity.new(jack, File.expand_path(link, path))
 
           pallet = jack.pallet(link_id.kind, link_id.full_name)
-          edge(pallet, pallet:{references:{file => link_id.full_name}})
+          edge(pallet, pallet: {references: {file => link_id.full_name}})
         when filestat.directory?
           child = jack.pallet(kind, File.join(name, file))
-          child.edge(self, pallet:{references:{_parent: full_name}})
+          child.edge(self, pallet: {references: {_parent: full_name}})
         end
       end
-      merge!(pallet:{kind => name, boxes: boxes})
+      merge!(pallet: {kind => name, boxes: boxes})
 
       self
     end
 
     def inspect
-      "#<%s:%x>" % [self.class, self.object_id, @path]
+      '#<%s:%x>' % [self.class, self.object_id, @path]
     end
 
     # Override standard to_yaml serialization, because pallet objects

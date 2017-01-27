@@ -45,11 +45,11 @@ class PalletJack
       # used.
       #
 
-      def synthesize_internal(param, dictionary, result=String.new)
+      def synthesize_internal(param, dictionary, result = String.new)
         case param
         when String
-          rex=/#\[([[:alnum:]._-]+)\]/
-          if md=rex.match(param) then
+          rex = /#\[([[:alnum:]._-]+)\]/
+          if md = rex.match(param) then
             result << md.pre_match
             return unless lookup = dictionary[md[1]]
             result << lookup.to_s
@@ -109,7 +109,7 @@ class PalletJack
 
       def synthesize(param, context = {})
         return if context[:value]
-        
+
         synthesize_internal(param, context[:pallet])
       end
 
@@ -171,20 +171,20 @@ class PalletJack
 
         captures = {}
 
-        param["sources"].each do |_, source|
+        param['sources'].each do |_, source|
           # Trying to read values from a non-existent key. Return nil
           # and let another transform try.
-          return unless lookup = context[:pallet][source["key"]]
+          return unless lookup = context[:pallet][source['key']]
 
           # Save all named captures
-          Regexp.new(source["regexp"]).match(lookup) do |md|
+          Regexp.new(source['regexp']).match(lookup) do |md|
             md.names.each do |name|
               captures[name] = md[name.to_sym]
             end
           end
         end
 
-        synthesize_internal(param["produce"], captures)
+        synthesize_internal(param['produce'], captures)
       end
 
       # Synthesized value will override an inherited value for a
@@ -203,7 +203,7 @@ class PalletJack
       end
     end
 
-    def initialize(key_transforms={})
+    def initialize(key_transforms = {})
       @key_transforms = key_transforms
     end
 
@@ -236,7 +236,6 @@ class PalletJack
 
     def transform!(pallet)
       @key_transforms.each do |keytrans_item|
-
         # Enable early termination of transforms for a key
         # by wrapping execution in a catch block.
         catch do |abort_tag|

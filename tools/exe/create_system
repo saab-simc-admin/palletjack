@@ -30,7 +30,7 @@ Create system objects in a warehouse"
   def output
     pallet_dir 'system', :system
     pallet_box 'system', :system, 'role' do
-      { system:{ role:[ '' ] } }
+      { system: { role: [''] } }
     end
     pallet_links 'system', :system, 'domain' => ['domain', :domain]
     pallet_links 'system', :system,

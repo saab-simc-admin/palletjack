@@ -36,17 +36,17 @@ Write configuration for the Kea DHCP server from a Palletjack warehouse"
 
   def process
     @kea_config = { 'Dhcp4' =>
-        jack.fetch(kind:'service',
-                   parent_name:'dhcp-server',
-                   name:options[:service])['service.kea_v4']
+        jack.fetch(kind: 'service',
+                   parent_name: 'dhcp-server',
+                   name: options[:service])['service.kea_v4']
       }
 
     @kea_config['Dhcp4']['subnet4'] = []
 
-    jack.each(kind:'ipv4_network') do |net|
+    jack.each(kind: 'ipv4_network') do |net|
       net_config = {'subnet' => net['net.ipv4.cidr'],
-        'reservations' => [],
-        'option-data' => []}
+                    'reservations' => [],
+                    'option-data' => []}
       if net['net.ipv4.gateway']
         net_config['option-data'] <<
           dhcp4_option(3, 'routers', net['net.ipv4.gateway'])
@@ -77,8 +77,8 @@ Write configuration for the Kea DHCP server from a Palletjack warehouse"
           dhcp4_option(67, 'boot-file-name', net['net.dhcp.boot-file'])
       end
 
-      net.children(kind:'ipv4_interface',
-                   none?:{ 'net.layer2.address' => nil }
+      net.children(kind: 'ipv4_interface',
+                   none?: { 'net.layer2.address' => nil }
                   ) do |interface|
         net_config['reservations'] << {
           'hw-address' => interface['net.layer2.address'],
@@ -87,7 +87,7 @@ Write configuration for the Kea DHCP server from a Palletjack warehouse"
           'option-data' =>
           [
             dhcp4_option(15, 'domain-name',
-                         interface.parents(kind:'system').first['net.dns.domain'])
+                         interface.parents(kind: 'system').first['net.dns.domain'])
           ]
         }
       end

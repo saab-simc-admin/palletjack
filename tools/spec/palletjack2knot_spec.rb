@@ -50,7 +50,7 @@ describe 'palletjack2knot' do
 
     it 'has a reasonable timestamp' do
       now = Time.now.utc.to_i
-      expect(now - 10 .. now + 10).to cover(@zone.soa.serial)
+      expect(now - 10..now + 10).to cover(@zone.soa.serial)
     end
 
     it 'has the correct origin' do
@@ -76,7 +76,7 @@ describe 'palletjack2knot' do
 
     it 'has a reasonable timestamp' do
       now = Time.now.utc.to_i
-      expect(now - 10 .. now + 10).to cover(@zone.soa.serial)
+      expect(now - 10..now + 10).to cover(@zone.soa.serial)
     end
 
     it 'has the correct origin' do

@@ -14,10 +14,10 @@ Gem::Specification.new do |spec|
   spec.homepage    = 'https://github.com/saab-simc-admin/palletjack'
   spec.license	= 'MIT'
 
-  spec.files         = `git ls-files -z`.split("\x0").reject do |f|
+  spec.files = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
   end
-  spec.bindir        = "exe"
+  spec.bindir        = 'exe'
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
 
   spec.platform	= Gem::Platform::RUBY
@@ -27,11 +27,11 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'dns-zone', '~> 0.3'
   spec.add_runtime_dependency 'ruby-ip', '~> 0.9'
 
-  spec.add_development_dependency "bundler", "~> 1.13"
-  spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "rspec", "~> 3.0"
-  spec.add_development_dependency "rspec_structure_matcher", "~> 0.0.6"
-  spec.add_development_dependency "rspec-collection_matchers", "~> 1.1.2"
+  spec.add_development_dependency 'bundler', '~> 1.13'
+  spec.add_development_dependency 'rake', '~> 10.0'
+  spec.add_development_dependency 'rspec', '~> 3.0'
+  spec.add_development_dependency 'rspec_structure_matcher', '~> 0.0.6'
+  spec.add_development_dependency 'rspec-collection_matchers', '~> 1.1.2'
 
   spec.has_rdoc	= true
 end

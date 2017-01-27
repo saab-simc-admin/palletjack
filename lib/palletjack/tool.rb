@@ -5,7 +5,6 @@ require 'singleton'
 require 'rugged'
 
 class PalletJack
-
   # Superclass for PalletJack tool implementations
   #
   # Provides convenience methods for option parsing, file generation,
@@ -240,7 +239,7 @@ class PalletJack
     #     |     `-- somecfg.yaml
 
     def config
-      @config ||= jack.fetch(kind:'_config',
+      @config ||= jack.fetch(kind: '_config',
                              name: self.class.to_s) rescue Hash.new
     end
 
@@ -315,7 +314,7 @@ class PalletJack
     #     file << system.to_yaml
     #   end
 
-    def config_file(*path, mode:0644, &block)
+    def config_file(*path, mode: 0644, &block)
       File.open(config_path(*path),
                 File::CREAT | File::TRUNC | File::WRONLY, mode) do |file|
         block.call(file)
@@ -377,7 +376,7 @@ class PalletJack
     #
     #   pallet_links 'system', :system, 'os'=>['os', :os], 'netinstall'=>[]
 
-    def pallet_links(kind, name, links={})
+    def pallet_links(kind, name, links = {})
       links.each do |link_type, parent|
         link_path = config_path(:warehouse, kind, name, link_type)
 

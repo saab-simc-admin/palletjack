@@ -90,7 +90,7 @@ class TraceableString < String
 
   def inspect
     if debug?
-      "\"%s\" (%s, line: %i, col: %i, byte: %i)" %
+      '"%s" (%s, line: %i, col: %i, byte: %i)' %
         [self.to_str, @file, @line, @column, @byte]
     else
       super
@@ -119,7 +119,6 @@ end
 
 # Extend the parser to remember the position of each object.
 class PositionHandler < Psych::TreeBuilder
-
   # The handler needs access to the parser in order to call mark
   attr_accessor :parser
 
@@ -157,7 +156,6 @@ end
 
 # Extend the Ruby structure builder to remeber each object's position.
 class PositionVisitor < Psych::Visitors::ToRuby
-
   # Copy a parser position from a parse tree node to a primitive
   # object.
   def record_position(s, o)
@@ -169,6 +167,7 @@ class PositionVisitor < Psych::Visitors::ToRuby
     s
   end
 
+  # rubocop:disable Style/MethodName
   def visit_Psych_Nodes_Scalar o
     # Primitive YAML values can be either strings or integers. Ruby
     # integers cannot be extended, so convert everything to strings
@@ -183,10 +182,10 @@ class PositionVisitor < Psych::Visitors::ToRuby
   def visit_Psych_Nodes_Mapping o
     record_position(super, o)
   end
+  # rubocop:enable Style/MethodName
 end
 
 module TraceableYAML
-
   # Parse a YAML document from the string +doc+, tagging each value
   # with the source +tag+, and return a Ruby object tree representing
   # the result.
