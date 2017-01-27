@@ -186,7 +186,6 @@ class PositionVisitor < Psych::Visitors::ToRuby
 end
 
 module TraceableYAML
-
   # Parse a YAML document from the string +doc+, tagging each value
   # with the source +tag+, and return a Ruby object tree representing
   # the result.
