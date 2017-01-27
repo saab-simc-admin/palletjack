@@ -6,7 +6,6 @@ require 'palletjack/tool'
 
 class DumpPallet < PalletJack::Tool
   def parse_options(parser)
-
     parser.banner = "Usage: #{$PROGRAM_NAME} [options] [<name> ...]
 
 Dump the YAML representation of all named pallets in a Palletjack warehouse
