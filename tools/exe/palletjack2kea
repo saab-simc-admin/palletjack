@@ -45,8 +45,8 @@ Write configuration for the Kea DHCP server from a Palletjack warehouse"
 
     jack.each(kind:'ipv4_network') do |net|
       net_config = {'subnet' => net['net.ipv4.cidr'],
-        'reservations' => [],
-        'option-data' => []}
+                    'reservations' => [],
+                    'option-data' => []}
       if net['net.ipv4.gateway']
         net_config['option-data'] <<
           dhcp4_option(3, 'routers', net['net.ipv4.gateway'])

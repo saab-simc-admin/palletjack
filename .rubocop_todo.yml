@@ -112,18 +112,6 @@ Style/Alias:
   Exclude:
     - 'lib/palletjack/pallet.rb'
 
-# Offense count: 9
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedHashRocketStyle, SupportedHashRocketStyles, EnforcedColonStyle, SupportedColonStyles, EnforcedLastArgumentHashStyle, SupportedLastArgumentHashStyles.
-# SupportedHashRocketStyles: key, separator, table
-# SupportedColonStyles: key, separator, table
-# SupportedLastArgumentHashStyles: always_inspect, always_ignore, ignore_implicit, ignore_explicit
-Style/AlignHash:
-  Exclude:
-    - 'tools/exe/create_domain'
-    - 'tools/exe/palletjack2kea'
-    - 'tools/spec/palletjack2kea_spec.rb'
-
 # Offense count: 3
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles, IndentationWidth.

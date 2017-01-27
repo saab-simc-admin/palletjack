@@ -92,20 +92,20 @@ describe 'palletjack2kea' do
 
       it 'DNS resolver' do
         check_dhcp_option({'code' => 6,
-                            'name' => 'domain-name-servers',
-                            'data' => '192.168.0.1'})
+                           'name' => 'domain-name-servers',
+                           'data' => '192.168.0.1'})
       end
 
       it 'TFTP server' do
         check_dhcp_option({'code' => 66,
-                            'name' => 'tftp-server-name',
-                            'data' => '192.168.0.1'})
+                           'name' => 'tftp-server-name',
+                           'data' => '192.168.0.1'})
       end
 
       it 'PXE boot file name' do
         check_dhcp_option({'code' => 67,
-                            'name' => 'boot-file-name',
-                            'data' => 'pxelinux.0'})
+                           'name' => 'boot-file-name',
+                           'data' => 'pxelinux.0'})
       end
     end
   end

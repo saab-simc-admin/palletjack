@@ -33,7 +33,7 @@ Create domain and ipv4_network objects in a warehouse"
     end
     pallet_box 'ipv4_network', :network, 'identity' do
       { net:{ ipv4:{ gateway:'' },
-          dns:{ resolver:[''] } } }
+              dns:{ resolver:[''] } } }
     end
 
     # Create the DNS domain object
