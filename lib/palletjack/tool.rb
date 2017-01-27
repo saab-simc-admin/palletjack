@@ -376,7 +376,7 @@ class PalletJack
     #
     #   pallet_links 'system', :system, 'os'=>['os', :os], 'netinstall'=>[]
 
-    def pallet_links(kind, name, links={})
+    def pallet_links(kind, name, links = {})
       links.each do |link_type, parent|
         link_path = config_path(:warehouse, kind, name, link_type)
 

@@ -45,7 +45,7 @@ class PalletJack
       # used.
       #
 
-      def synthesize_internal(param, dictionary, result=String.new)
+      def synthesize_internal(param, dictionary, result = String.new)
         case param
         when String
           rex=/#\[([[:alnum:]._-]+)\]/
@@ -203,7 +203,7 @@ class PalletJack
       end
     end
 
-    def initialize(key_transforms={})
+    def initialize(key_transforms = {})
       @key_transforms = key_transforms
     end
 
