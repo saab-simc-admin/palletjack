@@ -50,7 +50,7 @@ describe PalletJack::Pallet do
   context 'value sources' do
     before :context do
       @jack = PalletJack.load($EXAMPLE_WAREHOUSE)
-      @pallet = @jack.fetch(kind:'domain', name:'example.com')
+      @pallet = @jack.fetch(kind: 'domain', name: 'example.com')
     end
 
     it 'exist for loaded values' do

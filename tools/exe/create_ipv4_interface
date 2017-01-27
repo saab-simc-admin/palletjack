@@ -35,7 +35,7 @@ Create phy_nic and ipv4_interface objects in a warehouse"
 
     pallet_dir 'phy_nic', :mac
     pallet_box 'phy_nic', :mac, 'identity' do
-      { net:{ layer2:{ name:'' } } }
+      { net: { layer2: { name: '' } } }
     end
 
     # Create IPv4 Interface object

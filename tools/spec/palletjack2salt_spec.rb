@@ -21,7 +21,7 @@ describe 'palletjack2salt' do
       os_pillar = { 'host' => { 'kickstart' => Hash,
                                 'pxelinux' => Hash },
                     'system' => Hash }
-      @tool.jack.each(kind:'os') do |os|
+      @tool.jack.each(kind: 'os') do |os|
         expect(@global['os'][os.name]).to have_structure(os_pillar)
       end
     end
@@ -30,7 +30,7 @@ describe 'palletjack2salt' do
       ni_pillar = { 'host' => { 'kickstart' => Hash,
                                 'pxelinux' => Hash },
                     'system' => Hash }
-      @tool.jack.each(kind:'netinstall') do |ni|
+      @tool.jack.each(kind: 'netinstall') do |ni|
         expect(@global['netinstall'][ni.name]).to have_structure(ni_pillar)
       end
     end
@@ -57,7 +57,7 @@ describe 'palletjack2salt' do
 
     it 'contains configuration for all clients in the warehouse' do
       minions = {}
-      @tool.jack.each(kind:'system') do |system|
+      @tool.jack.each(kind: 'system') do |system|
         minions[system['net.dns.fqdn']] = { 'palletjack' => Hash }
       end
       expect(@minion).to have_structure(minions)

@@ -22,12 +22,12 @@ describe 'Example warehouse' do
     end
 
     it 'has "system" kind of pallets' do
-      expect(@jack[kind:'system']).not_to be_empty
+      expect(@jack[kind: 'system']).not_to be_empty
     end
 
     context 'system "vmhost1"' do
       before :all do
-        @sys = @jack.fetch(kind:'system', name:'vmhost1')
+        @sys = @jack.fetch(kind: 'system', name: 'vmhost1')
       end
 
       it 'has kind "system"' do
@@ -39,11 +39,11 @@ describe 'Example warehouse' do
       end
 
       it 'has a "domain" parent' do
-        expect(@sys.parents(kind:'domain')).not_to be_empty
+        expect(@sys.parents(kind: 'domain')).not_to be_empty
       end
 
       it 'has an "ipv4_interface" child' do
-        expect(@sys.children(kind:'ipv4_interface')).not_to be_empty
+        expect(@sys.children(kind: 'ipv4_interface')).not_to be_empty
       end
 
       it 'has key net.dns.fqdn:"vmhost1.example.com"' do
@@ -57,20 +57,20 @@ describe 'Example warehouse' do
 
     context 'system "__invalid__"' do
       it 'does not exist' do
-        expect(@jack[kind:'system', name:'__invalid__']).to be_empty
+        expect(@jack[kind: 'system', name: '__invalid__']).to be_empty
       end
     end
 
     it 'has "domain" kind of pallets' do
-      expect(@jack[kind:'domain']).not_to be_empty
+      expect(@jack[kind: 'domain']).not_to be_empty
     end
 
     it 'has "ipv4_interface" kind of pallets' do
-      expect(@jack[kind:'ipv4_interface']).not_to be_empty
+      expect(@jack[kind: 'ipv4_interface']).not_to be_empty
     end
 
     it 'does not have "__invalid__" kind of pallets' do
-      expect(@jack[kind:'__invalid__']).to be_empty
+      expect(@jack[kind: '__invalid__']).to be_empty
     end
   end
 end

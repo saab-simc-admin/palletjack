@@ -471,26 +471,6 @@ Style/RescueModifier:
   Exclude:
     - 'lib/palletjack/tool.rb'
 
-# Offense count: 67
-# Cop supports --auto-correct.
-Style/SpaceAfterColon:
-  Exclude:
-    - 'lib/palletjack/pallet.rb'
-    - 'lib/palletjack/tool.rb'
-    - 'spec/example-warehouse_spec.rb'
-    - 'spec/palletjack-pallet_spec.rb'
-    - 'spec/palletjack-tool_spec.rb'
-    - 'spec/palletjack_spec.rb'
-    - 'tools/exe/create_domain'
-    - 'tools/exe/create_ipv4_interface'
-    - 'tools/exe/create_system'
-    - 'tools/exe/palletjack2kea'
-    - 'tools/exe/palletjack2knot'
-    - 'tools/exe/palletjack2pxelinux'
-    - 'tools/exe/palletjack2salt'
-    - 'tools/exe/palletjack2unbound'
-    - 'tools/spec/palletjack2salt_spec.rb'
-
 # Offense count: 1
 # Cop supports --auto-correct.
 Style/SpaceAfterComma:

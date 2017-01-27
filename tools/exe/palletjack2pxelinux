@@ -115,7 +115,7 @@ MENU INCLUDE /config/graphics.conf
 MENU TITLE #{os_label} Installation Menu
 "
 
-      os.descendants(kind:'netinstall') do |netinstall|
+      os.descendants(kind: 'netinstall') do |netinstall|
         next unless ks_label=netinstall['host.kickstart.label']
         config=netinstall['host.pxelinux.config']
         kernel=netinstall['host.pxelinux.kernel']
@@ -154,7 +154,7 @@ MENU INCLUDE /config/graphics.conf
 MENU TITLE Linux Installation Menu
 "
 
-      jack.each(kind:'os') do |os|
+      jack.each(kind: 'os') do |os|
         next unless config=os['host.pxelinux.config']
 
         label=config.gsub(/-/, ' ')
@@ -172,8 +172,8 @@ LABEL #{config}
 
     # Generate pxe default menu links for each system
 
-    jack.each(kind:'system') do |system|
-      system.children(kind:'ipv4_interface') do |nic|
+    jack.each(kind: 'system') do |system|
+      system.children(kind: 'ipv4_interface') do |nic|
         if system['host.pxelinux.config']
           menuname = "#{system['host.pxelinux.config']}.menu"
           linkname = "01-#{nic['net.layer2.address'].gsub(':', '-').downcase}"

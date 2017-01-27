@@ -22,13 +22,13 @@ describe PalletJack do
     
     it 'can fetch a unique pallet' do
       expect(
-        @jack.fetch(kind:'domain', name:'example.com')
+        @jack.fetch(kind: 'domain', name: 'example.com')
       ).to be_a PalletJack::Pallet
     end
     
     it 'raises a KeyError when fetching a non-existent pallet' do
       expect{
-        @jack.fetch(kind:'__invalid__')
+        @jack.fetch(kind: '__invalid__')
       }.to raise_error KeyError
     end
     

@@ -29,21 +29,21 @@ Create domain and ipv4_network objects in a warehouse"
 
     pallet_dir 'ipv4_network', :network
     pallet_box 'ipv4_network', :network, 'dhcp' do
-      { net:{ dhcp:{ 'tftp-server' => '', 'boot-file' => '' } } }
+      { net: { dhcp: { 'tftp-server' => '', 'boot-file' => '' } } }
     end
     pallet_box 'ipv4_network', :network, 'identity' do
-      { net:{ ipv4:{ gateway:'' },
-              dns:{ resolver:[''] } } }
+      { net: { ipv4: { gateway: '' },
+               dns: { resolver: [''] } } }
     end
 
     # Create the DNS domain object
 
     pallet_dir 'domain', :domain
     pallet_box 'domain', :domain, 'dns' do
-      { net:{ dns:{ ns:[''], 'soa-ns' => '', 'soa-contact' => '' } } }
+      { net: { dns: { ns: [''], 'soa-ns' => '', 'soa-contact' => '' } } }
     end
     pallet_box 'domain', :domain, 'services' do
-      { net:{ service:{ syslog:[{address:'', port:'514', protocol:'udp' } ] } } }
+      { net: { service: { syslog: [{address: '', port: '514', protocol: 'udp' } ] } } }
     end
     pallet_links 'domain', :domain, 'ipv4_network' => ['ipv4_network', :network]
   end

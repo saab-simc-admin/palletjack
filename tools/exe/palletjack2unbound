@@ -64,7 +64,7 @@ stub-zone:
     def initialize(service_name)
       @tool = PalletJack2Unbound.instance
       @service_name = service_name
-      @service_config = @tool.jack.fetch(kind:'service',
+      @service_config = @tool.jack.fetch(kind: 'service',
                                          parent_name: 'dns-resolver',
                                          name: @service_name)
     end
@@ -124,7 +124,7 @@ E.g.
   def process_stub_zones
     @stub_zones = []
 
-    jack.each(kind:'domain') do |domain|
+    jack.each(kind: 'domain') do |domain|
       zone = domain['net.dns.domain']
       stub_addrs = []
 
@@ -133,8 +133,8 @@ E.g.
         nsname =
           Resolv::DNS::Name.create("#{ns}.#{zone}.") unless nsname.absolute?
 
-        jack.each(kind:'ipv4_interface',
-                  all?:{'net.dns.fqdn' => nsname.to_s}) do |ipv4|
+        jack.each(kind: 'ipv4_interface',
+                  all?: {'net.dns.fqdn' => nsname.to_s}) do |ipv4|
           stub_addrs << ipv4['net.ipv4.address']
         end
       end

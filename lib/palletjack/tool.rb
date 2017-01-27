@@ -239,7 +239,7 @@ class PalletJack
     #     |     `-- somecfg.yaml
 
     def config
-      @config ||= jack.fetch(kind:'_config',
+      @config ||= jack.fetch(kind: '_config',
                              name: self.class.to_s) rescue Hash.new
     end
 
@@ -314,7 +314,7 @@ class PalletJack
     #     file << system.to_yaml
     #   end
 
-    def config_file(*path, mode:0644, &block)
+    def config_file(*path, mode: 0644, &block)
       File.open(config_path(*path),
                 File::CREAT | File::TRUNC | File::WRONLY, mode) do |file|
         block.call(file)

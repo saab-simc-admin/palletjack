@@ -27,7 +27,7 @@ describe PalletJack::Tool do
     before :each do
       class TestTool < PalletJack::Tool
         def options
-          { warehouse:$EXAMPLE_WAREHOUSE }
+          { warehouse: $EXAMPLE_WAREHOUSE }
         end
       end
 
