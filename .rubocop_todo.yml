@@ -358,13 +358,6 @@ Style/IndentAssignment:
     - 'tools/spec/palletjack2kea_spec.rb'
     - 'tools/spec/palletjack2salt_spec.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: Width.
-Style/IndentationWidth:
-  Exclude:
-    - 'tools/spec/palletjack2kea_spec.rb'
-
 # Offense count: 3
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.

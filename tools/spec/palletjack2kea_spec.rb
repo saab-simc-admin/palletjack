@@ -85,9 +85,9 @@ describe 'palletjack2kea' do
       end
 
       it 'default gateway' do
-      check_dhcp_option({'code' => 3,
-                         'name' => 'routers',
-                         'data' => '192.168.0.1'})
+        check_dhcp_option({'code' => 3,
+                           'name' => 'routers',
+                           'data' => '192.168.0.1'})
       end
 
       it 'DNS resolver' do
