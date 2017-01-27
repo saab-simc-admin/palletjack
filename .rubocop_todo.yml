@@ -366,12 +366,6 @@ Style/MethodDefParentheses:
   Exclude:
     - 'lib/traceable.rb'
 
-# Offense count: 3
-# Configuration parameters: SupportedStyles.
-# SupportedStyles: snake_case, camelCase
-Style/MethodName:
-  EnforcedStyle: snake_case
-
 # Offense count: 2
 Style/MultilineBlockChain:
   Exclude:

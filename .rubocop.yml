@@ -2,3 +2,5 @@ inherit_from: .rubocop_todo.yml
 
 Style/IndentArray:
   EnforcedStyle: consistent
+Style/MethodName: 
+  EnforcedStyle: snake_case 
