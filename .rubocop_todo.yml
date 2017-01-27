@@ -187,12 +187,6 @@ Style/ClassVars:
   Exclude:
     - 'lib/traceable.rb'
 
-# Offense count: 2
-# Cop supports --auto-correct.
-Style/ClosingParenthesisIndentation:
-  Exclude:
-    - 'tools/exe/dump_pallet'
-
 # Offense count: 5
 # Cop supports --auto-correct.
 Style/ColonMethodCall:

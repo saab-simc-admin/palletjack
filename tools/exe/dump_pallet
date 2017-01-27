@@ -26,17 +26,17 @@ pallets of the specified type."
     options[:match_name] = :leaf_name
     parser.on('-f', '--[no-]full-name',
               'match full_name of pallets instead of leaf_name'
-              ) {|maybe| options[:match_name] = if maybe
-                                                  :full_name
-                                                else
-                                                  :leaf_name
-                                                end
+             ) {|maybe| options[:match_name] = if maybe
+                                                 :full_name
+                                               else
+                                                 :leaf_name
+                                               end
     }
 
     options[:position] = false
     parser.on('-p', '--[no-]position',
               'output source file name and position of each value'
-              ) {|maybe| TraceableString.debug = maybe }
+             ) {|maybe| TraceableString.debug = maybe }
   end
 
   # Dump the yaml contents of all pallets given to STDOUT
