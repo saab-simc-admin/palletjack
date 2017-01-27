@@ -648,12 +648,6 @@ Style/SpaceInsideHashLiteralBraces:
     - 'tools/spec/palletjack2kea_spec.rb'
     - 'tools/spec/palletjack2unbound_spec.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/SpaceInsideParens:
-  Exclude:
-    - 'tools/exe/palletjack2salt'
-
 # Offense count: 4
 # Cop supports --auto-correct.
 Style/SpaceInsideRangeLiteral:

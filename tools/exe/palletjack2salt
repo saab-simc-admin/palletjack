@@ -47,7 +47,7 @@ class PalletJack2Salt < PalletJack::Tool
 Write Salt pillar data from a Palletjack warehouse."
 
     opts.on('-g DIR', '--global DIR', 'global pillar directory',
-            String ) {|dir| options[:global_pillar] = dir }
+            String) {|dir| options[:global_pillar] = dir }
     opts.on('-m DIR', '--minion DIR', 'per-minion pillar directory',
             String) {|dir| options[:minion_pillar] = dir }
 
