@@ -1,4 +1,4 @@
-class PalletJack
+module PalletJack
   class Pallet < KVDAG::Vertex
     # Represents the identity aspects of a warehouse pallet
 

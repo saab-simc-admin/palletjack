@@ -128,7 +128,6 @@ Style/AlignParameters:
 # SupportedStyles: always, conditionals
 Style/AndOr:
   Exclude:
-    - 'lib/palletjack.rb'
     - 'lib/palletjack/pallet.rb'
 
 # Offense count: 7
@@ -191,7 +190,6 @@ Style/ClassVars:
 # Cop supports --auto-correct.
 Style/ColonMethodCall:
   Exclude:
-    - 'lib/palletjack.rb'
     - 'lib/palletjack/pallet.rb'
     - 'lib/palletjack/tool.rb'
     - 'spec/palletjack-pallet_spec.rb'
@@ -215,7 +213,6 @@ Style/Documentation:
   Exclude:
     - 'spec/**/*'
     - 'test/**/*'
-    - 'lib/palletjack.rb'
     - 'lib/palletjack/keytransformer.rb'
     - 'lib/palletjack/pallet/identity.rb'
     - 'lib/palletjack/tool.rb'
@@ -240,7 +237,6 @@ Style/EmptyCaseCondition:
 # Cop supports --auto-correct.
 Style/EmptyLiteral:
   Exclude:
-    - 'lib/palletjack.rb'
     - 'lib/palletjack/keytransformer.rb'
     - 'lib/palletjack/pallet.rb'
     - 'lib/palletjack/tool.rb'
@@ -299,6 +295,7 @@ Style/FormatString:
 Style/GlobalVars:
   Exclude:
     - 'spec/example-warehouse_spec.rb'
+    - 'spec/palletjack_warehouse_spec.rb'
     - 'spec/palletjack-pallet_spec.rb'
     - 'spec/palletjack-tool_spec.rb'
     - 'spec/palletjack_spec.rb'

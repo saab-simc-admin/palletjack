@@ -1,6 +1,6 @@
 require 'traceable'
 
-class PalletJack
+module PalletJack
   class KeyTransformer
     class Reader < KeyTransformer
       def concatenate(param, context = {})
