@@ -1,3 +1,3 @@
-class PalletJack
+module PalletJack
   VERSION = '0.4.2'
 end

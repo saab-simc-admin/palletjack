@@ -1,7 +1,7 @@
 require 'palletjack/pallet/identity'
 require 'traceable'
 
-class PalletJack
+module PalletJack
   # PalletJack managed pallet of key boxes inside a warehouse.
   class Pallet < KVDAG::Vertex
     # N.B: A pallet should never be loaded manually; use
