@@ -108,18 +108,15 @@ warehouse
 
 ```bash
 % irb -r palletjack
-2.3.1 :001 > jack = PalletJack.new('warehouse')
-2.3.1 :002 > testvm = jack.fetch('system', name:'testvm')
- => #<PalletJack::Pallet:148ac64>
+2.3.1 :001 > jack = PalletJack.load('examples/warehouse')
+2.3.1 :002 > testvm = jack.fetch(kind: 'system', name: 'testvm')
 2.3.1 :003 > testvm['host.type']
  => "virtual"
-2.3.1 :004 > jack['system'].each {|pallet| puts "#{pallet['net.dns.name']}: #{pallet['chassis.serial']}" }
+2.3.1 :004 > jack.each(kind: 'system') {|pallet| puts "#{pallet['net.dns.name']}: #{pallet['chassis.serial']}" }
 vmhost1: 1234ABCD
 testvm: 1234ABCD
- => #<Set: {#<PalletJack::Pallet:16abed0>, #<PalletJack::Pallet:148ac64>}>
-2.3.1 :005 > jack['system', with_all:{'host.type' => 'virtual'}].each {|system| puts system['net.dns.name'] }
+2.3.1 :005 > jack.each(kind: 'system', all?: {'host.type' => 'virtual'}) {|system| puts system['net.dns.name'] }
 testvm
- => #<Set: {#<PalletJack::Pallet:148ac64>}>
 ```
 
 ## Installation
