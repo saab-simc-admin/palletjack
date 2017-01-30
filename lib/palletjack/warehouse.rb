@@ -6,6 +6,7 @@ require 'palletjack/pallet'
 require 'traceable'
 
 module PalletJack
+  # A PalletJack managed warehouse of pallets
   class Warehouse < KVDAG
     attr_reader :warehouse
 
@@ -17,24 +18,24 @@ module PalletJack
 
     def initialize
       super
-      @pallets = Hash.new
+      @pallets = {}
     end
 
     # Load a PalletJack warehouse, and all its pallets
 
     def load(warehouse)
       @warehouse = File.expand_path(warehouse)
-      key_transforms = TraceableYAML::load_file(File.join(@warehouse, 'transforms.yaml'), 'transforms.yaml')
+      key_transforms = TraceableYAML.load_file(File.join(@warehouse, 'transforms.yaml'), 'transforms.yaml')
       @keytrans_reader = KeyTransformer::Reader.new(key_transforms)
       @keytrans_writer = KeyTransformer::Writer.new(key_transforms)
 
       Dir.foreach(@warehouse) do |kind|
         kindpath = File.join(@warehouse, kind)
-        next unless File.directory?(kindpath) and kind !~ /^\.{1,2}$/
+        next unless File.directory?(kindpath) && kind !~ /^\.{1,2}$/
 
         Dir.foreach(kindpath) do |pallet|
           palletpath = File.join(kindpath, pallet)
-          next unless File.directory?(palletpath) and pallet !~ /^\.{1,2}$/
+          next unless File.directory?(palletpath) && pallet !~ /^\.{1,2}$/
           pallet(kind, pallet)
         end
       end
