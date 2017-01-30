@@ -295,6 +295,7 @@ Style/FormatString:
 Style/GlobalVars:
   Exclude:
     - 'spec/example-warehouse_spec.rb'
+    - 'spec/palletjack_warehouse_spec.rb'
     - 'spec/palletjack-pallet_spec.rb'
     - 'spec/palletjack-tool_spec.rb'
     - 'spec/palletjack_spec.rb'
