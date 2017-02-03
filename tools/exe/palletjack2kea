@@ -37,7 +37,7 @@ Write configuration for the Kea DHCP server from a Palletjack warehouse"
   def process
     service = jack.fetch(kind: 'service',
                          parent_name: 'dhcp-server',
-                         name:options[:service])
+                         name: options[:service])
 
     @kea_config = { 'Dhcp4' => service['service.kea_v4'] }
 
