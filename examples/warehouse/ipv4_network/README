@@ -26,7 +26,7 @@ Links:
 Files:
 
   ipv4_network/<name>/identity.yaml
-  ipv4_network/<name>/dhcp.yaml
+  ipv4_network/<name>/netboot.yaml
 
 
 YAML:
@@ -36,7 +36,7 @@ identity.yaml:
     ipv4:
       gateway: IPv4 address of default gateway from this network
 
-dhcp.yaml:
+netboot.yaml:
   net:
     dhcp:
       tftp-server: IPv4 address of TFTP boot server on this network
