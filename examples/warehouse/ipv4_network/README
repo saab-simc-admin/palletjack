@@ -12,14 +12,21 @@ default transform rules fill in values for "net.ipv4.cidr" and
 bits are allowed here, but are not yet supported by "palletjack2zone"
 for writing reverse zones.
 
+The optional link "dhcp" points to the DHCP-server service that manages
+addresses on this network, if any.
+
 This information is used by most tools handling network configuration,
 currently "palletjack2kea" and "palletjack2zone".
+
+Links:
+
+  ipv4_network/<name>/dhcp -> ../../service/dhcp-server/<name>/
 
 
 Files:
 
   ipv4_network/<name>/identity.yaml
-  ipv4_network/<name>/dhcp.yaml
+  ipv4_network/<name>/netboot.yaml
 
 
 YAML:
@@ -29,7 +36,7 @@ identity.yaml:
     ipv4:
       gateway: IPv4 address of default gateway from this network
 
-dhcp.yaml:
+netboot.yaml:
   net:
     dhcp:
       tftp-server: IPv4 address of TFTP boot server on this network
