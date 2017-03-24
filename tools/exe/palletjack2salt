@@ -63,7 +63,7 @@ Write Salt pillar data from a Palletjack warehouse."
       result[dst_key] ||= {}
 
       jack.each(kind: kind) do |pallet|
-        result[dst_key][pallet.name] = pallet.to_hash.except('pallet')
+        result[dst_key][pallet.full_name] = pallet.to_hash.except('pallet')
       end
     end
 
