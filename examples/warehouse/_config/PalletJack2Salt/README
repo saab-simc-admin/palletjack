@@ -1,13 +1,16 @@
 PalletJack2Salt Configuration
 =============================
 
-Keys under `pillar.global.each-pallet` are used to store information
-about kinds of pallets to copy into global Salt pillars under the name
-space `palletjack:global`.
+Keys under `pillar.global.*` are used to store information about which
+kinds of pallets to copy into global Salt pillars under the name space
+`palletjack:global`.
 
-Keys under `pillar.global.each-leaf-pallet` are used to store information
-about kinds of pallets without hierarchical children to copy into
-global Salt pillars under the name space `palletjack:global`.
+  - For pallet kinds listed under `.each-pallet`, the entire hierarchy
+    of pallets is copied.
+
+  - For pallet kinds listed under `.each-leaf-pallet`, only leaves in
+    the hierarchy are copied, i.e. pallets without children of their
+    own kind.
 
 Keys under `pillar.per-minion.each-subtree` are used to store information
 about which key subtrees to copy from each `system` object into
