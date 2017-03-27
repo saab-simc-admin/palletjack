@@ -67,6 +67,16 @@ Write Salt pillar data from a Palletjack warehouse."
       end
     end
 
+    config['pillar.global.each-leaf-pallet'].each do |dst_key, kind|
+      result[dst_key] ||= {}
+
+      jack.each(kind: kind) do |pallet|
+        next unless pallet.children(kind: kind).empty?
+
+        result[dst_key][pallet.full_name] = pallet.to_hash.except('pallet')
+      end
+    end
+
     result
   end
 
