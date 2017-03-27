@@ -69,7 +69,7 @@ Metrics/AbcSize:
 # Offense count: 18
 # Configuration parameters: CountComments, ExcludedMethods.
 Metrics/BlockLength:
-  Max: 120
+  Max: 40
   Exclude:
     - 'spec/*_spec.rb'
     - 'tools/spec/*_spec.rb'
