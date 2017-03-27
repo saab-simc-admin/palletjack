@@ -22,7 +22,7 @@ describe 'palletjack2salt' do
                                 'pxelinux' => Hash },
                     'system' => Hash }
       @tool.jack.each(kind: 'os') do |os|
-        expect(@global['os'][os.name]).to have_structure(os_pillar)
+        expect(@global['os'][os.full_name]).to have_structure(os_pillar)
       end
     end
 
@@ -31,7 +31,9 @@ describe 'palletjack2salt' do
                                 'pxelinux' => Hash },
                     'system' => Hash }
       @tool.jack.each(kind: 'netinstall') do |ni|
-        expect(@global['netinstall'][ni.name]).to have_structure(ni_pillar)
+        next unless ni.children(kind: 'netinstall').empty?
+
+        expect(@global['netinstall'][ni.full_name]).to have_structure(ni_pillar)
       end
     end
   end

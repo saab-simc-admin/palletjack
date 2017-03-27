@@ -2,5 +2,6 @@
 pillar:
   global:
     each-pallet:
-      netinstall: netinstall
       os: os
+    each-leaf-pallet:
+      netinstall: netinstall
