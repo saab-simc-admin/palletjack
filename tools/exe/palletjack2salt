@@ -59,7 +59,7 @@ Write Salt pillar data from a Palletjack warehouse."
   def process_global_pillar
     result = {}
 
-    config['pillar.global.each-pallet'].each do |dst_key, kind|
+    (config['pillar.global.each-pallet'] || []).each do |dst_key, kind|
       result[dst_key] ||= {}
 
       jack.each(kind: kind) do |pallet|
@@ -67,7 +67,7 @@ Write Salt pillar data from a Palletjack warehouse."
       end
     end
 
-    config['pillar.global.each-leaf-pallet'].each do |dst_key, kind|
+    (config['pillar.global.each-leaf-pallet'] || []).each do |dst_key, kind|
       result[dst_key] ||= {}
 
       jack.each(kind: kind) do |pallet|
