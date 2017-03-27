@@ -188,9 +188,9 @@ module PalletJack
     #   end
 
     def required_option(*opts)
-      @option_checks << lambda do
+      @option_checks << (lambda do
         raise ArgumentError unless opts.any? {|opt| options[opt]}
-      end
+      end)
     end
 
     # Require the presence of no more than one of the given options.
@@ -208,9 +208,9 @@ module PalletJack
     #   end
 
     def exclusive_options(*opts)
-      @option_checks << lambda do
+      @option_checks << (lambda do
         raise ArgumentError if opts.count {|opt| options[opt]} > 1
-      end
+      end)
     end
 
     # Usage information from option parser
