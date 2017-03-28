@@ -101,9 +101,9 @@ describe 'palletjack2unbound' do
       context 'outside in-addr.arpa for RFC1918 address space' do
         it 'is not declared "transparent"' do
           expect(
-            @stub_zones.select { |stub|
+            @stub_zones.reject { |stub|
               # Let's hope the examples stay in this RFC1918 space
-              stub.instance_variable_get(:@zone) !~ /\.168\.192\.in-addr\.arpa/
+              stub.instance_variable_get(:@zone) =~ /\.168\.192\.in-addr\.arpa/
             }.none? { |stub|
               instance_variable_get(:@transparent)
             }
