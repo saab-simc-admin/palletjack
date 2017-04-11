@@ -143,8 +143,12 @@ module PalletJack
 
       @parser.parse!(argv)
       @option_checks.each {|check| check.call }
-    rescue
-      abort(usage)
+    rescue OptionParser::ParseError => error
+      if error.args.empty?
+        abort(usage)
+      else
+        abort("#{error}\n\n#{usage}")
+      end
     end
 
     # Additional option parsing
