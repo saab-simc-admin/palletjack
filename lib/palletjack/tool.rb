@@ -255,9 +255,7 @@ module PalletJack
     # Build a filesystem path from path components
     #
     # Symbols are looked up in the options dictionary.
-    # All other types are converted to strings. The
-    # resulting list is fed to File#join to produce a
-    # local filesystem compliant path.
+    # All components are converted to Pathname and concatenated.
     #
     # Example:
     #   parser.on(...) {|dir| options[:output] = dir }
@@ -266,14 +264,16 @@ module PalletJack
     #   config_path :output, 'subdir2'
 
     def config_path(*path)
-      File.join(path.map {|item|
-                  case item
-                  when Symbol
-                    options.fetch(item)
-                  else
-                    item.to_s
-                  end
-                })
+      path.map { |item|
+        case item
+        when Pathname
+          item
+        when Symbol
+          Pathname.new(options.fetch(item))
+        else
+          Pathname.new(item.to_s)
+        end
+      }.reduce(&:+)
     end
 
     # :call-seq:
