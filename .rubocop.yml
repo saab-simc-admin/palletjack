@@ -2,7 +2,7 @@ inherit_from: .rubocop_todo.yml
 
 Style/IndentArray:
   EnforcedStyle: consistent
-Style/MethodName: 
-  EnforcedStyle: snake_case 
+Style/MethodName:
+  EnforcedStyle: snake_case
 Style/SymbolArray:
   EnforcedStyle: brackets
