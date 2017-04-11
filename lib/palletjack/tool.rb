@@ -1,5 +1,6 @@
 require 'palletjack'
 require 'fileutils'
+require 'pathname'
 require 'optparse'
 require 'singleton'
 require 'rugged'
