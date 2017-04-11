@@ -323,6 +323,7 @@ Style/GuardClause:
 Style/HashSyntax:
   Exclude:
     - 'Rakefile'
+    - 'exe/palletjack-pallet'
     - 'tools/Rakefile'
     - 'tools/exe/palletjack2pxelinux'
 
