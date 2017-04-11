@@ -378,7 +378,8 @@ module PalletJack
 
     def pallet_links(kind, name, links = {})
       links.each do |link_type, parent|
-        link_path = config_path(:warehouse, kind, name, link_type)
+        link_base = config_path(:warehouse, kind, name)
+        link_path = config_path(link_base, link_type)
 
         begin
           File.delete(link_path)
@@ -387,9 +388,9 @@ module PalletJack
         end
         unless parent.empty?
           parent_kind, parent_name = parent
-          parent_path = config_path('..', '..', parent_kind, parent_name)
+          parent_path = config_path(:warehouse, parent_kind, parent_name)
 
-          File.symlink(parent_path, link_path)
+          File.symlink(parent_path.relative_path_from(link_base), link_path)
         end
       end
     end
