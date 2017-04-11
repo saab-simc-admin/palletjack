@@ -137,7 +137,7 @@ module PalletJack
                  'warehouse directory', String) {|dir|
         @options[:warehouse] = dir }
       @parser.on_tail('-h', '--help', 'display usage information') {
-        raise ArgumentError }
+        raise OptionParser::ParseError }
 
       parse_options(@parser)
 
@@ -189,7 +189,7 @@ module PalletJack
 
     def required_option(*opts)
       @option_checks << (lambda do
-        raise ArgumentError unless opts.any? {|opt| options[opt]}
+        raise OptionParser::ParseError unless opts.any? {|opt| options[opt]}
       end)
     end
 
@@ -209,7 +209,7 @@ module PalletJack
 
     def exclusive_options(*opts)
       @option_checks << (lambda do
-        raise ArgumentError if opts.count {|opt| options[opt]} > 1
+        raise OptionParser::ParseError if opts.count {|opt| options[opt]} > 1
       end)
     end
 
