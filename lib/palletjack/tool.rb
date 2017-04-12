@@ -367,13 +367,13 @@ module PalletJack
     #        but that requires some redesign work.
     #++
 
-    def pallet_box(kind, name, box, keys = {}, &block)
+    def pallet_box(kind, name, box, keyvalues = {}, &block)
       box = options[box] if box.is_a?(Symbol)
       box_path = config_path(:warehouse, kind, name, "#{box}.yaml")
       contents = KVDAG::KeyPathHashProxy.new
 
       contents.merge! YAML::load_file(box_path) if box_path.file?
-      keys.each { |key, value| contents[key] = value }
+      keyvalues.each { |key, value| contents[key] = value }
       contents.merge! block.call if block_given?
 
       config_file box_path do |box_file|
