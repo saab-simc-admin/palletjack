@@ -7,6 +7,16 @@ describe PalletJack::Tool do
     expect{ PalletJack::Tool.instance }.not_to raise_error
   end
 
+  it 'does not mask programming errors as usage' do
+    class BrokenTool < PalletJack::Tool
+      def parse_options(_)
+        raise RuntimeError
+      end
+    end
+
+    expect{ BrokenTool.run }.to raise_error RuntimeError
+  end
+
   context 'without a command line' do
     before :each do
       allow(PalletJack::Tool.instance).to receive(:argv).and_return([])
