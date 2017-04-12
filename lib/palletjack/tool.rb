@@ -355,7 +355,7 @@ module PalletJack
     # declaration of the box contents.
     #
     # Uses config_file to create the file, so any symbols will
-    # be looked up in the options hash.
+    # be looked up in the options hash, except for the box name.
     #
     # Example:
     #
@@ -368,7 +368,6 @@ module PalletJack
     #++
 
     def pallet_box(kind, name, box, keyvalues = {}, &block)
-      box = options[box] if box.is_a?(Symbol)
       box_path = config_path(:warehouse, kind, name, "#{box}.yaml")
       contents = KVDAG::KeyPathHashProxy.new
 
