@@ -1,5 +1,6 @@
 require 'palletjack'
 require 'fileutils'
+require 'pathname'
 require 'optparse'
 require 'singleton'
 require 'rugged'
@@ -255,9 +256,7 @@ module PalletJack
     # Build a filesystem path from path components
     #
     # Symbols are looked up in the options dictionary.
-    # All other types are converted to strings. The
-    # resulting list is fed to File#join to produce a
-    # local filesystem compliant path.
+    # All components are converted to Pathname and concatenated.
     #
     # Example:
     #   parser.on(...) {|dir| options[:output] = dir }
@@ -266,14 +265,16 @@ module PalletJack
     #   config_path :output, 'subdir2'
 
     def config_path(*path)
-      File.join(path.map {|item|
-                  case item
-                  when Symbol
-                    options.fetch(item)
-                  else
-                    item.to_s
-                  end
-                })
+      path.map { |item|
+        case item
+        when Pathname
+          item
+        when Symbol
+          Pathname.new(options.fetch(item))
+        else
+          Pathname.new(item.to_s)
+        end
+      }.reduce(&:+)
     end
 
     # :call-seq:
@@ -378,7 +379,8 @@ module PalletJack
 
     def pallet_links(kind, name, links = {})
       links.each do |link_type, parent|
-        link_path = config_path(:warehouse, kind, name, link_type)
+        link_base = config_path(:warehouse, kind, name)
+        link_path = config_path(link_base, link_type)
 
         begin
           File.delete(link_path)
@@ -387,9 +389,9 @@ module PalletJack
         end
         unless parent.empty?
           parent_kind, parent_name = parent
-          parent_path = config_path('..', '..', parent_kind, parent_name)
+          parent_path = config_path(:warehouse, parent_kind, parent_name)
 
-          File.symlink(parent_path, link_path)
+          File.symlink(parent_path.relative_path_from(link_base), link_path)
         end
       end
     end
