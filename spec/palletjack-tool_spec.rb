@@ -60,9 +60,9 @@ describe PalletJack::Tool do
         @tool.config_file(@filename) do |file|
           @temp_name = file.path
         end
-        expect(File.exist? @filename).to be true
+        expect(File.exist?(@filename)).to be true
         File.unlink(@filename)
-        expect(File.exist? @temp_name).to be false
+        expect(File.exist?(@temp_name)).to be false
         expect(@filename.to_s).not_to eq @temp_name
       end
 
@@ -74,8 +74,8 @@ describe PalletJack::Tool do
           end
         rescue RuntimeError
         end
-        expect(File.exist? @filename).to be false
-        expect(File.exist? @temp_name).to be false
+        expect(File.exist?(@filename)).to be false
+        expect(File.exist?(@temp_name)).to be false
       end
     end
   end

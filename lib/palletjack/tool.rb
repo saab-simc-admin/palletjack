@@ -326,7 +326,7 @@ module PalletJack
     def config_file(*path, mode: 0644, &block)
       filename = config_path(*path)
       begin
-        temp_filename = "#{filename}.tmp.#{Process.pid}.#{rand(1000000)}"
+        temp_filename = "#{filename}.tmp.#{Process.pid}.#{rand(1_000_000)}"
         temp_file = File.new(temp_filename,
                              File::CREAT | File::EXCL | File::RDWR)
       rescue Errno::EEXIST
