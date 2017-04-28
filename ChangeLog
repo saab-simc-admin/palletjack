@@ -1,0 +1,109 @@
+v0.6.5 2017-04-28
+
+  Bug fixes:
+
+    * Make configuration file writes atomic (#120, #121)
+
+v0.6.4 2017-04-21
+
+  Bug fixes:
+
+    * Exceptions raised when parsing options are now propagated
+      properly instead of just resulting in the usage message being
+      printed and the program exiting (#118)
+
+  API changes:
+
+    * PalletJack::Tool#pallet_box can now take a hash of static
+      key-value pairs in addition to a block (#119)
+
+v0.6.3 2017-04-12
+
+  Bug fixes:
+
+    * PalletJack::Tool#pallet_links now creates correct parent links
+      in the presence of hierarchical names (#117)
+
+v0.6.2 2017-03-27
+
+  Bug fixes:
+
+    * Make palletjack2salt use the full hierarchical name for
+      netinstall pillars (#113)
+
+  Warehouse changes:
+
+    * Add the pillar.global.each-leaf-pallet directive to
+      palletjack2salt configuration for copying only leaf pallets into
+      Salt pillars (#114)
+
+v0.6.1 2017-03-17
+
+  Bug fixes:
+
+    * Add explicit dependency on json ~> 1.8 (#112)
+
+v0.6.0 2017-02-09
+
+  Warehouse changes:
+
+    * ipv4_network objects now need to link to service/dhcp-server
+      objects in order to generate DHCP server configuration (#111)
+
+v0.5.0 2017-01-30
+
+  API changes:
+
+    * Refactor the PalletJack class, making PalletJack a module and
+      moving the functionality into PalletJack::Warehouse (#110)
+
+  Process changes:
+
+    * Add RuboCop coding style enforcement (#106, #108)
+
+v0.4.2 2017-01-16
+
+  Warehouse changes:
+
+    * Example warehouse updated to CentOS 7.3.1611 (#103)
+
+  API changes:
+
+    * PalletJack no longer inherits from KVDAG (#107)
+
+v0.4.1 2016-11-28
+
+  Warehouse changes:
+
+    * Refactor netinstall objects to use hierarcical names and
+      inheritance (#101)
+
+v0.4.0 2016-11-23
+
+  API changes:
+
+    * Add information about source file and position to keys and
+      values (#100)
+
+v0.3.0 2016-11-18
+
+  Bug fixes:
+
+    * Wait until the warehouse has been fully loaded before running
+      transforms (#99)
+
+  Warehouse changes:
+
+    * Update the example warehouse to use hierarchical DHCP server
+      configuration objects (#98)
+
+v0.2.0 2016-11-11
+
+  Warehouse changes:
+
+    * Allow objects to be hierarchical (#95, #97)
+
+  API changes:
+
+    * Drop the v0.1.0 monolithic tool API, converting all bundled
+      tools to the v0.1.1 split function API (#94)
