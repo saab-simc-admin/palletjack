@@ -243,6 +243,8 @@ We are happy to accept contributions in the form of issues and pull requests on 
 
   - Write your commit messages in the usual Git style: a short summary in the first line, then paragraphs of explanatory text, line wrapped.
 
+  - For externally visible changes (either to users or tool developers), add a note in the changelog.
+
 - Test your code.
 
   - Code shall pass [Rubocop](https://github.com/bbatsov/rubocop) tests. See [.rubocop.yml](.rubocop.yml) for configured options. Rubocop is automaticallly run with the default Rake task.
