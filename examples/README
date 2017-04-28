@@ -51,3 +51,11 @@ For the CentOS 7 installer, download
 http://mirror.centos.org/centos/7/os/x86_64/images/pxeboot/vmlinuz and
 http://mirror.centos.org/centos/7/os/x86_64/images/pxeboot/initrd.img
 to pxelinux/boot/CentOS-7.3.1611-x86_64/.
+
+
+lca2017-presentation.odp
+------------------------
+
+Notes from the presentation given at the Linux.Conf.Au 2017 Sysadmin
+miniconf about Pallet Jack. Recording available at
+https://www.youtube.com/watch?v=4oq4ursOnlw
