@@ -305,8 +305,12 @@ module PalletJack
     # config_file :option, 'fragment', 'base.ext' {|file| ... }
     # config_file ..., mode:0600 {|file| ...}
     #
-    # Creates a configuration file, with default mode:0644
-    # and calls the given block with the file as argument.
+    # Creates a temporary configuration file with an undefined name,
+    # with default mode:0644, and calls the given block with the file
+    # as argument. After the block has run, the file is atomically
+    # renamed to the given destination file name. If any errors occur,
+    # the temporary file is deleted without overwriting the
+    # destination file.
     #
     # Uses config_path to construct the path, so any symbols will
     # be looked up in the options hash.
@@ -320,9 +324,25 @@ module PalletJack
     #   end
 
     def config_file(*path, mode: 0644, &block)
-      File.open(config_path(*path),
-                File::CREAT | File::TRUNC | File::WRONLY, mode) do |file|
-        block.call(file)
+      filename = config_path(*path)
+      begin
+        temp_filename = "#{filename}.tmp.#{Process.pid}.#{rand(1_000_000)}"
+        temp_file = File.new(temp_filename,
+                             File::CREAT | File::EXCL | File::RDWR)
+      rescue Errno::EEXIST
+        retry
+      end
+
+      begin
+        temp_file.flock(File::LOCK_EX)
+        block.call(temp_file)
+        temp_file.flush
+        File.rename(temp_filename, filename)
+      rescue
+        File.unlink(temp_filename) rescue nil
+        raise
+      ensure
+        temp_file.close
       end
     end
 

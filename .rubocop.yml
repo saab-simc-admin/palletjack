@@ -6,3 +6,6 @@ Style/MethodName:
   EnforcedStyle: snake_case
 Style/SymbolArray:
   EnforcedStyle: brackets
+Lint/HandleExceptions:
+  Exclude:
+    - 'spec/palletjack-tool_spec.rb'
