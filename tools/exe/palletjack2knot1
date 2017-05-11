@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+
+require 'palletjack2zones'
+
+# Write DNS server zone files from a Palletjack warehouse, with
+# configuration for a Knot 1.x server.
+class PalletJack2Knot1 < PalletJack2Zones
+  def toolname
+    'palletjack2knot1'
+  end
+
+  def zone_config(zone)
+    "
+#{zone} {
+  file \"zones/#{zone}.zone\";
+}
+"
+  end
+end
+
+if PalletJack2Knot1.standalone?(__FILE__)
+  PalletJack2Knot1.run
+end

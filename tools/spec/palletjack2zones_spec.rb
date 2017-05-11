@@ -2,11 +2,11 @@ require 'spec_helper'
 require 'tmpdir'
 require 'rspec/collection_matchers'
 
-load 'palletjack2knot'
+require 'palletjack2zones'
 
-describe 'palletjack2knot' do
+describe 'palletjack2zones' do
   it 'requires an output directory' do
-    @tool = PalletJack2Knot.instance
+    @tool = PalletJack2Zones.instance
     allow(@tool).to receive(:argv).and_return([
       '-w', $EXAMPLE_WAREHOUSE
     ])
@@ -14,9 +14,14 @@ describe 'palletjack2knot' do
     expect{@tool.setup}.to raise_error SystemExit
   end
 
+  it 'does not write server-specific configuration' do
+    @tool = PalletJack2Zones.instance
+    expect(@tool.zone_config('test')).to eq nil
+  end
+
   context 'generates' do
     before :example do
-      @tool = PalletJack2Knot.instance
+      @tool = PalletJack2Zones.instance
       allow(@tool).to receive(:argv).and_return([
         '-w', $EXAMPLE_WAREHOUSE,
         '-o', Dir.tmpdir
@@ -38,7 +43,7 @@ describe 'palletjack2knot' do
 
   context 'forward zone for example.com' do
     before :example do
-      @tool = PalletJack2Knot.instance
+      @tool = PalletJack2Zones.instance
       allow(@tool).to receive(:argv).and_return([
         '-w', $EXAMPLE_WAREHOUSE,
         '-o', Dir.tmpdir
@@ -64,7 +69,7 @@ describe 'palletjack2knot' do
 
   context 'reverse zone for 192.168.0.0/24' do
     before :example do
-      @tool = PalletJack2Knot.instance
+      @tool = PalletJack2Zones.instance
       allow(@tool).to receive(:argv).and_return([
         '-w', $EXAMPLE_WAREHOUSE,
         '-o', Dir.tmpdir

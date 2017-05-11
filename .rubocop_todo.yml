@@ -154,8 +154,8 @@ Style/BlockDelimiters:
     - 'tools/exe/create_ipv4_interface'
     - 'tools/exe/create_system'
     - 'tools/exe/dump_pallet'
-    - 'tools/exe/palletjack2knot'
     - 'tools/exe/palletjack2unbound'
+    - 'tools/lib/palletjack2zones.rb'
     - 'tools/spec/palletjack2kea_spec.rb'
     - 'tools/spec/palletjack2unbound_spec.rb'
 
@@ -225,10 +225,10 @@ Style/Documentation:
     - 'tools/exe/create_system'
     - 'tools/exe/dump_pallet'
     - 'tools/exe/palletjack2kea'
-    - 'tools/exe/palletjack2knot'
     - 'tools/exe/palletjack2pxelinux'
     - 'tools/exe/palletjack2salt'
     - 'tools/exe/palletjack2unbound'
+    - 'tools/lib/palletjack2zones.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -252,6 +252,7 @@ Style/EmptyLiteral:
 Style/EmptyMethod:
   Exclude:
     - 'lib/palletjack/tool.rb'
+    - 'tools/lib/palletjack2zones.rb'
 
 # Offense count: 2
 # Cop supports --auto-correct.
@@ -280,10 +281,10 @@ Style/FirstParameterIndentation:
     - 'tools/exe/create_ipv4_interface'
     - 'tools/exe/create_system'
     - 'tools/exe/palletjack2kea'
-    - 'tools/exe/palletjack2knot'
     - 'tools/exe/palletjack2pxelinux'
     - 'tools/exe/palletjack2salt'
     - 'tools/exe/palletjack2unbound'
+    - 'tools/lib/palletjack2zones.rb'
 
 # Offense count: 2
 # Configuration parameters: EnforcedStyle, SupportedStyles.
@@ -304,9 +305,9 @@ Style/GlobalVars:
     - 'spec/palletjack_spec.rb'
     - 'spec/spec_helper.rb'
     - 'tools/spec/palletjack2kea_spec.rb'
-    - 'tools/spec/palletjack2knot_spec.rb'
     - 'tools/spec/palletjack2salt_spec.rb'
     - 'tools/spec/palletjack2unbound_spec.rb'
+    - 'tools/spec/palletjack2zones_spec.rb'
     - 'tools/spec/spec_helper.rb'
 
 # Offense count: 2
@@ -337,10 +338,12 @@ Style/IfUnlessModifier:
     - 'tools/exe/create_system'
     - 'tools/exe/dump_pallet'
     - 'tools/exe/palletjack2kea'
-    - 'tools/exe/palletjack2knot'
+    - 'tools/exe/palletjack2knot1'
+    - 'tools/exe/palletjack2knot2'
     - 'tools/exe/palletjack2pxelinux'
     - 'tools/exe/palletjack2salt'
     - 'tools/exe/palletjack2unbound'
+    - 'tools/lib/palletjack2zones.rb'
 
 # Offense count: 16
 # Cop supports --auto-correct.
@@ -352,10 +355,10 @@ Style/IndentAssignment:
     - 'tools/exe/create_ipv4_interface'
     - 'tools/exe/create_system'
     - 'tools/exe/palletjack2kea'
-    - 'tools/exe/palletjack2knot'
     - 'tools/exe/palletjack2pxelinux'
     - 'tools/exe/palletjack2salt'
     - 'tools/exe/palletjack2unbound'
+    - 'tools/lib/palletjack2zones.rb'
     - 'tools/spec/palletjack2kea_spec.rb'
     - 'tools/spec/palletjack2salt_spec.rb'
 
@@ -480,8 +483,8 @@ Style/SpaceBeforeBlockBraces:
   Exclude:
     - 'spec/palletjack-tool_spec.rb'
     - 'spec/palletjack_spec.rb'
-    - 'tools/spec/palletjack2knot_spec.rb'
     - 'tools/spec/palletjack2unbound_spec.rb'
+    - 'tools/spec/palletjack2zones_spec.rb'
 
 # Offense count: 37
 # Cop supports --auto-correct.
@@ -496,12 +499,12 @@ Style/SpaceInsideBlockBraces:
     - 'tools/exe/create_system'
     - 'tools/exe/dump_pallet'
     - 'tools/exe/palletjack2kea'
-    - 'tools/exe/palletjack2knot'
     - 'tools/exe/palletjack2pxelinux'
     - 'tools/exe/palletjack2salt'
     - 'tools/exe/palletjack2unbound'
-    - 'tools/spec/palletjack2knot_spec.rb'
+    - 'tools/lib/palletjack2zones.rb'
     - 'tools/spec/palletjack2unbound_spec.rb'
+    - 'tools/spec/palletjack2zones_spec.rb'
 
 # Offense count: 31
 # Cop supports --auto-correct.
@@ -539,8 +542,8 @@ Style/SymbolProc:
 # Configuration parameters: AllowNamedUnderscoreVariables.
 Style/TrailingUnderscoreVariable:
   Exclude:
-    - 'tools/exe/palletjack2knot'
     - 'tools/exe/palletjack2unbound'
+    - 'tools/lib/palletjack2zones.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.

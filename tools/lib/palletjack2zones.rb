@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Write DNS server zone file from a Palletjack warehouse
+# Write DNS server zone files from a Palletjack warehouse
 #
 # Data model assumptions:
 # - Each domain corresponds uniquely to one IPv4 network
@@ -10,12 +10,24 @@
 # "net.dns.alias", each of its interfaces will get that alias in its
 # own domain. Aliases explicitly specified on a single interface will
 # override this.
+#
+# To adapt this code to a specific DNS server, implement #zone_config
+# to take the name of a zone and output the configuration block for
+# telling the server about it. Also, implement #toolname to return the
+# name of the running tool.
 
 require 'palletjack/tool'
 require 'dns/zone'
 require 'ip'
 
-class PalletJack2Knot < PalletJack::Tool
+class PalletJack2Zones < PalletJack::Tool
+  def toolname
+    'PalletJack2Zones base class'
+  end
+
+  def zone_config(zone)
+  end
+
   def parse_options(opts)
     opts.banner =
 "Usage: #{$PROGRAM_NAME} -w <warehouse> -o <output directory>
@@ -28,14 +40,6 @@ Write DNS server zone files from a Palletjack warehouse"
     }
 
     required_option :output
-  end
-
-  def zone_config(zone)
-    "
-#{zone} {
-  file \"zones/#{zone}.zone\";
-}
-"
   end
 
   # Generate and store forward zone data for a Pallet Jack domain
@@ -171,11 +175,11 @@ Write DNS server zone files from a Palletjack warehouse"
 
   def output
     config_file :output, 'zones.conf' do |conf_file|
-      conf_file << git_header('palletjack2knot')
+      conf_file << git_header(toolname)
 
       @forward_zones.each do |domain, zone|
         config_file :zone_dir, "#{domain}.zone" do |zonefile|
-          zonefile << git_header('palletjack2knot', comment_char: ';')
+          zonefile << git_header(toolname, comment_char: ';')
           zonefile << zone.dump_pretty
           conf_file << zone_config(domain)
         end
@@ -183,15 +187,11 @@ Write DNS server zone files from a Palletjack warehouse"
 
       @reverse_zones.each do |domain, zone|
         config_file :zone_dir, "#{domain}.zone" do |zonefile|
-          zonefile << git_header('palletjack2knot', comment_char: ';')
+          zonefile << git_header(toolname, comment_char: ';')
           zonefile << zone.dump_pretty
           conf_file << zone_config(domain)
         end
       end
     end
   end
-end
-
-if PalletJack2Knot.standalone?(__FILE__)
-  PalletJack2Knot.run
 end
