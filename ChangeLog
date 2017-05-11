@@ -3,7 +3,7 @@ v0.7.0 2017-05-11
   Tool changes:
 
     * palletjack2knot renamed to palletjack2knot1 for Knot 1.x,
-      palletjack2knot2 introduced for Knot 2.x.
+      palletjack2knot2 introduced for Knot 2.x (#124)
 
 v0.6.5 2017-04-28
 
