@@ -189,6 +189,10 @@ Style/ClassVars:
   Exclude:
     - 'lib/traceable.rb'
 
+Style/ClosingParenthesisIndentation:
+  Exclude:
+    - 'tools/exe/power_model'
+
 # Offense count: 5
 # Cop supports --auto-correct.
 Style/ColonMethodCall:
@@ -229,6 +233,7 @@ Style/Documentation:
     - 'tools/exe/palletjack2salt'
     - 'tools/exe/palletjack2unbound'
     - 'tools/lib/palletjack2zones.rb'
+    - 'tools/exe/power_model'
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -284,6 +289,7 @@ Layout/FirstParameterIndentation:
     - 'tools/exe/palletjack2pxelinux'
     - 'tools/exe/palletjack2salt'
     - 'tools/exe/palletjack2unbound'
+    - 'tools/exe/power_model'
     - 'tools/lib/palletjack2zones.rb'
 
 # Offense count: 2
@@ -316,6 +322,7 @@ Style/GuardClause:
   Exclude:
     - 'lib/traceable.rb'
     - 'tools/exe/palletjack2salt'
+    - 'tools/exe/power_model'
 
 # Offense count: 3
 # Cop supports --auto-correct.
@@ -343,6 +350,7 @@ Style/IfUnlessModifier:
     - 'tools/exe/palletjack2pxelinux'
     - 'tools/exe/palletjack2salt'
     - 'tools/exe/palletjack2unbound'
+    - 'tools/exe/power_model'
     - 'tools/lib/palletjack2zones.rb'
 
 # Offense count: 16
@@ -358,6 +366,7 @@ Layout/IndentAssignment:
     - 'tools/exe/palletjack2pxelinux'
     - 'tools/exe/palletjack2salt'
     - 'tools/exe/palletjack2unbound'
+    - 'tools/exe/power_model'
     - 'tools/lib/palletjack2zones.rb'
     - 'tools/spec/palletjack2kea_spec.rb'
     - 'tools/spec/palletjack2salt_spec.rb'
