@@ -1,0 +1,119 @@
+#!/usr/bin/env ruby
+
+# Generate a report on theoretical electrical power capacity.
+
+require 'palletjack/tool'
+require 'yaml'
+
+class PowerModel < PalletJack::Tool
+  def parse_options(opts)
+    opts.banner =
+"Usage: #{$PROGRAM_NAME} -w <warehouse>
+
+Generate an electrical power capacity report from a Palletjack warehouse."
+  end
+
+  # The internal representation of the generated configuration, ready
+  # to be tested or printed.
+
+  attr_reader :power_model
+
+  # Populate the model with initial zero values, so we can do +=
+  # operations later without having to worry about initial values
+  # actually being present.
+  def initialize_model
+    @power_model = {
+      'chassis' => {},
+      'ups' => {},
+      'building' => {},
+      'room' => {},
+      'rack' => {}
+    }
+
+    jack.each(kind: 'ups') do |ups|
+      @power_model['ups'][ups['power.ups.name']] = {
+        'capacity' => Integer(ups['power.ups.max-load']),
+        'load' => 0
+      }
+    end
+
+    jack.each(kind: 'rack') do |rack|
+      @power_model['rack'][rack['location.rack.name']] = {
+        'capacity' => 0,
+        'load' => 0
+      }
+    end
+
+    jack.each(kind: 'room') do |room|
+      @power_model['room'][room['location.room.name']] = {
+        'capacity' => 0,
+        'load' => 0
+      }
+    end
+
+    jack.each(kind: 'building') do |building|
+      @power_model['building'][building['location.building.name']] = {
+        'capacity' => 0,
+        'load' => 0
+      }
+    end
+  end
+
+  # Add the power draw of a single +chassis+ to every level of the
+  # model.
+  def add_chassis_to_model(chassis)
+    unless chassis['chassis.max-power']
+      puts "Chassis #{chassis['chassis.name']} has no max power draw"
+      return
+    end
+
+    @power_model['chassis'][chassis['chassis.name']] =
+      Integer(chassis['chassis.max-power'])
+
+    if chassis['power.ups']
+      @power_model['ups'][chassis['power.ups.name']]['load'] +=
+        Integer(chassis['chassis.max-power'])
+    end
+
+    if chassis['location.rack']
+      @power_model['rack'][chassis['location.rack.name']]['load'] +=
+        Integer(chassis['chassis.max-power'])
+    end
+
+    if chassis['location.room']
+      @power_model['room'][chassis['location.room.name']]['load'] +=
+        Integer(chassis['chassis.max-power'])
+    end
+
+    if chassis['location.building']
+      @power_model['building'][chassis['location.building.name']]['load'] +=
+        Integer(chassis['chassis.max-power'])
+    end
+  end
+
+  def process
+    initialize_model
+
+    jack.each(kind: 'chassis') do |chassis|
+      add_chassis_to_model(chassis)
+    end
+  end
+
+  # Return the percentage load of the UPS named +ups_name+ as an
+  # integer.
+  def load_percent(ups_name)
+    Integer(@power_model['ups'][ups_name]['load'].fdiv(
+      @power_model['ups'][ups_name]['capacity']
+    ) * 100)
+  end
+
+  def output
+    jack.each(kind: 'ups') do |ups|
+      puts "#{ups['power.ups.name']}: #{load_percent(ups['power.ups.name'])}%"
+    end
+  end
+end
+
+if PowerModel.standalone?(__FILE__)
+  PowerModel.run
+end
