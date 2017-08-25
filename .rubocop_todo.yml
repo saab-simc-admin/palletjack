@@ -176,6 +176,7 @@ Style/BracesAroundHashParameters:
   Exclude:
     - 'tools/spec/palletjack2kea_spec.rb'
     - 'tools/spec/palletjack2unbound_spec.rb'
+    - 'tools/spec/power_model_spec.rb'
 
 # Offense count: 1
 # Configuration parameters: EnforcedStyle, SupportedStyles.
@@ -314,6 +315,7 @@ Style/GlobalVars:
     - 'tools/spec/palletjack2salt_spec.rb'
     - 'tools/spec/palletjack2unbound_spec.rb'
     - 'tools/spec/palletjack2zones_spec.rb'
+    - 'tools/spec/power_model_spec.rb'
     - 'tools/spec/spec_helper.rb'
 
 # Offense count: 2
@@ -370,6 +372,10 @@ Layout/IndentAssignment:
     - 'tools/lib/palletjack2zones.rb'
     - 'tools/spec/palletjack2kea_spec.rb'
     - 'tools/spec/palletjack2salt_spec.rb'
+
+Style/IndentHash:
+  Exclude:
+    - 'tools/spec/power_model_spec.rb'
 
 # Offense count: 3
 # Cop supports --auto-correct.
@@ -559,3 +565,7 @@ Style/TrailingUnderscoreVariable:
 Style/WhileUntilDo:
   Exclude:
     - 'lib/palletjack/pallet/identity.rb'
+
+Style/WordArray:
+  Exclude:
+    - 'tools/spec/power_model_spec.rb'
