@@ -1,0 +1,25 @@
+UPS
+===
+
+Type name: ups
+
+Represents an uninterruptible power supply.
+
+Can be pointed to from anywhere in the physical hierarchy (chassis,
+rack, room, or building), according to how it is connected.
+
+
+Files:
+
+  ups/<name>/identity.yaml
+
+
+YAML:
+
+identity.yaml:
+  power:
+    ups:
+      manufacturer: Human-readable manufacturer name
+      model: Human-readable model name
+      serial: Serial number
+      max-load: Maximum rated load in VA

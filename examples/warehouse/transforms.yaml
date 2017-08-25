@@ -164,6 +164,8 @@
   - synthesize: "#[pallet.rack]"
 - system.name:
   - synthesize: "#[pallet.system]"
+- power.ups.name:
+  - synthesize: "#[pallet.ups]"
 - net.dns.name:                    # Later rules can reference previously
   - synthesize: "#[system.name]"   # synthesized values
 
