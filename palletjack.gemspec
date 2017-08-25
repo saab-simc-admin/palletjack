@@ -34,7 +34,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rspec_structure_matcher', '~> 0.0.6'
   spec.add_development_dependency 'rspec-collection_matchers', '~> 1.1.2'
-  spec.add_development_dependency 'rubocop', '~> 0.46'
+  spec.add_development_dependency 'rubocop', '~> 0.49'
 
   spec.has_rdoc	= true
 end
