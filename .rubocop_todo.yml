@@ -119,7 +119,7 @@ Style/Alias:
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles, IndentationWidth.
 # SupportedStyles: with_first_parameter, with_fixed_indentation
-Style/AlignParameters:
+Layout/AlignParameters:
   Exclude:
     - 'lib/palletjack/pallet.rb'
     - 'tools/exe/create_ipv4_interface'
@@ -161,7 +161,7 @@ Style/BlockDelimiters:
 
 # Offense count: 11
 # Cop supports --auto-correct.
-Style/BlockEndNewline:
+Layout/BlockEndNewline:
   Exclude:
     - 'lib/palletjack/tool.rb'
     - 'tools/exe/create_domain'
@@ -199,7 +199,7 @@ Style/ColonMethodCall:
 
 # Offense count: 2
 # Cop supports --auto-correct.
-Style/CommentIndentation:
+Layout/CommentIndentation:
   Exclude:
     - 'tools/spec/palletjack2salt_spec.rb'
 
@@ -257,7 +257,7 @@ Style/EmptyMethod:
 # Offense count: 2
 # Cop supports --auto-correct.
 # Configuration parameters: AllowForAlignment, ForceEqualSignAlignment.
-Style/ExtraSpacing:
+Layout/ExtraSpacing:
   Exclude:
     - 'palletjack.gemspec'
     - 'tools/palletjack-tools.gemspec'
@@ -275,7 +275,7 @@ Style/FileName:
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles, IndentationWidth.
 # SupportedStyles: consistent, special_for_inner_method_call, special_for_inner_method_call_in_parentheses
-Style/FirstParameterIndentation:
+Layout/FirstParameterIndentation:
   Exclude:
     - 'tools/exe/create_domain'
     - 'tools/exe/create_ipv4_interface'
@@ -348,7 +348,7 @@ Style/IfUnlessModifier:
 # Offense count: 16
 # Cop supports --auto-correct.
 # Configuration parameters: IndentationWidth.
-Style/IndentAssignment:
+Layout/IndentAssignment:
   Exclude:
     - 'lib/palletjack/tool.rb'
     - 'tools/exe/create_domain'
@@ -377,7 +377,7 @@ Style/MultilineBlockChain:
 
 # Offense count: 1
 # Cop supports --auto-correct.
-Style/MultilineBlockLayout:
+Layout/MultilineBlockLayout:
   Exclude:
     - 'tools/exe/dump_pallet'
 
@@ -385,7 +385,7 @@ Style/MultilineBlockLayout:
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 # SupportedStyles: symmetrical, new_line, same_line
-Style/MultilineHashBraceLayout:
+Layout/MultilineHashBraceLayout:
   Exclude:
     - 'tools/exe/palletjack2kea'
 
@@ -407,7 +407,7 @@ Style/MultilineIfThen:
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 # SupportedStyles: symmetrical, new_line, same_line
-Style/MultilineMethodCallBraceLayout:
+Layout/MultilineMethodCallBraceLayout:
   Exclude:
     - 'tools/exe/dump_pallet'
     - 'tools/exe/palletjack2kea'
@@ -418,7 +418,7 @@ Style/MultilineMethodCallBraceLayout:
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles, IndentationWidth.
 # SupportedStyles: aligned, indented
-Style/MultilineOperationIndentation:
+Layout/MultilineOperationIndentation:
   Exclude:
     - 'tools/spec/palletjack2kea_spec.rb'
 
@@ -479,7 +479,7 @@ Style/RescueModifier:
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 # SupportedStyles: space, no_space
-Style/SpaceBeforeBlockBraces:
+Layout/SpaceBeforeBlockBraces:
   Exclude:
     - 'spec/palletjack-tool_spec.rb'
     - 'spec/palletjack_spec.rb'
@@ -491,7 +491,7 @@ Style/SpaceBeforeBlockBraces:
 # Configuration parameters: EnforcedStyle, SupportedStyles, EnforcedStyleForEmptyBraces, SupportedStylesForEmptyBraces, SpaceBeforeBlockParameters.
 # SupportedStyles: space, no_space
 # SupportedStylesForEmptyBraces: space, no_space
-Style/SpaceInsideBlockBraces:
+Layout/SpaceInsideBlockBraces:
   Exclude:
     - 'lib/palletjack/tool.rb'
     - 'tools/exe/create_domain'
@@ -511,7 +511,7 @@ Style/SpaceInsideBlockBraces:
 # Configuration parameters: EnforcedStyle, SupportedStyles, EnforcedStyleForEmptyBraces, SupportedStylesForEmptyBraces.
 # SupportedStyles: space, no_space, compact
 # SupportedStylesForEmptyBraces: space, no_space
-Style/SpaceInsideHashLiteralBraces:
+Layout/SpaceInsideHashLiteralBraces:
   Exclude:
     - 'lib/palletjack/pallet.rb'
     - 'tools/exe/create_domain'
