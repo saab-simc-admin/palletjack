@@ -193,7 +193,7 @@ module TraceableYAML
     handler = PositionHandler.new(tag)
     parser = Psych::Parser.new(handler)
     handler.parser = parser
-    parser.parse doc
+    parser.parse(doc, tag)
     if PositionVisitor.respond_to?(:create)
       # Ruby 2.1 and above
       visitor = PositionVisitor.create
