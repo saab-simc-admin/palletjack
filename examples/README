@@ -45,7 +45,7 @@ this repository.
 
 For Memtest86+, download
 http://www.memtest.org/download/4.20/memtest86+-4.20.bin.gz and unpack
-it as pxelinux/boot/memtest.4.20.
+it as pxelinux/boot/memtest86/memtest.4.20.
 
 For the CentOS 7 installer, download
 http://mirror.centos.org/centos/7/os/x86_64/images/pxeboot/vmlinuz and
