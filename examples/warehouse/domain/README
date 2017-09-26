@@ -58,7 +58,8 @@ dns.yaml:
         target: Dot-terminated FQDN or hostname of target
       - ...
     txt:
-      - label: Label to attach TXT record to
+      - label: Label to attach TXT record to (if label is absent,
+               attach it to the domain apex)
         text: Contents of TXT record
       - ...
 

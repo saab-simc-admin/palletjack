@@ -101,7 +101,7 @@ Write DNS server zone files from a Palletjack warehouse"
     if domain['net.dns.txt']
       domain['net.dns.txt'].each do |record|
         txt = DNS::Zone::RR::TXT.new
-        txt.label = record['label']
+        txt.label = record['label'] || absolute_domain_name
         txt.text = record['text']
         zone.records << txt
       end
