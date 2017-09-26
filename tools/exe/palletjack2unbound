@@ -94,6 +94,7 @@ into Salt state configuration for unbound.
 
 E.g.
   palletjack2unbound -w /etc/salt/respository/warehouse \\
+    -s example-com \\
     -o /etc/salt/repository/state/unbound/files"
 
     opts.on('-o DIR', '--output DIR', 'output directory', String) {|dir|

@@ -8,7 +8,7 @@ require 'json'
 class PalletJack2Kea < PalletJack::Tool
   def parse_options(opts)
     opts.banner =
-"Usage: #{$PROGRAM_NAME} [options] <name> ...
+"Usage: #{$PROGRAM_NAME} -w <warehouse> -s <service>
 
 Write configuration for the Kea DHCP server from a Palletjack warehouse"
 
