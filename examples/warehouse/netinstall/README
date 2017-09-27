@@ -9,7 +9,7 @@ variant may not contain a "-".
 Represents a specific variant of configuration choices for network
 installation of an operating system.
 
-Palletjack2pxelinux uses "host.os.name" and "host.kickstart.variant"
+Palletjack2pxelinux uses "host.os.name" and "host.netinstall.variant"
 to generate os variant enumeration PXE menus and os variant
 installation PXE menus.
 
@@ -20,11 +20,11 @@ Links:
 
 Files:
 
-  netinstall/<os>/<variant>/kickstart.yaml
+  netinstall/<os>/<variant>/netinstall.yaml
 
 
 Transformed values:
 
   host:
-    kickstart:
+    netinstall:
       variant: Variant part of netinstall name

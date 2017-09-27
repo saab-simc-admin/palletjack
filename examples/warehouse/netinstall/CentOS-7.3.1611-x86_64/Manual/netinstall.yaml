@@ -1,4 +1,4 @@
 host:
-  kickstart:
+  netinstall:
     label: manual configuration
-    ksurl: "none"
+    config_url: "none"
