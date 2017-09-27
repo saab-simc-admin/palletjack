@@ -1,4 +1,4 @@
 host:
-  kickstart:
+  netinstall:
     label: single disk physical machine
     use_disk: sda
