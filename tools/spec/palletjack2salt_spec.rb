@@ -96,7 +96,7 @@ describe 'palletjack2salt' do
     it 'contains system configuration' do
       system =
       {
-        'os' => 'CentOS-7.3.1611-x86_64',
+        'os' => 'CentOS-7.4.1708-x86_64',
         'architecture' => 'x86_64',
         'role' => ['kvm-server', 'ssh-server'],
         'name' => 'vmhost1'
