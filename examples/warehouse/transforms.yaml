@@ -178,7 +178,7 @@
   - synthesize: "#[pallet.ipv4_interface]"
 - net.layer2.address:
   - synthesize: "#[pallet.phy_nic]"
-- host.kickstart.config:
+- host.netinstall.config:
   - synthesize: "#[pallet.os]-#[pallet.netinstall]"
 
 
@@ -188,8 +188,8 @@
 - net.dns.fqdn:
   - synthesize: "#[net.dns.name].#[net.dns.domain]"
 
-- host.kickstart.ksurl:
-  - synthesize: "http://kickstart/#[host.kickstart.config].cfg"
+- host.netinstall.config_url:
+  - synthesize: "http://kickstart/#[host.netinstall.config].cfg"
 - host.pxelinux.kernel:
   - synthesize: "/boot/#[system.os]/vmlinuz"
 
@@ -251,20 +251,43 @@
 - host.pxelinux.append:
   - synthesize_regexp:
       sources:
+        kickstart:
+          key: "host.netinstall.kickstart"
+          regexp: "^(?<kickstart>.*)$"
         os:
           key: "system.os"
           regexp: "^(?<os>.*)$"
-        ksurl:
-          key: "host.kickstart.ksurl"
-          regexp: "^(?<ksurl>http://.*)$"
+        config_url:
+          key: "host.netinstall.config_url"
+          regexp: "^(?<config_url>http://.*)$"
         baseurl:
-          key: "host.kickstart.baseurl"
+          key: "host.netinstall.baseurl"
           regexp: "^(?<baseurl>http://.*)$"
       produce:
       - "initrd=/boot/#[os]/initrd.img
-         inst.ks=#[ksurl]"
+         inst.ks=#[config_url]"
       - "initrd=/boot/#[os]/initrd.img
          method=#[baseurl]"
+  - synthesize_regexp:
+      sources:
+        preseed:
+          key: "host.netinstall.preseed"
+          regexp: "^(?<preseed>.*)$"
+        os:
+          key: "system.os"
+          regexp: "^(?<os>.*)$"
+        config_url:
+          key: "host.netinstall.config_url"
+          regexp: "^(?<config_url>http://.*)$"
+        baseurl:
+          key: "host.netinstall.baseurl"
+          regexp: "^(?<protocol>.+)://(?<host>[^/]+)(?<path>.*)$"
+      produce:
+      - "initrd=/boot/#[os]/initrd.img
+         mirror/country=manual
+         mirror/protocol?=#[protocol]
+         mirror/http/hostname?=#[host]
+         mirror/http/directory?=#[path]"
 
 
 # Chassis names contain multiple colon-separated fields. Pick these
