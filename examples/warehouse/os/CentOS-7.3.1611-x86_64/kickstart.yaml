@@ -1,4 +1,0 @@
----
-host:
-  kickstart:
-    baseurl: http://mirror.centos.org/centos/7.3.1611/os/x86_64/
