@@ -284,6 +284,10 @@
           regexp: "^(?<protocol>.+)://(?<host>[^/]+)(?<path>.*)$"
       produce:
       - "initrd=/boot/#[os]/initrd.img
+         preseed/url=#[config_url]
+         auto=true
+         priority=critical"
+      - "initrd=/boot/#[os]/initrd.img
          mirror/country=manual
          mirror/protocol?=#[protocol]
          mirror/http/hostname?=#[host]
