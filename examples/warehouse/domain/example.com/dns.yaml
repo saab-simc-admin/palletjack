@@ -23,3 +23,7 @@ net:
         protocol: tcp
         port: 5269
         target: xmpp2
+    txt:
+      - text: "v=spf1 mx"
+      - label: _kerberos
+        text: EXAMPLE.COM
