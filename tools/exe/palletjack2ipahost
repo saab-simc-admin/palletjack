@@ -1,0 +1,176 @@
+#!/usr/bin/env ruby
+
+# Create host objects in a FreeIPA or Red Hat IdM instance.
+#
+# Unless a specific system is specified this will loop trough all systems
+# in the warehouse and ensure that a corresponding host object exists.
+# Hostgroups are synchronized with the warehouse and any group not
+# specified in the warehouse will be removed.
+#
+# Host objects will be created with a randomly generated password. The
+# password is saved in the warehouse as system.ipa.otp, which can later be
+# exported to the Configuration Management tool.
+#
+# When specifying the --reinstall parameter the existing host object will
+# be removed and a new one created, allowing the machine be be reinstalled.
+#
+# If the IPA server is configured as authoritative DNS server, an A record
+# will be created for the systems primary interface (interface whose
+# domain matches with the system).
+#
+# TODO: Implement full synchronization of all relevant DNS records
+#
+# Data model assumptions:
+# - Multiple IP addresses in the same domain is equivalent
+
+require 'palletjack/tool'
+require 'ipa/client'
+require 'yaml'
+
+class PalletJack2IPAHost < PalletJack::Tool
+  def parse_options(opts)
+    opts.banner =
+"Usage: #{$PROGRAM_NAME} -w <warehouse> -i <IPA server> [-s <system> [--reinstall]]
+
+Synchronize the warehouse with the IPA server."
+
+    opts.on('-i SERVER', '--ipa-server SERVER', 'IPA server fqdn', String) {|srv|
+             options[:ipa] = srv
+           }
+    opts.on('-s SYSTEM', '--system SYSTEM', 'name of system to synchronize', String) {|system|
+             options[:system] = system
+           }
+    opts.on('-r', '--reinstall', 'reinstall the system (can only be used when a system is specified)') {|reinstall|
+             required_option :system
+             options[:reinstall] = reinstall
+           }
+
+    required_option :ipa
+  end
+
+  def sync_system(system)
+    # Create the IPA session and load pallet data
+    ipa = IPA::Client.new(host: options[:ipa])
+    box = system['system.ipa'] || {}
+
+    puts "Processing #{system['net.dns.fqdn']}..."
+
+    # Remove the host object
+    if options[:reinstall] then
+      del_host = ipa.host_del(hostname: system['net.dns.fqdn'], params: { 'updatedns' => true } )
+      if del_host['error'] then
+        puts " ! ERROR#{del_host['error']['code']} #{del_host['error']['name']}: #{del_host['error']['message']}"
+        return
+      else
+        puts " * Deleted host object"
+      end
+    end
+
+    #
+    # Create a new host object
+    unless ipa.host_exists? system['net.dns.fqdn']
+      # Generate a random password
+      add_host_params = { 'random' => true }
+
+      ip_address = nil
+      system.children(kind:'ipv4_interface') do |interface|
+        # Find an interface in the same domain as the host
+        if interface['net.dns.domain'] == system['net.dns.domain'] then
+          ip_address = interface['net.ipv4.address']
+        end
+      end
+
+      if ip_address then
+        add_host_params['ip_address'] = ip_address
+      else
+        puts " ! WARNING: No IP Address found for #{system['net.dns.fqdn']}, setting force = true."
+        add_host_params['force'] = true
+      end
+
+      add_host = ipa.host_add(hostname: system['net.dns.fqdn'], params: add_host_params)
+
+      if add_host['error'] then
+        puts " ! ERROR#{add_host['error']['code']} #{add_host['error']['name']}: #{add_host['error']['message']}"
+        return
+      end
+
+      puts " * Created host object"
+      # Update the box
+      # Note that ['result']['result'] is not acutally a typo, the API
+      # returns data like that.
+      box['otp'] = add_host['result']['result']['randompassword']
+    end
+
+    # Now we know that there is a host object, so query
+    # the available information.
+    host_show = ipa.host_show(hostname: system['net.dns.fqdn'], all: true)
+    host_data = host_show['result']['result']
+
+    # Sync hostgroups to the warehouse. This will first loop over the
+    # hostgroups in the warehouse and join the groups the system should
+    # be a member of, then loop trough all of the hostgroups the system
+    # is a member of and leave any group not specified in the warehouse.
+    if system['system.ipa.hostgroups'] then
+
+      hostgroups = host_data['memberof_hostgroup'] || []
+      system['system.ipa.hostgroups'].each do |group|
+        unless hostgroups.include? group then
+          ipa_mod = ipa.api_post(method: 'hostgroup_add_member', item: group,
+                                 params: { 'host' => [ system['net.dns.fqdn'] ] })
+
+          if ipa_mod['error'] then
+            puts " ! #{ipa_mod['error']['code']} #{ipa_mod['error']['name']}: #{ipa_mod['error']['message']}"
+          else
+            puts " * Added to hostgroup #{group}"
+          end
+        end
+      end
+
+      hostgroups.each do |group|
+        unless system['system.ipa.hostgroups'].include? group then
+          ipa_mod = ipa.api_post(method: 'hostgroup_remove_member', item: group,
+                                 params: { 'host' => [ system['net.dns.fqdn'] ] })
+
+          if ipa_mod['error'] then
+            puts " ! #{ipa_mod['error']['code']} #{ipa_mod['error']['name']}: #{ipa_mod['error']['message']}"
+          else
+            puts " * Removed from hostgroup #{group}"
+          end
+        end
+      end
+
+    end
+
+    @ipa_boxes[system['system.name']] = box
+
+  end
+
+  def process
+
+    @ipa_boxes = {}
+
+    if options[:system] then
+      system = jack.fetch(kind: 'system', name: options[:system])
+      sync_system system
+    else
+      # Make a sync operation of all systems in the database
+      jack.each(kind: 'system') do |system|
+        next unless system['system.role'].include? 'ipa-client'
+        sync_system system
+      end
+    end
+
+  end
+
+  def output
+    @ipa_boxes.each do |system, content|
+      pallet_box 'system', system, 'ipa' do
+        { system: { ipa: content } }
+      end
+    end
+  end
+end
+
+if PalletJack2IPAHost.standalone?(__FILE__) then
+  PalletJack2IPAHost.run
+end
