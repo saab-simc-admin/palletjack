@@ -17,14 +17,21 @@ physical machine, a virtual machine or a container.
 The link "os" points to the operating system this system runs.
 
 role.yaml contains, in the key "system.role", a list of roles which
-this system skall have, which in the future will be made available to
-the configuration management system.
+this system skall have, which will be made available to the
+configuration management system. It also contains, in the key
+"system.ipa.hostgroups", a list of hostgroups the system should join
+in a FreeIPA domain.
+
+ipa.yaml is updated by the palletjack2ipahost tool and contains, in
+the key "system.ipa.otp", a one-time password which can be used to
+enroll in a FreeIPA domain.
 
 
 Files:
 
   system/<name>/architecture.yaml
   system/<name>/role.yaml
+  system/<name>/ipa.yaml
 
 
 Links:
@@ -46,6 +53,15 @@ role.yaml:
       - role1
       - role2
       ...
+    ipa:
+      hostgroups:
+        - group1
+        ...
+
+ipa.yaml:
+  system:
+    ipa:
+      otp: Auto-generated FreeIPA password
 
 
 Transformed values:
