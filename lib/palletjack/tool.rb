@@ -457,7 +457,6 @@ module PalletJack
 #{comment_char}#{comment_char} Repository: #{workdir}
 #{comment_char}#{comment_char} Branch: #{branch}\n"
       if include_id
-      then
         header +=
           "#{comment_char}#{comment_char} Commit ID: #{repo.head.target_id}\n"
       end

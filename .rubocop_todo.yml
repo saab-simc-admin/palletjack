@@ -401,14 +401,6 @@ Style/MultilineIfModifier:
   Exclude:
     - 'tools/exe/palletjack2unbound'
 
-# Offense count: 5
-# Cop supports --auto-correct.
-Style/MultilineIfThen:
-  Exclude:
-    - 'lib/palletjack/keytransformer.rb'
-    - 'lib/palletjack/tool.rb'
-    - 'tools/exe/palletjack2unbound'
-
 # Offense count: 6
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
