@@ -24,6 +24,7 @@ Lint/AssignmentInCondition:
 # SupportedStylesAlignWith: either, start_of_block, start_of_line
 Lint/BlockAlignment:
   Exclude:
+    - 'tools/exe/palletjack2ipahost'
     - 'tools/spec/palletjack2kea_spec.rb'
 
 # Offense count: 1
@@ -35,6 +36,10 @@ Lint/FormatParameterMismatch:
 Lint/NonLocalExitFromIterator:
   Exclude:
     - 'lib/palletjack/keytransformer.rb'
+
+Lint/ShadowingOuterLocalVariable:
+  Exclude:
+    - 'tools/exe/palletjack2ipahost'
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -60,6 +65,7 @@ Lint/UselessAccessModifier:
 Lint/UselessAssignment:
   Exclude:
     - 'lib/palletjack/tool.rb'
+    - 'tools/exe/palletjack2ipahost'
     - 'tools/exe/palletjack2unbound'
 
 # Offense count: 16
@@ -157,6 +163,7 @@ Style/BlockDelimiters:
     - 'tools/exe/create_ipv4_interface'
     - 'tools/exe/create_system'
     - 'tools/exe/dump_pallet'
+    - 'tools/exe/palletjack2ipahost'
     - 'tools/exe/palletjack2unbound'
     - 'tools/lib/palletjack2zones.rb'
     - 'tools/spec/palletjack2kea_spec.rb'
@@ -223,15 +230,8 @@ Style/Documentation:
     - 'lib/palletjack/pallet/identity.rb'
     - 'lib/palletjack/tool.rb'
     - 'lib/traceable.rb'
-    - 'tools/exe/create_domain'
-    - 'tools/exe/create_ipv4_interface'
-    - 'tools/exe/create_system'
-    - 'tools/exe/dump_pallet'
-    - 'tools/exe/palletjack2kea'
-    - 'tools/exe/palletjack2pxelinux'
-    - 'tools/exe/palletjack2salt'
-    - 'tools/exe/palletjack2unbound'
-    - 'tools/lib/palletjack2zones.rb'
+    - 'tools/exe/*'
+    - 'tools/lib/*'
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -283,6 +283,7 @@ Layout/FirstParameterIndentation:
     - 'tools/exe/create_domain'
     - 'tools/exe/create_ipv4_interface'
     - 'tools/exe/create_system'
+    - 'tools/exe/palletjack2ipahost'
     - 'tools/exe/palletjack2kea'
     - 'tools/exe/palletjack2pxelinux'
     - 'tools/exe/palletjack2salt'
@@ -318,6 +319,7 @@ Style/GlobalVars:
 Style/GuardClause:
   Exclude:
     - 'lib/traceable.rb'
+    - 'tools/exe/palletjack2ipahost'
     - 'tools/exe/palletjack2salt'
 
 # Offense count: 3
@@ -336,17 +338,7 @@ Style/HashSyntax:
 # Configuration parameters: MaxLineLength.
 Style/IfUnlessModifier:
   Exclude:
-    - 'tools/exe/create_domain'
-    - 'tools/exe/create_ipv4_interface'
-    - 'tools/exe/create_system'
-    - 'tools/exe/dump_pallet'
-    - 'tools/exe/palletjack2kea'
-    - 'tools/exe/palletjack2knot1'
-    - 'tools/exe/palletjack2knot2'
-    - 'tools/exe/palletjack2pxelinux'
-    - 'tools/exe/palletjack2salt'
-    - 'tools/exe/palletjack2unbound'
-    - 'tools/lib/palletjack2zones.rb'
+    - 'tools/exe/*'
 
 # Offense count: 16
 # Cop supports --auto-correct.
@@ -357,6 +349,7 @@ Layout/IndentAssignment:
     - 'tools/exe/create_domain'
     - 'tools/exe/create_ipv4_interface'
     - 'tools/exe/create_system'
+    - 'tools/exe/palletjack2ipahost'
     - 'tools/exe/palletjack2kea'
     - 'tools/exe/palletjack2pxelinux'
     - 'tools/exe/palletjack2salt'
@@ -493,6 +486,7 @@ Layout/SpaceInsideBlockBraces:
     - 'tools/exe/create_ipv4_interface'
     - 'tools/exe/create_system'
     - 'tools/exe/dump_pallet'
+    - 'tools/exe/palletjack2ipahost'
     - 'tools/exe/palletjack2kea'
     - 'tools/exe/palletjack2pxelinux'
     - 'tools/exe/palletjack2salt'
