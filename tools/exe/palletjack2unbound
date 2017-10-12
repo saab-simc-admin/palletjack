@@ -51,7 +51,7 @@ stub-zone:
           stubfile << "  stub-addr: #{addr}\n"
         end
 
-        if @transparent then
+        if @transparent
           stubfile << "\nserver:\n  local-zone: \"#{@zone}\" transparent\n"
         end
       end
