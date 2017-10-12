@@ -9,3 +9,5 @@ Style/SymbolArray:
 Lint/HandleExceptions:
   Exclude:
     - 'spec/palletjack-tool_spec.rb'
+Style/Not:
+  Enabled: false
