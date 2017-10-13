@@ -43,7 +43,11 @@ module PalletJack
           boxes << file
         when filestat.symlink?
           link = File.readlink(filepath)
-          link_id = Identity.new(jack, File.expand_path(link, path))
+          target = File.expand_path(link, path)
+          unless File.exist? target
+            raise Errno::ENOENT.new "broken symlink #{filepath} -> #{link}"
+          end
+          link_id = Identity.new(jack, target)
 
           pallet = jack.pallet(link_id.kind, link_id.full_name)
           edge(pallet, pallet: {references: {file => link_id.full_name}})
