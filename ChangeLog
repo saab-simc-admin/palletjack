@@ -1,3 +1,10 @@
+v0.7.3.creideiki.0.8.1 2017-10-18
+
+  Bug fixes:
+
+    * Tools no longer crash if the warehouse is not a Git repository
+      (#129, #143)
+
 v0.7.3.creideiki.0.8.0 2017-10-18
 
   Tool changes:
