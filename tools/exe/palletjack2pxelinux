@@ -6,16 +6,16 @@
 #
 # Each +os+ object will contain the keys:
 #   host:
-#     kickstart:
+#     netinstall:
 #       baseurl: <URL to OS installation>
 #     pxelinux:
 #       config: <basename of pxelinux menu file w/o .menu>
 #
 # Each +netinstall+ object will contain the keys:
 #   host:
-#     kickstart:
+#     netinstall:
 #       label: <human-friendly label for variant>
-#       ksurl: ["none"|<URL to kickstart file>]
+#       ksurl: ["none"|<URL to netinstall file>]
 #     pxelinux:
 #       config: <basename of pxelinux menu file w/o .menu>
 #       kernel: <tftp path of pxelinux kernel>
@@ -68,7 +68,7 @@ Write PXELINUX boot configuration files from a Palletjack warehouse"
   def pxemenu_for_netinstall(netinstall)
     config = netinstall['host.pxelinux.config']
     os_label = netinstall['system.os'].gsub(/-/, ' ')
-    ks_label = netinstall['host.kickstart.label']
+    ni_label = netinstall['host.netinstall.label']
     kernel = netinstall['host.pxelinux.kernel']
     append = netinstall['host.pxelinux.append']
 
@@ -78,13 +78,13 @@ Write PXELINUX boot configuration files from a Palletjack warehouse"
 UI menu.c32
 PROMPT 0
 MENU INCLUDE /config/graphics.conf
-MENU AUTOBOOT Installing #{os_label} (#{ks_label}) in # seconds
+MENU AUTOBOOT Installing #{os_label} (#{ni_label}) in # seconds
 TIMEOUT 100
 
-MENU TITLE Install #{os_label} (#{ks_label})
+MENU TITLE Install #{os_label} (#{ni_label})
 
 LABEL #{config}
-  MENU LABEL ^Install #{os_label} (#{ks_label})
+  MENU LABEL ^Install #{os_label} (#{ni_label})
   MENU DEFAULT
   KERNEL #{kernel}
   APPEND #{append}
@@ -116,7 +116,7 @@ MENU TITLE #{os_label} Installation Menu
 "
 
       os.descendants(kind: 'netinstall') do |netinstall|
-        next unless ks_label = netinstall['host.kickstart.label']
+        next unless ni_label = netinstall['host.netinstall.label']
         config = netinstall['host.pxelinux.config']
         kernel = netinstall['host.pxelinux.kernel']
         append = netinstall['host.pxelinux.append']
@@ -125,7 +125,7 @@ MENU TITLE #{os_label} Installation Menu
 
         menufile << "
 LABEL #{config}
-  MENU LABEL Install #{os_label} (#{ks_label})
+  MENU LABEL Install #{os_label} (#{ni_label})
   KERNEL menu.c32
   APPEND /config/#{config}.menu
 "
