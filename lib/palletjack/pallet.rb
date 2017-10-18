@@ -1,4 +1,5 @@
 require 'palletjack/pallet/identity'
+require 'palletjack/errors'
 require 'traceable'
 
 module PalletJack
@@ -38,8 +39,15 @@ module PalletJack
         filestat = File.lstat(filepath)
         case
         when (filestat.file? and file =~ /\.yaml$/)
-          merge!(TraceableYAML::load_file(filepath,
-                   filepath.sub(@identity.warehouse, '')[1..-1]))
+          # Parsing an empty YAML file returns false, which is allowed
+          yaml = TraceableYAML::load_file(filepath,
+                   filepath.sub(@identity.warehouse, '')[1..-1]) || {}
+          unless yaml.is_a? Hash
+            raise PalletJack::WarehouseError.new(
+              "Box #{filepath} contains a #{yaml.class}, expected a Hash"
+            )
+          end
+          merge!(yaml)
           boxes << file
         when filestat.symlink?
           link = File.readlink(filepath)

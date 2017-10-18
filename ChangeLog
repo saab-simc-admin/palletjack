@@ -1,3 +1,9 @@
+v0.7.3.creideiki.0.8.2 2017-10-18
+
+  Warehouse changes:
+
+    * Boxes should be YAML hashes or empty (#128, #149)
+
 v0.7.3.creideiki.0.8.1 2017-10-18
 
   Bug fixes:
