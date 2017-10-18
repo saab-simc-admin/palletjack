@@ -1,0 +1,5 @@
+---
+host:
+  netinstall:
+    baseurl: http://mirror.centos.org/centos/7.4.1708/os/x86_64/
+    kickstart: ~

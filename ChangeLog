@@ -1,8 +1,18 @@
-Next
+v0.7.3.creideiki.0.8.0 2017-10-18
+
+  Tool changes:
+
+    * palletjack2pxelinux can generate preseed configuration for
+      automating network installations of Ubuntu (#146)
 
   Warehouse changes:
 
     * Example warehouse updated to CentOS 7.4.1708 (#136, #145)
+    * Netinstall machinery is now generic instead of Kickstart
+      specific, and keys have changed name from "kickstart" to
+      "netinstall" (#146)
+    * Example warehouse includes Ubuntu 16.04 netinstall with preseed
+      (#139)
 
 v0.7.2 2017-09-29
 
