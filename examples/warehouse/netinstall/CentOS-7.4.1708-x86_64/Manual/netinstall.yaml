@@ -1,0 +1,4 @@
+host:
+  netinstall:
+    label: manual configuration
+    config_url: none
