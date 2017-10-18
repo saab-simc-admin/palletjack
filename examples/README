@@ -50,7 +50,7 @@ it as pxelinux/boot/memtest86/memtest.4.20.
 For the CentOS 7 installer, download
 http://mirror.centos.org/centos/7/os/x86_64/images/pxeboot/vmlinuz and
 http://mirror.centos.org/centos/7/os/x86_64/images/pxeboot/initrd.img
-to pxelinux/boot/CentOS-7.3.1611-x86_64/.
+to pxelinux/boot/CentOS-7.4.1708-x86_64/.
 
 
 lca2017-presentation.odp
