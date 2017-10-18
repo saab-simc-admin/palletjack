@@ -1,3 +1,21 @@
+v0.7.3.creideiki.0.9.0 2017-10-18
+
+  Tool changes:
+
+    * New tool palletjack2ipahost, for syncing a warehouse to a
+      FreeIPA server (#147)
+
+  Packaging changes:
+
+    * New dependencies: ipa-ruby ~> 0.0 and hashie ~> 3 (#147)
+
+  Warehouse changes:
+
+    * Systems include FreeIPA hostgroup information in role.yaml
+      (#147)
+    * palletjack2ipahost creates a box ipa.yaml in each system pallet
+      to contain the one-time password for FreeIPA enrollment (#147)
+
 v0.7.3.creideiki.0.8.2 2017-10-18
 
   Warehouse changes:
