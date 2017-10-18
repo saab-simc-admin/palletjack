@@ -1,4 +1,4 @@
 host:
-  kickstart:
+  netinstall:
     label: single disk virtual machine
     use_disk: vda

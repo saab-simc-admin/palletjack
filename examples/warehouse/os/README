@@ -14,15 +14,19 @@ the OS.
 
 Files:
 
-  os/<name>/kickstart.yaml
+  os/<name>/netinstall.yaml
 
 
 YAML:
 
-kickstart.yaml:
+netinstall.yaml:
   host:
-    kickstart:
+    netinstall:
       baseurl: URL to operating system network installation repository
+      kickstart: Key present with value ~ if Kickstart should be used
+                 to install this OS.
+      preseed: Key present with value ~ if Preseed should be used
+               to install this OS.
 
 
 Transformed values:
