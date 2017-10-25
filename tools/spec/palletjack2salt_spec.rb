@@ -18,7 +18,7 @@ describe 'palletjack2salt' do
     end
 
     it 'contains configuration for os images' do
-      os_pillar = { 'host' => { 'kickstart' => Hash,
+      os_pillar = { 'host' => { 'netinstall' => Hash,
                                 'pxelinux' => Hash },
                     'system' => Hash }
       @tool.jack.each(kind: 'os') do |os|
@@ -27,7 +27,7 @@ describe 'palletjack2salt' do
     end
 
     it 'contains configuration for netinstall configurations' do
-      ni_pillar = { 'host' => { 'kickstart' => Hash,
+      ni_pillar = { 'host' => { 'netinstall' => Hash,
                                 'pxelinux' => Hash },
                     'system' => Hash }
       @tool.jack.each(kind: 'netinstall') do |ni|
