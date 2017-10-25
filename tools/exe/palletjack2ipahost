@@ -180,7 +180,7 @@ Requres a valid Kerberos ticket for a FreeIPA administrator."
     failed = ret['result']['failed']
     return unless failed
     failed.extend Hashie::Extensions::DeepLocate
-    failures = failed.deep_locate lambda(_, value, _) {
+    failures = failed.deep_locate lambda { |_, value, _|
                  value.is_a?(Array) && !value.empty?
                }
     raise "Failed #{action}: #{ret['result']['failed']}" unless failures.empty?
