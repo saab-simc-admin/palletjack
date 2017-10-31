@@ -137,6 +137,9 @@ module PalletJack
       @parser.on('-w DIR', '--warehouse DIR',
                  'warehouse directory', String) {|dir|
         @options[:warehouse] = dir }
+      @parser.on_tail('-V', '--version', 'display version information') {
+        puts PalletJack::VERSION
+        exit 0 }
       @parser.on_tail('-h', '--help', 'display usage information') {
         raise OptionParser::ParseError }
 
