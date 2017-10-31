@@ -2,3 +2,7 @@ system:
   role:
     - web-server
     - ssh-server
+    - freeipa-client
+  ipa:
+    hostgroups:
+      - clients

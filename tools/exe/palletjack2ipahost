@@ -1,0 +1,192 @@
+#!/usr/bin/env ruby
+
+# Create host objects in a FreeIPA instance.
+#
+# Requires you to first have a valid Kerberos ticket for a FreeIPA
+# administrator. Check if you have one with "klist" and if not, get
+# one using "kinit <username>".
+#
+# Runs for a single system or, if none is given, every system in the
+# warehouse with the role freeipa-client.
+#
+# Hostgroups are synchronized with the warehouse and any group not
+# specified in the warehouse will be removed.
+#
+# Host objects will be created with a randomly generated password. The
+# password is saved in the warehouse as system.ipa.otp, for later
+# export to Salt.
+#
+# If the --reinstall parameter is specified, the existing host object
+# will be removed and a new one created, allowing the machine be be
+# reinstalled.
+
+require 'palletjack/tool'
+require 'ipa/client'
+require 'yaml'
+require 'hashie'
+
+class PalletJack2IPAHost < PalletJack::Tool
+  def parse_options(opts)
+    opts.banner =
+"Usage: #{$PROGRAM_NAME} -w <warehouse> -i <IPA server> [-s <system> [--reinstall]] [-v]
+
+Synchronize systems in the warehouse to host objects in an IPA server.
+
+Requres a valid Kerberos ticket for a FreeIPA administrator."
+
+    opts.on('-i SERVER', '--ipa-server SERVER', 'IPA server',
+            String) { |srv| options[:ipa] = srv }
+    opts.on('-s SYSTEM', '--system SYSTEM', 'system to synchronize',
+            String) { |system| options[:system] = system }
+    opts.on('-r', '--reinstall', 'reinstall the named system') { |reinstall|
+      required_option :system
+      options[:reinstall] = reinstall
+    }
+    opts.on('-v', '--verbose', 'verbose mode') { |verbose|
+      options[:verbose] = verbose
+    }
+
+    required_option :ipa
+  end
+
+  def output
+    # Do all the processing here in #output, since we're always
+    # modifying state on an external FreeIPA server and there is no
+    # local preprocessing to do in #process.
+
+    @ipa_boxes = {}
+
+    connect_to_freeipa(options[:ipa])
+
+    if options[:system]
+      system = jack.fetch(kind: 'system', name: options[:system])
+      unless system['system.role'].include? 'freeipa-client'
+        raise "System \"#{options[:system]}\" does not have the role \"freeipa-client\""
+      end
+      sync_system system
+    else
+      jack.each(kind: 'system') do |system|
+        next unless system['system.role'].include? 'freeipa-client'
+        sync_system system
+      end
+    end
+
+    @ipa_boxes.each do |system, content|
+      pallet_box 'system', system, 'ipa' do
+        { system: { ipa: content } }
+      end
+    end
+  end
+
+  private
+
+  def connect_to_freeipa(host)
+    @ipa = IPA::Client.new(host: host)
+  end
+
+  # Update all FreeIPA server state to match the +system+ from the warehouse
+  #
+  # If reinstalling, remove the old host object. Then, create a new
+  # host object and sync hostgroups.
+  def sync_system(system)
+    puts "Syncing #{system['system.name']}" if options[:verbose]
+
+    box = system['system.ipa'] || {}
+
+    if options[:reinstall]
+      puts 'Removing host object' if options[:verbose]
+      del_host = @ipa.host_del(hostname: system['net.dns.fqdn'])
+      check_api_error(del_host, 'deleting host')
+    end
+
+    unless @ipa.host_exists? system['net.dns.fqdn']
+      puts 'Creating host object' if options[:verbose]
+      box['otp'] = create_host_object(system)
+    end
+
+    sync_hostgroups(system)
+
+    @ipa_boxes[system['system.name']] = box
+  end
+
+  # Create a host object in FreeIPA representing a +system+ from the
+  # warehouse. The host object may not already exist.
+  def create_host_object(system)
+    # Generate a random password
+    add_host_params = { 'random' => true }
+
+    ip_address = nil
+    system.children(kind: 'ipv4_interface') do |interface|
+      # Find an interface in the same domain as the host and set as
+      # primary IP address in FreeIPA
+      if interface['net.dns.domain'] == system['net.dns.domain']
+        ip_address = interface['net.ipv4.address']
+      end
+    end
+
+    if ip_address
+      add_host_params['ip_address'] = ip_address
+      puts "Using IP address #{ip_address}" if options[:verbose]
+    else
+      raise "No IP address in domain #{system['net.dns.domain']} found for #{system['system.name']}"
+    end
+
+    add_host = @ipa.host_add(hostname: system['net.dns.fqdn'], params: add_host_params)
+    check_api_error(add_host, 'adding host')
+
+    add_host['result']['result']['randompassword']
+  end
+
+  # Sync hostgroups from the warehouse to FreeIPA
+  #
+  # Join the system to the groups listed in the warehouse, and leave
+  # all groups not listed in the warehouse.
+  def sync_hostgroups(system)
+    host_show = @ipa.host_show(hostname: system['net.dns.fqdn'], all: true)
+    check_api_error(host_show, 'getting host information')
+    host_data = host_show['result']['result']
+
+    server_hostgroups = host_data['memberof_hostgroup'] || []
+    warehouse_hostgroups = system['system.ipa.hostgroups'] || []
+
+    warehouse_hostgroups.each do |group|
+      next if server_hostgroups.include? group
+      puts "Adding hostgroup #{group}" if options[:verbose]
+      ipa_mod = @ipa.api_post(method: 'hostgroup_add_member', item: group,
+                              params: { 'host' => [system['net.dns.fqdn']] })
+      check_api_error(ipa_mod, 'adding host to group')
+    end
+
+    server_hostgroups.each do |group|
+      next if warehouse_hostgroups.include? group
+      puts "Removing hostgroup #{group}" if options[:verbose]
+      ipa_mod = @ipa.api_post(method: 'hostgroup_remove_member', item: group,
+                              params: { 'host' => [system['net.dns.fqdn']] })
+      check_api_error(ipa_mod, 'removing host from group')
+    end
+  end
+
+  # Check if the return value +ret+ from the +ipa/client+ API is an
+  # error or a failure, and if so, raise a RuntimeError including the
+  # string +action+.
+  def check_api_error(ret, action)
+    if ret['error']
+      raise "Error #{action}: #{ret['error']['code']} #{ret['error']['name']}: #{ret['error']['message']}"
+    end
+
+    # result.failed contains a complicated and variable structure with
+    # its leaves being lists of the requested operations that failed.
+    # If all operations were successful, all these lists are empty.
+    failed = ret['result']['failed']
+    return unless failed
+    failed.extend Hashie::Extensions::DeepLocate
+    failures = failed.deep_locate lambda { |_, value, _|
+                 value.is_a?(Array) && !value.empty?
+               }
+    raise "Failed #{action}: #{ret['result']['failed']}" unless failures.empty?
+  end
+end
+
+if PalletJack2IPAHost.standalone?(__FILE__)
+  PalletJack2IPAHost.run
+end

@@ -49,7 +49,7 @@ module PalletJack
         case param
         when String
           rex = /#\[([[:alnum:]._-]+)\]/
-          if md = rex.match(param) then
+          if md = rex.match(param)
             result << md.pre_match
             return unless lookup = dictionary[md[1]]
             result << lookup.to_s
@@ -249,9 +249,8 @@ module PalletJack
 
           transforms.each do |t|
             transform, param = t.flatten
-            if self.respond_to?(transform.to_sym) then
+            if self.respond_to?(transform.to_sym)
               if new_value = self.send(transform.to_sym, param, context)
-              then
                 new_value = TraceableString.new(new_value)
                 new_value.file = transform.file
                 new_value.line = transform.line
