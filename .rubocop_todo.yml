@@ -179,6 +179,7 @@ Style/BracesAroundHashParameters:
   Exclude:
     - 'tools/spec/palletjack2kea_spec.rb'
     - 'tools/spec/palletjack2unbound_spec.rb'
+    - 'tools/spec/power_model_spec.rb'
 
 # Offense count: 1
 # Configuration parameters: EnforcedStyle, SupportedStyles.
@@ -191,6 +192,10 @@ Style/ClassAndModuleChildren:
 Style/ClassVars:
   Exclude:
     - 'lib/traceable.rb'
+
+Style/ClosingParenthesisIndentation:
+  Exclude:
+    - 'tools/exe/power_model'
 
 # Offense count: 5
 # Cop supports --auto-correct.
@@ -232,6 +237,7 @@ Style/Documentation:
     - 'tools/exe/palletjack2salt'
     - 'tools/exe/palletjack2unbound'
     - 'tools/lib/palletjack2zones.rb'
+    - 'tools/exe/power_model'
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -287,6 +293,7 @@ Layout/FirstParameterIndentation:
     - 'tools/exe/palletjack2pxelinux'
     - 'tools/exe/palletjack2salt'
     - 'tools/exe/palletjack2unbound'
+    - 'tools/exe/power_model'
     - 'tools/lib/palletjack2zones.rb'
 
 # Offense count: 2
@@ -311,6 +318,7 @@ Style/GlobalVars:
     - 'tools/spec/palletjack2salt_spec.rb'
     - 'tools/spec/palletjack2unbound_spec.rb'
     - 'tools/spec/palletjack2zones_spec.rb'
+    - 'tools/spec/power_model_spec.rb'
     - 'tools/spec/spec_helper.rb'
 
 # Offense count: 2
@@ -319,6 +327,7 @@ Style/GuardClause:
   Exclude:
     - 'lib/traceable.rb'
     - 'tools/exe/palletjack2salt'
+    - 'tools/exe/power_model'
 
 # Offense count: 3
 # Cop supports --auto-correct.
@@ -346,6 +355,7 @@ Style/IfUnlessModifier:
     - 'tools/exe/palletjack2pxelinux'
     - 'tools/exe/palletjack2salt'
     - 'tools/exe/palletjack2unbound'
+    - 'tools/exe/power_model'
     - 'tools/lib/palletjack2zones.rb'
 
 # Offense count: 16
@@ -361,9 +371,14 @@ Layout/IndentAssignment:
     - 'tools/exe/palletjack2pxelinux'
     - 'tools/exe/palletjack2salt'
     - 'tools/exe/palletjack2unbound'
+    - 'tools/exe/power_model'
     - 'tools/lib/palletjack2zones.rb'
     - 'tools/spec/palletjack2kea_spec.rb'
     - 'tools/spec/palletjack2salt_spec.rb'
+
+Style/IndentHash:
+  Exclude:
+    - 'tools/spec/power_model_spec.rb'
 
 # Offense count: 3
 # Cop supports --auto-correct.
@@ -553,3 +568,7 @@ Style/TrailingUnderscoreVariable:
 Style/WhileUntilDo:
   Exclude:
     - 'lib/palletjack/pallet/identity.rb'
+
+Style/WordArray:
+  Exclude:
+    - 'tools/spec/power_model_spec.rb'

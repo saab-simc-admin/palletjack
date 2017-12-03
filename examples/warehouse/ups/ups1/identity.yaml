@@ -1,0 +1,6 @@
+power:
+  ups:
+    manufacturer: Example
+    model: BigBattery 50
+    serial: 0123456789
+    max-load: 50000

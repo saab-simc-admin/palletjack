@@ -18,6 +18,7 @@ Files:
 Links:
 
   room/<name>/building -> ../../building/<name>/
+  room/<name>/ups -> ../../ups/<name>/
 
 
 YAML:
