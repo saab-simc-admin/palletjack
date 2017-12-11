@@ -1,0 +1,5 @@
+---
+host:
+  netinstall:
+    baseurl: http://archive.ubuntu.com/ubuntu/dists/xenial/
+    preseed: ~
